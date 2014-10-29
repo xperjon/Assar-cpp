@@ -1,68 +1,37 @@
 // radarplotView.cpp : implementation of the CRadarplotView class
-
 //
 
-
-
 #include "stdafx.h"
-
 #include "ASSAR.h"
 #include "MainFrm.h"
-
 #include "radarplotDoc.h"
-
 #include "radarplotView.h"
-
 #include "utrustningsklasser.h"
-
 //#include "utrustningsLista.h"
-
 #include "DlgRadarPPI.h"
-
 #include "RadarCalculate.h"
-
 #include "DialogKalibreraRadar.h"
-
 #include "PropSheetUtrustning.h"
-
 #include "PropSheetUtrustning1.h"
-
 #include "PropSheetUtrustning2.h"
-
 #include "DialogChoise.h"
-
 //#include "RadarPPI.h"
-
 #include "radarppi.h"
-
 #include "DlgOverViewOpenGL.h"
-
 #include "DataFile.h"
-
 #include <math.h>
 
 
-
 #ifdef _DEBUG
-
 #define new DEBUG_NEW
-
 #undef THIS_FILE
-
 static char THIS_FILE[] = __FILE__;
-
 #endif
 
 
-
 /////////////////////////////////////////////////////////////////////////////
-
 // CRadarplotView
-
-
-
 IMPLEMENT_DYNCREATE(CRadarplotView, CView)
-
 
 
 BEGIN_MESSAGE_MAP(CRadarplotView, CView)
@@ -123,540 +92,282 @@ END_MESSAGE_MAP()
 
 
 /////////////////////////////////////////////////////////////////////////////
-
 // CRadarplotView construction/destruction
-
-																																	
-
-CRadarplotView::CRadarplotView():m_rectEllipse(50,-345,550,-430),m_rE1(60,-615,560,-700),m_rE2(60,-860,560,-945),m_rE3(60,-1105,560,-1190),m_rE4(60,-1075,560,-1160),m_rE5(60,-1320,560,-1405),m_rE6(60,-1565,560,-1650),m_rE7(60,-1810,560,-1895)
-
+CRadarplotView::CRadarplotView() :m_rectEllipse(50, -345, 550, -430), m_rE1(60, -615, 560, -700), m_rE2(60, -860, 560, -945), m_rE3(60, -1105, 560, -1190), m_rE4(60, -1075, 560, -1160), m_rE5(60, -1320, 560, -1405), m_rE6(60, -1565, 560, -1650), m_rE7(60, -1810, 560, -1895)
 {
-
-
-	NbrOfRadar			=	0;
-
-	NbrOfJammer			=	0;
-
-	NbrOfTarget			=	0;
-
-	countJ				=	0;
-
-	countT				=	0;
-
-	m_bRun				=	false;
-
+	NbrOfRadar = 0;
+	NbrOfJammer = 0;
+	NbrOfTarget = 0;
+	countJ = 0;
+	countT = 0;
+	m_bRun = false;
 	m_strSimulationStatus = "Ready";
-
 	m_pDlgOVOpenGL = NULL;
 	m_pDlgScenOpenGL = NULL;
 
-//	m_pDisplay = new COpenGL(this);
-
-	
-
+	//	m_pDisplay = new COpenGL(this);
 }
 
-
-
 CRadarplotView::~CRadarplotView()
-
 {
-
 	TRACE("~CRadarplotView\n");
 
-
-
 	delete m_pDlgOVOpenGL;
-
 	delete	m_pDlgScenOpenGL;
-
-
-
 }
 
 
 
 BOOL CRadarplotView::PreCreateWindow(CREATESTRUCT& cs)
-
 {
-
 	// TODO: Modify the Window class or styles here by modifying
-
 	//  the CREATESTRUCT cs
-
-
-
-
-
 	return CView::PreCreateWindow(cs);
-
 }
 
 
-
 /////////////////////////////////////////////////////////////////////////////
-
 // CRadarplotView drawing
-
-void CRadarplotView::ShowText(CDC* pDC,int nXPos,int nYPos, int textSize,CString* pstrText)
-
+void CRadarplotView::ShowText(CDC* pDC, int nXPos, int nYPos, int textSize, CString* pstrText)
 {
-
 	TEXTMETRIC	tm;
-
 	CFont		fontText;
-
-	CString		strText		=	*pstrText;
-
+	CString		strText = *pstrText;
 	CSize		sizeText;
 
 
-
 	pDC->SetMapMode(MM_TWIPS);
+	fontText.CreateFont(-textSize, 0, 0, 0, 400, false, false, 0, ANSI_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+		DEFAULT_PITCH | FF_SWISS, _T("Arial"));
 
-
-
-
-
-	fontText.CreateFont(-textSize,0,0,0,400,false,false,0,ANSI_CHARSET,
-
-						OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
-
-						DEFAULT_PITCH | FF_SWISS,_T("Arial"));
-
-
-
-	CFont* pOldFont= (CFont*) pDC->SelectObject(&fontText);
-
+	CFont* pOldFont = (CFont*)pDC->SelectObject(&fontText);
 	pDC->GetTextMetrics(&tm);
-
-	sizeText=pDC->GetTextExtent(strText);
-
-	pDC->TextOut(nXPos,-nYPos,strText);
-
-
+	sizeText = pDC->GetTextExtent(strText);
+	pDC->TextOut(nXPos, -nYPos, strText);
 
 }
 
 void CRadarplotView::OnDraw(CDC* pDC)
-
 {
 
-
-
-//	CRadarplotDoc* pDoc = GetDocument();
-
+	//	CRadarplotDoc* pDoc = GetDocument();
 	CString text;
-
-	pDC->SetBkColor(RGB(150,150,150));
-
-	pDC->SetTextColor(RGB(255,255,255));
-
+	pDC->SetBkColor(RGB(150, 150, 150));
+	pDC->SetTextColor(RGB(255, 255, 255));
 	text.Format(_T("SCENARIO"));
-
-	ShowText(pDC,2500,200,480,&text);
-
-	pDC->SetBkColor(RGB(255,255,255));
-
-	pDC->SetTextColor(RGB(0,0,0));
-
+	ShowText(pDC, 2500, 200, 480, &text);
+	pDC->SetBkColor(RGB(255, 255, 255));
+	pDC->SetTextColor(RGB(0, 0, 0));
 	text.Format(_T("Radar:"));
-
-	ShowText(pDC,200,1200,320,&text);
-
-	pDC->MoveTo(200,-1520);
-
-	pDC->LineTo(7000,-1520);
-
+	ShowText(pDC, 200, 1200, 320, &text);
+	pDC->MoveTo(200, -1520);
+	pDC->LineTo(7000, -1520);
 	text.Format(_T("Jammer:"));
-
-	ShowText(pDC,200,2800,320,&text);
-
-	pDC->MoveTo(200,-3120);
-
-	pDC->LineTo(7000,-3120);
-
+	ShowText(pDC, 200, 2800, 320, &text);
+	pDC->MoveTo(200, -3120);
+	pDC->LineTo(7000, -3120);
 	text.Format(_T("Targets:"));
-
-	ShowText(pDC,200,5400,320,&text);
-
-	pDC->MoveTo(200,-5720);
-
-	pDC->LineTo(7000,-5720);
-
-
+	ShowText(pDC, 200, 5400, 320, &text);
+	pDC->MoveTo(200, -5720);
+	pDC->LineTo(7000, -5720);
 
 	CUtrustning* tempRadar;
-
 	CUtrustningLista::CNod *pTempPos;
-
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
 	pTempPos = pLista->m_pStartPos;
-
-	int J=0;
-
-	int T=0;
-
-	for(int i=0;i<pLista->m_nAntalNoder;i++) 
-
+	int J = 0;
+	int T = 0;
+	for (int i = 0; i < pLista->m_nAntalNoder; i++)
 	{
-
-		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
-
+		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
 		{
-
-			if(pTempPos->m_bActive==true)
-
-				pDC->SetTextColor(RGB(255,0,0));
-
+			if (pTempPos->m_bActive == true)
+				pDC->SetTextColor(RGB(255, 0, 0));
 			else
-
-				pDC->SetTextColor(RGB(0,0,0));
-
-
+				pDC->SetTextColor(RGB(0, 0, 0));
 
 			text.Format(pTempPos->m_pUtrustning->m_strUniqID);
-
-			ShowText(pDC,1700,2100,240,&text);
-
-			text.Format(_T("Max Range: %4.1f [km]"),((CRadarStation*)pTempPos->m_pUtrustning)->m_fMaxRange/1000);
-
-			ShowText(pDC,3400,1600,180,&text);
-
-			text.Format(_T("Frequency: min %3.1f [MHz] max %3.1f [MHz]"),((CRadarStation*)pTempPos->m_pUtrustning)->m_fFreqMin*1000,((CRadarStation*)pTempPos->m_pUtrustning)->m_fFreqMax*1000);
-
-			ShowText(pDC,3400,1800,180,&text);
-
-			text.Format(_T("PRI: %3.1f [ms] PRF: %3.1f [kHz] "),((CRadarStation*)pTempPos->m_pUtrustning)->m_fPRI*1000,(1/((CRadarStation*)pTempPos->m_pUtrustning)->m_fPRI)/1000);
-
-			ShowText(pDC,3400,2000,180,&text);
-
+			ShowText(pDC, 1700, 2100, 240, &text);
+			text.Format(_T("Max Range: %4.1f [km]"), ((CRadarStation*)pTempPos->m_pUtrustning)->m_fMaxRange / 1000);
+			ShowText(pDC, 3400, 1600, 180, &text);
+			text.Format(_T("Frequency: min %3.1f [MHz] max %3.1f [MHz]"), ((CRadarStation*)pTempPos->m_pUtrustning)->m_fFreqMin * 1000, ((CRadarStation*)pTempPos->m_pUtrustning)->m_fFreqMax * 1000);
+			ShowText(pDC, 3400, 1800, 180, &text);
+			text.Format(_T("PRI: %3.1f [ms] PRF: %3.1f [kHz] "), ((CRadarStation*)pTempPos->m_pUtrustning)->m_fPRI * 1000, (1 / ((CRadarStation*)pTempPos->m_pUtrustning)->m_fPRI) / 1000);
+			ShowText(pDC, 3400, 2000, 180, &text);
 			text.Format(_T("Width Mainlobe Tx: %d [Degrees] "), (int)(((CRadarStation*)pTempPos->m_pUtrustning)->m_fWidthMainlobe));
-
-			ShowText(pDC,3400,2200,180,&text);
-
+			ShowText(pDC, 3400, 2200, 180, &text);
 			text.Format(_T("Width Mainlobe Rx: %d [Degrees] "), (int)(((CRadarStation*)pTempPos->m_pUtrustning)->m_fWidthMainlobeRx));
-
-			ShowText(pDC,3400,2200,180,&text);
-
+			ShowText(pDC, 3400, 2200, 180, &text);
 			text.Format(_T("Scan Period: %d [rpm] "), (int)(((CRadarStation*)pTempPos->m_pUtrustning)->m_nAntennaScanPeriod));
-
-			ShowText(pDC,3400,2400,180,&text);	
-
+			ShowText(pDC, 3400, 2400, 180, &text);
 			text.Format(_T("Pulse Width: %3.1f [us] "), (((CRadarStation*)pTempPos->m_pUtrustning)->m_fPulseWidth * 1000000));
-
-			ShowText(pDC,3400,2600,180,&text);
-
+			ShowText(pDC, 3400, 2600, 180, &text);
 			text.Format(_T("Peakpower: %d [W] "), (int)(((CRadarStation*)pTempPos->m_pUtrustning)->m_fPeakPower));
+			ShowText(pDC, 3400, 2800, 180, &text);
 
-			ShowText(pDC,3400,2800,180,&text);
-
-			
 
 			CBitmap bitmap;
+			CDC dcDisplayMemory;
+			bitmap.LoadBitmap(IDB_BITMAP_RADARPPI);
+			dcDisplayMemory.CreateCompatibleDC(pDC);
+			dcDisplayMemory.SelectObject(&bitmap);
+			pDC->SetMapMode(MM_LOMETRIC);
+			pDC->BitBlt(50, -430, 200, 85, &dcDisplayMemory, 0, 0, SRCCOPY);
 
+			tempRadar = pTempPos->m_pUtrustning;
+		}
+		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+		{
+			if (pTempPos->m_bActive == true)
+				pDC->SetTextColor(RGB(255, 0, 0));
+			else
+				pDC->SetTextColor(RGB(0, 0, 0));
+
+			text.Format(pTempPos->m_pUtrustning->m_strUniqID);
+			ShowText(pDC, 1700, 3700 + 980 * J, 240, &text);
+			text.Format(_T("Jam Mode: %s "), pTempPos->m_pUtrustning->m_strStatus);
+			ShowText(pDC, 3400, 3500 + 1100 * J, 180, &text);
+			if (((CRadarJammer*)pTempPos->m_pUtrustning)->m_bBrusStorning == true && pTempPos->m_pUtrustning->m_strStatus != "OFF")
+			{
+
+				text.Format(_T("ERP: %3.1f [W]"), (((CRadarJammer*)pTempPos->m_pUtrustning)->m_fPeakPowerNoiseRef)*(((CRadarJammer*)pTempPos->m_pUtrustning)->m_nAntennaGainTX));
+				ShowText(pDC, 3400, 3700 + 1100 * J, 180, &text);
+
+				text.Format(_T("Frequency: min %3.1f [MHz] max %3.1f [MHz]"), ((CRadarJammer*)pTempPos->m_pUtrustning)->m_fFreqMin * 1000, ((CRadarJammer*)pTempPos->m_pUtrustning)->m_fFreqMax * 1000);
+				ShowText(pDC, 3400, 3900, 180, &text);
+				//	text.Format("J/S: %3.1f [dB]",((CRadarJammer*)pTempPos->m_pUtrustning)->m_fPeakPower);
+				//	ShowText(pDC,3400,3700+1100*J,180,&text);
+			}
+			else if (((CRadarJammer*)pTempPos->m_pUtrustning)->m_bRepeterStorning == true && pTempPos->m_pUtrustning->m_strStatus != "OFF")
+			{
+				text.Format(_T("ERP: %3.1f [W]"), (((CRadarJammer*)pTempPos->m_pUtrustning)->m_fPeakPowerRepeaterRef)*(((CRadarJammer*)pTempPos->m_pUtrustning)->m_nAntennaGainTX));
+				ShowText(pDC, 3400, 3700 + 1100 * J, 180, &text);
+				text.Format(_T("Power Received: %3.1f [dBm]"), CRadarCalculate::FromGgrTodBm(CRadarCalculate::PowerRecieved(((CRadarStation*)tempRadar)->m_fPeakPower, ((CRadarStation*)tempRadar)->m_fGainMainlobe, ((CRadarStation*)tempRadar)->m_flambda, ((CRadarJammer*)pTempPos->m_pUtrustning)->ReturnAntennaGain(2, (180 + ((CRadarJammer*)pTempPos->m_pUtrustning)->m_fBaring) - ((CRadarJammer*)pTempPos->m_pUtrustning)->m_fCourse), pTempPos->m_pUtrustning->m_fDistanceToRadar)));
+				ShowText(pDC, 3400, 3900 + 1100 * J, 180, &text);
+				text.Format(_T("Velocity False Targets: %d [m/s]"), (int)(((CRadarJammer*)pTempPos->m_pUtrustning)->m_fFalseTargetVelocity + pTempPos->m_pUtrustning->m_fVelocity));
+				ShowText(pDC, 3400, 4100 + 1100 * J, 180, &text);
+			}
+			else
+			{
+				text.Format(_T("ERP: %d [W]"), 0);
+				ShowText(pDC, 3400, 3700 + 1100 * J, 180, &text);
+			}
+			text.Format(_T("Distance to Radar: %3.1f [km]"), pTempPos->m_pUtrustning->m_fDistanceToRadar / 1000.0f);
+			ShowText(pDC, 3400, 4300 + 1100 * J, 180, &text);
+			text.Format(_T("Velocity: %d [m/s]"), (int)pTempPos->m_pUtrustning->m_fVelocity);
+			ShowText(pDC, 3400, 4500 + 1100 * J, 180, &text);
+
+			text.Format(_T("Frequency: min %3.1f [MHz] max %3.1f [MHz]"), ((CRadarStation*)pTempPos->m_pUtrustning)->m_fFreqMin * 1000, ((CRadarStation*)pTempPos->m_pUtrustning)->m_fFreqMax * 1000);
+
+			if (int(CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR)) == int(CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSignal / (CRadarCalculate::FromdBToGgr(pLista->getRadar()->m_fLosses)*1.38*pow(10, -23)*290.0f*
+				pLista->getRadar()->m_fIFBandWidth*1000000.0f*CRadarCalculate::FromdBToGgr(pLista->getRadar()->m_fNoiseFactor)))))
+			{
+				text.Format(_T("SNR: %3.1f [dB] Noise Type: Thermal Noise"), CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR));
+			}
+			else
+				text.Format(_T("SNR: %3.1f [dB]  Noise Type: Jammer Noise"), CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR));
+
+
+			ShowText(pDC, 3400, 4700, 180, &text);
+			CBitmap bitmap;
 			CDC dcDisplayMemory;
 
-			bitmap.LoadBitmap(IDB_BITMAP_RADARPPI);
-
+			//bitmap.LoadBitmap(IDB_BITMAP_JAS2);IDB_BITMAP_L39
+			bitmap.LoadBitmap(IDB_BITMAP_L39299X160);
 			dcDisplayMemory.CreateCompatibleDC(pDC);
-
 			dcDisplayMemory.SelectObject(&bitmap);
-
 			pDC->SetMapMode(MM_LOMETRIC);
-
-			pDC->BitBlt(50,-430,200,85,&dcDisplayMemory,0,0,SRCCOPY);
-
-			
-
-			tempRadar=pTempPos->m_pUtrustning;
-
-	
-
-		
-
+			pDC->BitBlt(60, -800 - 245 * J, 200, 160, &dcDisplayMemory, 0, 0, SRCCOPY);
+			J++;
 		}
 
-		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
-
+		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 		{
-
-
-
-			if(pTempPos->m_bActive==true)
-
-				pDC->SetTextColor(RGB(255,0,0));
-
+			if (pTempPos->m_bActive == true)
+				pDC->SetTextColor(RGB(255, 0, 0));
 			else
+				pDC->SetTextColor(RGB(0, 0, 0));
+			text.Format(pTempPos->m_pUtrustning->m_strUniqID);
+			ShowText(pDC, 1700, 6200 + 1400 * T, 240, &text);
+			text.Format(_T("Bearing: %d [Grader]"), (int)pTempPos->m_pUtrustning->m_fBaring);
+			ShowText(pDC, 3400, 5800 + 1400 * T, 180, &text);
+			text.Format(_T("Course: %d [Grader]"), (int)pTempPos->m_pUtrustning->m_fCourse);
+			ShowText(pDC, 3400, 6000 + 1400 * T, 180, &text);
+			text.Format(_T("Velocity: %d [m/s]"), (int)pTempPos->m_pUtrustning->m_fVelocity);
+			ShowText(pDC, 3400, 6200 + 1400 * T, 180, &text);
+			text.Format(_T("Radar Cross Section: %d [m^2]"), (int)pTempPos->m_pUtrustning->m_fSigma);
+			ShowText(pDC, 3400, 6400 + 1400 * T, 180, &text);
+			text.Format(_T("Distance to Radar: %3.1f [km]"), pTempPos->m_pUtrustning->m_fDistanceToRadar / 1000.0f);
+			ShowText(pDC, 3400, 6600 + 1400 * T, 180, &text);
 
-				pDC->SetTextColor(RGB(0,0,0));
-
-
-
-				text.Format(pTempPos->m_pUtrustning->m_strUniqID);
-
-				ShowText(pDC,1700,3700+980*J,240,&text);
-
-				text.Format(_T("Jam Mode: %s "), pTempPos->m_pUtrustning->m_strStatus);
-
-				ShowText(pDC,3400,3500+1100*J,180,&text);
-
-				if(((CRadarJammer*)pTempPos->m_pUtrustning)->m_bBrusStorning==true && pTempPos->m_pUtrustning->m_strStatus!="OFF")
-
-				{
-
-					text.Format(_T("ERP: %3.1f [W]"), (((CRadarJammer*)pTempPos->m_pUtrustning)->m_fPeakPowerNoiseRef)*(((CRadarJammer*)pTempPos->m_pUtrustning)->m_nAntennaGainTX));
-
-					ShowText(pDC,3400,3700+1100*J,180,&text);
-
-
-
-					text.Format(_T("Frequency: min %3.1f [MHz] max %3.1f [MHz]"), ((CRadarJammer*)pTempPos->m_pUtrustning)->m_fFreqMin * 1000, ((CRadarJammer*)pTempPos->m_pUtrustning)->m_fFreqMax * 1000);
-
-					ShowText(pDC,3400,3900,180,&text);
-
-
-				//	text.Format("J/S: %3.1f [dB]",((CRadarJammer*)pTempPos->m_pUtrustning)->m_fPeakPower);
-
-				//	ShowText(pDC,3400,3700+1100*J,180,&text);
-
-				}
-
-				else if(((CRadarJammer*)pTempPos->m_pUtrustning)->m_bRepeterStorning==true && pTempPos->m_pUtrustning->m_strStatus!="OFF")
-
-				{
-
-					text.Format(_T("ERP: %3.1f [W]"), (((CRadarJammer*)pTempPos->m_pUtrustning)->m_fPeakPowerRepeaterRef)*(((CRadarJammer*)pTempPos->m_pUtrustning)->m_nAntennaGainTX));
-
-					ShowText(pDC,3400,3700+1100*J,180,&text);
-
-					text.Format(_T("Power Received: %3.1f [dBm]"), CRadarCalculate::FromGgrTodBm(CRadarCalculate::PowerRecieved(((CRadarStation*)tempRadar)->m_fPeakPower, ((CRadarStation*)tempRadar)->m_fGainMainlobe, ((CRadarStation*)tempRadar)->m_flambda, ((CRadarJammer*)pTempPos->m_pUtrustning)->ReturnAntennaGain(2, (180 + ((CRadarJammer*)pTempPos->m_pUtrustning)->m_fBaring) - ((CRadarJammer*)pTempPos->m_pUtrustning)->m_fCourse), pTempPos->m_pUtrustning->m_fDistanceToRadar)));
-
-					ShowText(pDC,3400,3900+1100*J,180,&text);
-
-					text.Format(_T("Velocity False Targets: %d [m/s]"), (int)(((CRadarJammer*)pTempPos->m_pUtrustning)->m_fFalseTargetVelocity + pTempPos->m_pUtrustning->m_fVelocity));
-
-					ShowText(pDC,3400,4100+1100*J,180,&text);
-
-
-
-				}
-
-				else
-
-				{
-
-					text.Format(_T("ERP: %d [W]"), 0);
-
-					ShowText(pDC,3400,3700+1100*J,180,&text);
-
-				}
-
-				text.Format(_T("Distance to Radar: %3.1f [km]"), pTempPos->m_pUtrustning->m_fDistanceToRadar / 1000.0f);
-
-				ShowText(pDC,3400,4300+1100*J,180,&text);
-
-				text.Format(_T("Velocity: %d [m/s]"), (int)pTempPos->m_pUtrustning->m_fVelocity);
-
-				ShowText(pDC,3400,4500+1100*J,180,&text);
-
-
-				text.Format(_T("Frequency: min %3.1f [MHz] max %3.1f [MHz]"), ((CRadarStation*)pTempPos->m_pUtrustning)->m_fFreqMin * 1000, ((CRadarStation*)pTempPos->m_pUtrustning)->m_fFreqMax * 1000);
-
-				
-				if(int(CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR)) == int(CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSignal/(CRadarCalculate::FromdBToGgr(pLista->getRadar()->m_fLosses)*1.38*pow(10,-23)*290.0f*
-
+			if (int(CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR)) == int(CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSignal / (CRadarCalculate::FromdBToGgr(pLista->getRadar()->m_fLosses)*1.38*pow(10, -23)*290.0f*
 				pLista->getRadar()->m_fIFBandWidth*1000000.0f*CRadarCalculate::FromdBToGgr(pLista->getRadar()->m_fNoiseFactor)))))
-
-				{
-					text.Format(_T("SNR: %3.1f [dB] Noise Type: Thermal Noise"), CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR));
-				}
-
-				else
-
-					text.Format(_T("SNR: %3.1f [dB]  Noise Type: Jammer Noise"), CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR));
-				
-				
-				ShowText(pDC,3400,4700,180,&text);
-
-				CBitmap bitmap;
-
-				CDC dcDisplayMemory;
-
-				//bitmap.LoadBitmap(IDB_BITMAP_JAS2);IDB_BITMAP_L39
-				bitmap.LoadBitmap(IDB_BITMAP_L39299X160);
-
-				dcDisplayMemory.CreateCompatibleDC(pDC);
-
-				dcDisplayMemory.SelectObject(&bitmap);
-
-				pDC->SetMapMode(MM_LOMETRIC);
-
-				pDC->BitBlt(60,-800-245*J,200,160,&dcDisplayMemory,0,0,SRCCOPY);
-
-				J++;
-
-				
-
-		}
-
-
-
-		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
-
-		{
-
-			if(pTempPos->m_bActive==true)
-
-				pDC->SetTextColor(RGB(255,0,0));
-
+			{
+				text.Format(_T("SNR: %3.1f [dB] Noise Type: Thermal Noise"), CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR));
+			}
 			else
+				text.Format(_T("SNR: %3.1f [dB] Noise Type:  Jammer Noise"), CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR));
 
-				pDC->SetTextColor(RGB(0,0,0));
+			/*		pLista->getRadar()->m_fIFBandWidth
+					pLista->getRadar()->m_fNoiseFactor*/
 
-				text.Format(pTempPos->m_pUtrustning->m_strUniqID);
+			/*		if(pTempPos->m_pUtrustning->m_fSNR == pTempPos->m_pUtrustning->m_fSignal/(1.38f*pow(10,-38)*290.0f*
+						((CRadarStation*)pTempPos->m_pUtrustning)->m_fIFBandWidth*1000000*CRadarCalculate::FromdBToGgr(((CRadarStation*)pTempPos->m_pUtrustning)->m_fNoiseFactor)))
+						{
+						text.Format("SNR: %3.1f [dB] Noise Type: Thermal Noise",CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR));
+						}
 
-				ShowText(pDC,1700,6200+1400*T,240,&text);
+						else
 
-				text.Format(_T("Bearing: %d [Grader]"), (int)pTempPos->m_pUtrustning->m_fBaring);
+						text.Format("SNR: %3.1f [dB] Noise Type: Jammer Noise",CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR));*/
 
-				ShowText(pDC,3400,5800+1400*T,180,&text);
+			ShowText(pDC, 3400, 6800 + 1400 * T, 180, &text);
 
-				text.Format(_T("Course: %d [Grader]"), (int)pTempPos->m_pUtrustning->m_fCourse);
+			//			text.Format("J/S: %d [dB]",10*log(pTempPos->m_pUtrustning->m_fJ_mal/pTempPos->m_pUtrustning->m_fSignal));//     m_fFalseTargetVelocity+pTempPos->m_pUtrustning->m_fVelocity))  //pTempPos->m_pUtrustning->m_ppTarget[i]->m_fJ_mal)/m_pUtrustning->m_fSignal;
+			//			ShowText(pDC,3400,6800+1400*T,180,&text);
 
-				ShowText(pDC,3400,6000+1400*T,180,&text);
-
-				text.Format(_T("Velocity: %d [m/s]"), (int)pTempPos->m_pUtrustning->m_fVelocity);
-
-				ShowText(pDC,3400,6200+1400*T,180,&text);
-
-				text.Format(_T("Radar Cross Section: %d [m^2]"), (int)pTempPos->m_pUtrustning->m_fSigma);
-
-				ShowText(pDC,3400,6400+1400*T,180,&text);
-
-				text.Format(_T("Distance to Radar: %3.1f [km]"), pTempPos->m_pUtrustning->m_fDistanceToRadar / 1000.0f);
-
-				ShowText(pDC,3400,6600+1400*T,180,&text);
-
-				
-				
-				if(int(CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR)) == int(CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSignal/(CRadarCalculate::FromdBToGgr(pLista->getRadar()->m_fLosses)*1.38*pow(10,-23)*290.0f*
-
-					pLista->getRadar()->m_fIFBandWidth*1000000.0f*CRadarCalculate::FromdBToGgr(pLista->getRadar()->m_fNoiseFactor)))))
-
-				{
-
-					text.Format(_T("SNR: %3.1f [dB] Noise Type: Thermal Noise"), CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR));
-				}
-
-				else
-
-					text.Format(_T("SNR: %3.1f [dB] Noise Type:  Jammer Noise"), CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR));
-				
-
-		/*		pLista->getRadar()->m_fIFBandWidth
-				pLista->getRadar()->m_fNoiseFactor*/
-
-		/*		if(pTempPos->m_pUtrustning->m_fSNR == pTempPos->m_pUtrustning->m_fSignal/(1.38f*pow(10,-38)*290.0f*
-					((CRadarStation*)pTempPos->m_pUtrustning)->m_fIFBandWidth*1000000*CRadarCalculate::FromdBToGgr(((CRadarStation*)pTempPos->m_pUtrustning)->m_fNoiseFactor)))
-				{
-				text.Format("SNR: %3.1f [dB] Noise Type: Thermal Noise",CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR));
-				}
-
-				else
-
-				text.Format("SNR: %3.1f [dB] Noise Type: Jammer Noise",CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR));*/
-				
-
-
-
-				ShowText(pDC,3400,6800+1400*T,180,&text);
-
-				
-
-	//			text.Format("J/S: %d [dB]",10*log(pTempPos->m_pUtrustning->m_fJ_mal/pTempPos->m_pUtrustning->m_fSignal));//     m_fFalseTargetVelocity+pTempPos->m_pUtrustning->m_fVelocity))  //pTempPos->m_pUtrustning->m_ppTarget[i]->m_fJ_mal)/m_pUtrustning->m_fSignal;
-
-	//			ShowText(pDC,3400,6800+1400*T,180,&text);
-
-			
-
-				CBitmap bitmap;
-
-				CDC dcDisplayMemory;
-
-				bitmap.LoadBitmap(IDB_BITMAP6);
-
-				dcDisplayMemory.CreateCompatibleDC(pDC);
-
-				dcDisplayMemory.SelectObject(&bitmap);
-
-				pDC->SetMapMode(MM_LOMETRIC);
-
-				pDC->BitBlt(60,-1160-245*T,140,85,&dcDisplayMemory,0,0,SRCCOPY);
-
-				T++;
-
-				
-
+			CBitmap bitmap;
+			CDC dcDisplayMemory;
+			bitmap.LoadBitmap(IDB_BITMAP6);
+			dcDisplayMemory.CreateCompatibleDC(pDC);
+			dcDisplayMemory.SelectObject(&bitmap);
+			pDC->SetMapMode(MM_LOMETRIC);
+			pDC->BitBlt(60, -1160 - 245 * T, 140, 85, &dcDisplayMemory, 0, 0, SRCCOPY);
+			T++;
 		}
-
 		pTempPos = pTempPos->m_pNext;
-
 	}
-
-
 
 	CUtrustning* tmpUtr;
-
 	CUtrustningLista::CNod *pTempPos1;
-
 	pTempPos1 = pLista->m_pStartPos;
-
-	for(int t=0;t<pLista->m_nAntalNoder;t++) 
-
+	for (int t = 0; t < pLista->m_nAntalNoder; t++)
 	{
-
-		if(pTempPos1->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
-
+		if (pTempPos1->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
 		{	//Detta skulle man behöva göra nåt åt
-
 			//Problemet orsakas av kopiorna m_Radar och m_Jammer som behöver 
-
 			//information som tillfogats listans object i beräkningsklasser(filen DIALOG_PPI_PLOT2)
-
-			tmpUtr=pTempPos1->m_pUtrustning;
-
-			m_bRun=((CRadarStation*)pTempPos1->m_pUtrustning)->m_bRun;
-
-//			pRadar->m_CellLista=(*((CRadarStation*)pTempPos1->m_pUtrustning)).m_CellLista;
-
+			tmpUtr = pTempPos1->m_pUtrustning;
+			m_bRun = ((CRadarStation*)pTempPos1->m_pUtrustning)->m_bRun;
+			//			pRadar->m_CellLista=(*((CRadarStation*)pTempPos1->m_pUtrustning)).m_CellLista;
 			break;
-
 		}
 
-
-
 		pTempPos1 = pTempPos1->m_pNext;
-
-	}	
-
-	if(m_bRun==false)
-
-	{
-
-		KillTimer(3);
-
 	}
 
+	if (m_bRun == false)
+	{
+		KillTimer(3);
+	}
 	else
+		//	KillTimer(0);
 
-	//	KillTimer(0);
+		SetTimer(4, 1500, NULL);
 
-		SetTimer(4,1500,NULL);
-
-	if(m_pDlgOVOpenGL!=NULL)
-	m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
-
+	if (m_pDlgOVOpenGL != NULL)
+		m_pDlgOVOpenGL->InvalidateRect(NULL, FALSE);
 }
 
 
@@ -731,9 +442,9 @@ CRadarplotDoc* CRadarplotView::GetDocument() // non-debug version is inline
 
 {
 
-	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CRadarplotDoc)));
+ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CRadarplotDoc)));
 
-	return (CRadarplotDoc*)m_pDocument;
+return (CRadarplotDoc*)m_pDocument;
 
 }*/
 
@@ -747,49 +458,49 @@ CRadarplotDoc* CRadarplotView::GetDocument() // non-debug version is inline
 
 
 
-void CRadarplotView::OnButtonPpi() 
+void CRadarplotView::OnButtonPpi()
 
 {
 
-	if(m_bRun)
+	if (m_bRun)
 
 		return;
 
-	if(NbrOfJammer>0)
+	if (NbrOfJammer > 0)
 
 	{
 
-		m_bRun=true;
+		m_bRun = true;
 
 		CUtrustning*		tmpUtr;
 
 		CUtrustning*		utrjam;
 
-	
+
 
 		CUtrustningLista::CNod *pTempPos;
 		CUtrustningLista* pLista = CUtrustningLista::getInstance();
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
 
 			{
 
-				tmpUtr=pTempPos->m_pUtrustning;
+				tmpUtr = pTempPos->m_pUtrustning;
 
 				//break;
 
 			}
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 
 			{
 
-				utrjam=pTempPos->m_pUtrustning;
+				utrjam = pTempPos->m_pUtrustning;
 
 			}
 
@@ -797,19 +508,19 @@ void CRadarplotView::OnButtonPpi()
 
 			pTempPos = pTempPos->m_pNext;
 
-		}	
+		}
 
-	//Kopiera över från kopian till orginalet (om någon trycker på/av på/av osv.)
+		//Kopiera över från kopian till orginalet (om någon trycker på/av på/av osv.)
 
-	//Vi kopierar ej utrustningen då detta skulle innebära ett waypoints försvann(de ligger ej i kopian)
+		//Vi kopierar ej utrustningen då detta skulle innebära ett waypoints försvann(de ligger ej i kopian)
 
-//		*((CRadarJammer*)utrjam)=m_Jammer;
+		//		*((CRadarJammer*)utrjam)=m_Jammer;
 
-		((CRadarStation*)tmpUtr)->m_bRun=true;
+		((CRadarStation*)tmpUtr)->m_bRun = true;
 
 		//m_pDlgScenOpenGL->ShowWindow(SW_MAXIMIZE);
 
-		m_pDlgScenOpenGL->Init(tmpUtr,utrjam,NbrOfTarget);
+		m_pDlgScenOpenGL->Init(tmpUtr, utrjam, NbrOfTarget);
 
 
 		//Initfunktioner
@@ -820,17 +531,17 @@ void CRadarplotView::OnButtonPpi()
 		resT = m_pDlgScenOpenGL->InitTarget();
 		resJ = m_pDlgScenOpenGL->InitJammer();
 
-		if(resR || resJ || resT )
+		if (resR || resJ || resT)
 			return;
 		else
 			m_pDlgScenOpenGL->StartSim();
 
-	//	m_pDlgScenOpenGL->SetFocus();	
+		//	m_pDlgScenOpenGL->SetFocus();	
 
 		m_strSimulationStatus.Format(_T("Running"));
 		ShowStatus();
 
-	//	m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
+		//	m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
 		Invalidate();
 
 	}
@@ -840,28 +551,28 @@ void CRadarplotView::OnButtonPpi()
 
 }
 
-void CRadarplotView::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CRadarplotView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 {
 
-	
+
 	//Hitta fönsterplacering
 	CRect tempwindow;
 	GetWindowRect(tempwindow);
 
 	//Dra bort en offset på muspekaren
-	point.x=point.x-tempwindow.left;
-	point.y=point.y-tempwindow.top;
+	point.x = point.x - tempwindow.left;
+	point.y = point.y - tempwindow.top;
 
-	if(m_bRun)
+	if (m_bRun)
 	{
 
 		CMenu menuRun;
 		VERIFY(menuRun.LoadMenu(IDR_MENU_VIEW_RUN));
 		CMenu* pPop = menuRun.GetSubMenu(0);
 		ASSERT(pPop != NULL);
-		pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
-	
+		pPop->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x + tempwindow.left, point.y + tempwindow.top, this);
+
 	}
 	else
 	{
@@ -869,29 +580,29 @@ void CRadarplotView::OnContextMenu(CWnd* pWnd, CPoint point)
 		CUtrustningLista* pLista = CUtrustningLista::getInstance();
 
 
-		CRect rectEllipse,rE1,rE2,rE3,rE4,rE5,rE6,rE7;
+		CRect rectEllipse, rE1, rE2, rE3, rE4, rE5, rE6, rE7;
 
-		CRgn Radar,Jam1,Jam2,Jam3,Tar1,Tar2,Tar3,Tar4;
+		CRgn Radar, Jam1, Jam2, Jam3, Tar1, Tar2, Tar3, Tar4;
 
-		CMenu menuRadar,menuJammer,menuTarget;
+		CMenu menuRadar, menuJammer, menuTarget;
 
 
 
 		rectEllipse = m_rectEllipse;
 
-		rE1=m_rE1;
+		rE1 = m_rE1;
 
-		rE2=m_rE2;
+		rE2 = m_rE2;
 
-		rE3=m_rE3;
+		rE3 = m_rE3;
 
-		rE4=m_rE4;
+		rE4 = m_rE4;
 
-		rE5=m_rE5;
+		rE5 = m_rE5;
 
-		rE6=m_rE6;
+		rE6 = m_rE6;
 
-		rE7=m_rE7;
+		rE7 = m_rE7;
 
 
 
@@ -945,18 +656,18 @@ void CRadarplotView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 
 
-		if(Radar.PtInRegion(point) && pLista->m_nAntalNoder!=0)
+		if (Radar.PtInRegion(point) && pLista->m_nAntalNoder != 0)
 
 		{
 
 			CUtrustningLista::CNod *pTempPos;
 			pTempPos = pLista->m_pStartPos;
 
-			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+			for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 			{
 
-				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+				if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
 
 				{
 
@@ -980,14 +691,14 @@ void CRadarplotView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			ASSERT(pPop != NULL);
 
-		
-			pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
 
-			
+			pPop->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x + tempwindow.left, point.y + tempwindow.top, this);
+
+
 
 		}
 
-		if(Jam1.PtInRegion(point) && NbrOfJammer>0)
+		if (Jam1.PtInRegion(point) && NbrOfJammer > 0)
 
 		{
 
@@ -995,11 +706,11 @@ void CRadarplotView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			pTempPos = pLista->m_pStartPos;
 
-			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+			for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 			{
 
-				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+				if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 
 				{
 
@@ -1023,33 +734,33 @@ void CRadarplotView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			ASSERT(pPop != NULL);
 
-			
 
-			pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
+
+			pPop->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x + tempwindow.left, point.y + tempwindow.top, this);
 
 		}
 
-		if(Jam2.PtInRegion(point) && NbrOfJammer>1)
+		if (Jam2.PtInRegion(point) && NbrOfJammer > 1)
 
 		{
 
-			int l=0;
+			int l = 0;
 
 			CUtrustningLista::CNod *pTempPos;
 
 			pTempPos = pLista->m_pStartPos;
 
-			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+			for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 			{
 
-				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+				if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 
 				{
 
 					l++;
 
-					if(l>1)
+					if (l > 1)
 
 					{
 
@@ -1075,33 +786,33 @@ void CRadarplotView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			ASSERT(pPop != NULL);
 
-			
 
-			pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
+
+			pPop->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x + tempwindow.left, point.y + tempwindow.top, this);
 
 		}
 
-		if(Jam3.PtInRegion(point) && NbrOfJammer>2)
+		if (Jam3.PtInRegion(point) && NbrOfJammer > 2)
 
 		{
 
-			int k=0;
+			int k = 0;
 
 			CUtrustningLista::CNod *pTempPos;
-		
+
 			pTempPos = pLista->m_pStartPos;
 
-			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+			for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 			{
 
-				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+				if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 
 				{
 
 					k++;
 
-					if(k>2)
+					if (k > 2)
 
 					{
 
@@ -1127,13 +838,13 @@ void CRadarplotView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			ASSERT(pPop != NULL);
 
-			
 
-			pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
+
+			pPop->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x + tempwindow.left, point.y + tempwindow.top, this);
 
 		}
 
-		if(Tar1.PtInRegion(point) && NbrOfTarget>0)
+		if (Tar1.PtInRegion(point) && NbrOfTarget > 0)
 
 		{
 
@@ -1143,11 +854,11 @@ void CRadarplotView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			pTempPos = pLista->m_pStartPos;
 
-			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+			for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 			{
 
-				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+				if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 
 				{
 
@@ -1171,33 +882,33 @@ void CRadarplotView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			ASSERT(pPop != NULL);
 
-			
 
-			pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
+
+			pPop->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x + tempwindow.left, point.y + tempwindow.top, this);
 
 		}
 
-		if(Tar2.PtInRegion(point) && NbrOfTarget>1)
+		if (Tar2.PtInRegion(point) && NbrOfTarget > 1)
 
 		{
 
-			int n=0;
+			int n = 0;
 
 			CUtrustningLista::CNod *pTempPos;
 
 			pTempPos = pLista->m_pStartPos;
 
-			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+			for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 			{
 
-				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+				if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 
 				{
 
 					n++;
 
-					if(n>1)
+					if (n > 1)
 
 					{
 
@@ -1223,33 +934,33 @@ void CRadarplotView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			ASSERT(pPop != NULL);
 
-			
 
-			pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
+
+			pPop->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x + tempwindow.left, point.y + tempwindow.top, this);
 
 		}
 
-		if(Tar3.PtInRegion(point) && NbrOfTarget>2)
+		if (Tar3.PtInRegion(point) && NbrOfTarget > 2)
 
 		{
 
-			int o=0;
+			int o = 0;
 
 			CUtrustningLista::CNod *pTempPos;
 
 			pTempPos = pLista->m_pStartPos;
 
-			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+			for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 			{
 
-				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+				if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 
 				{
 
 					o++;
 
-					if(o>2)
+					if (o > 2)
 
 					{
 
@@ -1275,33 +986,33 @@ void CRadarplotView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			ASSERT(pPop != NULL);
 
-			
 
-			pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
+
+			pPop->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x + tempwindow.left, point.y + tempwindow.top, this);
 
 		}
 
-		if(Tar4.PtInRegion(point) && NbrOfTarget>3)
+		if (Tar4.PtInRegion(point) && NbrOfTarget > 3)
 
 		{
 
-			int p=0;
+			int p = 0;
 
 			CUtrustningLista::CNod *pTempPos;
 
 			pTempPos = pLista->m_pStartPos;
 
-			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+			for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 			{
 
-				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+				if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 
 				{
 
 					p++;
 
-					if(p>3)
+					if (p > 3)
 
 					{
 
@@ -1327,9 +1038,9 @@ void CRadarplotView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			ASSERT(pPop != NULL);
 
-			
 
-			pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
+
+			pPop->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x + tempwindow.left, point.y + tempwindow.top, this);
 
 		}
 	}
@@ -1338,15 +1049,15 @@ void CRadarplotView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 
 
-void CRadarplotView::OnButtonCreateRadar() 
+void CRadarplotView::OnButtonCreateRadar()
 
 {
 
-	if(m_bRun)
+	if (m_bRun)
 
 		return;
 
-	if(NbrOfRadar>0)
+	if (NbrOfRadar > 0)
 
 		AfxMessageBox(_T("Not available in DEMO version!"));
 
@@ -1354,30 +1065,30 @@ void CRadarplotView::OnButtonCreateRadar()
 
 	{
 
-	CUtrustning*		tmpUtr;
+		CUtrustning*		tmpUtr;
 
-	CUtrustningLista* pLista = CUtrustningLista::getInstance();
+		CUtrustningLista* pLista = CUtrustningLista::getInstance();
 
-	tmpUtr = new CRadarStation();
+		tmpUtr = new CRadarStation();
 
-	tmpUtr->m_fPosX = 0;
+		tmpUtr->m_fPosX = 0;
 
-	tmpUtr->m_fPosY = 0;
+		tmpUtr->m_fPosY = 0;
 
-	tmpUtr->m_strUniqID.Format(_T("Radar_1"));
+		tmpUtr->m_strUniqID.Format(_T("Radar_1"));
 
-	pLista->LaggTill(tmpUtr);
+		pLista->LaggTill(tmpUtr);
 
 
 
-	NbrOfRadar++;
+		NbrOfRadar++;
 
-//	m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
-	Invalidate(true);
+		//	m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
+		Invalidate(true);
 
-	m_bDelete=true;
+		m_bDelete = true;
 
-	OnPropertiesRadar();
+		OnPropertiesRadar();
 
 	}
 
@@ -1385,19 +1096,19 @@ void CRadarplotView::OnButtonCreateRadar()
 
 
 
-void CRadarplotView::OnButtonCreateJammer() 
+void CRadarplotView::OnButtonCreateJammer()
 
 {
 
-	if(m_bRun)
+	if (m_bRun)
 
 		return;
 
-	if(NbrOfRadar!=0)
+	if (NbrOfRadar != 0)
 
-		{
+	{
 
-		if(NbrOfJammer>0)
+		if (NbrOfJammer > 0)
 
 			AfxMessageBox(_T("Not available in DEMO version!"));
 
@@ -1405,41 +1116,41 @@ void CRadarplotView::OnButtonCreateJammer()
 
 		{
 
-		CUtrustning*		tmpUtr;
-		CUtrustningLista* pLista = CUtrustningLista::getInstance();
-		tmpUtr = new CRadarJammer();
+			CUtrustning*		tmpUtr;
+			CUtrustningLista* pLista = CUtrustningLista::getInstance();
+			tmpUtr = new CRadarJammer();
 
-//Här kan man göra ändringar i Utrustningen för Jammern
+			//Här kan man göra ändringar i Utrustningen för Jammern
 
-		tmpUtr->m_strStatus="OFF";
+			tmpUtr->m_strStatus = "OFF";
 
-		tmpUtr->m_fColor[0]=0.5f;
+			tmpUtr->m_fColor[0] = 0.5f;
 
-		tmpUtr->m_fColor[1]=0.75f;
+			tmpUtr->m_fColor[1] = 0.75f;
 
-		tmpUtr->m_fColor[2]=1.0f;
+			tmpUtr->m_fColor[2] = 1.0f;
 
-		tmpUtr->m_fBaring=45.0f*countJ+45.0f;
+			tmpUtr->m_fBaring = 45.0f*countJ + 45.0f;
 
-		tmpUtr->m_strUniqID.Format(_T("Jammer_1"));
+			tmpUtr->m_strUniqID.Format(_T("Jammer_1"));
 
-		m_strCurrentObject=tmpUtr->m_strUniqID;
+			m_strCurrentObject = tmpUtr->m_strUniqID;
 
-		pLista->LaggTill(tmpUtr);	
+			pLista->LaggTill(tmpUtr);
 
 
 
-		countJ++;
+			countJ++;
 
-		NbrOfJammer++;
+			NbrOfJammer++;
 
-	
-		
-		Invalidate(true);
 
-		m_bDelete=true;
 
-		OnPropertiesJammer();
+			Invalidate(true);
+
+			m_bDelete = true;
+
+			OnPropertiesJammer();
 
 		}
 
@@ -1457,23 +1168,23 @@ void CRadarplotView::OnButtonCreateJammer()
 
 
 
-void CRadarplotView::OnButtonCreateTarget() 
+void CRadarplotView::OnButtonCreateTarget()
 
 {
 
-	if(m_bRun)
+	if (m_bRun)
 
 		return;
 
-	if(NbrOfRadar!=0)
+	if (NbrOfRadar != 0)
 
 	{
 
-		if(NbrOfJammer!=0)
+		if (NbrOfJammer != 0)
 
 		{
 
-			if(NbrOfTarget>3)
+			if (NbrOfTarget > 3)
 
 				AfxMessageBox(_T("The maximal amount of Targets is four"));
 
@@ -1481,40 +1192,40 @@ void CRadarplotView::OnButtonCreateTarget()
 
 			{
 
-			CUtrustning*		tmpUtr;
+				CUtrustning*		tmpUtr;
 
-			CUtrustningLista* pLista = CUtrustningLista::getInstance();
+				CUtrustningLista* pLista = CUtrustningLista::getInstance();
 
-			tmpUtr = new CRadarTarget();
+				tmpUtr = new CRadarTarget();
 
-			tmpUtr->m_fVelocity = 250;
+				tmpUtr->m_fVelocity = 250;
 
-			tmpUtr->m_fCourse = 180.0f+90.0f*countT;
+				tmpUtr->m_fCourse = 180.0f + 90.0f*countT;
 
-			if(tmpUtr->m_fCourse>360)
+				if (tmpUtr->m_fCourse > 360)
 
-				tmpUtr->m_fCourse-=360;
+					tmpUtr->m_fCourse -= 360;
 
-			tmpUtr->m_fBaring=90.0f*countT;
+				tmpUtr->m_fBaring = 90.0f*countT;
 
-			tmpUtr->m_strUniqID.Format(_T("Target_%d"), countT + 1);
+				tmpUtr->m_strUniqID.Format(_T("Target_%d"), countT + 1);
 
-			m_strCurrentObject=tmpUtr->m_strUniqID;
+				m_strCurrentObject = tmpUtr->m_strUniqID;
 
-			pLista->LaggTill(tmpUtr);
+				pLista->LaggTill(tmpUtr);
 
 
 
-			NbrOfTarget++;
+				NbrOfTarget++;
 
-			countT++;
-//			m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
+				countT++;
+				//			m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
 
-			Invalidate(true);
+				Invalidate(true);
 
-			m_bDelete=true;
+				m_bDelete = true;
 
-			OnPropertiesTarget();
+				OnPropertiesTarget();
 
 			}
 
@@ -1530,57 +1241,57 @@ void CRadarplotView::OnButtonCreateTarget()
 
 		AfxMessageBox(_T("Start by adding a Radar!"));
 
-		
+
 
 }
 
 
 
-void CRadarplotView::OnButtonClearall() 
+void CRadarplotView::OnButtonClearall()
 {
 
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
-	if(pLista->IsEmpty())
+	if (pLista->IsEmpty())
 		return;
 
 	CString tmpstr;
 
-	if(m_bRun)
+	if (m_bRun)
 		tmpstr.Format(_T("Stop Simulation and delete all platforms?"));
 	else
 		tmpstr.Format(_T("Delete all platforms?"));
 
-	int nRet= AfxMessageBox(tmpstr,MB_YESNO,1);
-	if(nRet!=IDYES)
+	int nRet = AfxMessageBox(tmpstr, MB_YESNO, 1);
+	if (nRet != IDYES)
 		return;
 
-	if(m_bRun)
+	if (m_bRun)
 		OnButtonStop();
 
 	pLista->TaBortAlla();
 
-	NbrOfRadar=0;
+	NbrOfRadar = 0;
 
-	NbrOfJammer=0;
+	NbrOfJammer = 0;
 
-	NbrOfTarget=0;
+	NbrOfTarget = 0;
 
-	countJ=0;
+	countJ = 0;
 
-	countT=0;
+	countT = 0;
 
 	//Dessa för att inte en "ny" radar ska ta gamla värden
-//	CRadarStation tempRadar;
+	//	CRadarStation tempRadar;
 
-//	m_Radar=tempRadar;
+	//	m_Radar=tempRadar;
 
-//	CRadarJammer tempJammer;
+	//	CRadarJammer tempJammer;
 
-//	m_Jammer=tempJammer;
-	
-//	m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
+	//	m_Jammer=tempJammer;
+
+	//	m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
 	m_pDlgOVOpenGL->ClearInfo();
-	m_pDlgScenOpenGL->InvalidateRect(NULL,FALSE);
+	m_pDlgScenOpenGL->InvalidateRect(NULL, FALSE);
 
 	Invalidate(true);
 
@@ -1588,13 +1299,13 @@ void CRadarplotView::OnButtonClearall()
 
 
 
-void CRadarplotView::OnDeleteRadar() 
+void CRadarplotView::OnDeleteRadar()
 
 {
 
 	// TODO: Add your command handler code here
 
-	if(NbrOfJammer>0 || NbrOfTarget>0)
+	if (NbrOfJammer > 0 || NbrOfTarget > 0)
 
 	{
 
@@ -1603,14 +1314,14 @@ void CRadarplotView::OnDeleteRadar()
 		return;
 
 	}
-	
+
 	CString tmpstr;
 
 	tmpstr.Format(_T("Delete?"));
 
-	int nRet= AfxMessageBox(tmpstr,MB_YESNO,1);
+	int nRet = AfxMessageBox(tmpstr, MB_YESNO, 1);
 
-	if(nRet==IDYES)
+	if (nRet == IDYES)
 
 	{
 
@@ -1618,11 +1329,11 @@ void CRadarplotView::OnDeleteRadar()
 		CUtrustningLista* pLista = CUtrustningLista::getInstance();
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
 
 			{
 
@@ -1638,16 +1349,16 @@ void CRadarplotView::OnDeleteRadar()
 
 		}
 
-//		CRadarStation tempRadar;
+		//		CRadarStation tempRadar;
 
-//		m_Radar=tempRadar;
+		//		m_Radar=tempRadar;
 
-		NbrOfRadar=0;
+		NbrOfRadar = 0;
 
 		m_pDlgOVOpenGL->ClearInfo();
-		m_pDlgScenOpenGL->InvalidateRect(NULL,FALSE);
+		m_pDlgScenOpenGL->InvalidateRect(NULL, FALSE);
 		Invalidate(true);
-	
+
 
 	}
 
@@ -1661,17 +1372,17 @@ void CRadarplotView::OnDeleteRadar()
 
 
 
-void CRadarplotView::OnDeleteJammer() 
+void CRadarplotView::OnDeleteJammer()
 
 {
 
 	// TODO: Add your command handler code here
 
-	if(NbrOfJammer<1)
+	if (NbrOfJammer < 1)
 
 		return;
 
-	if(NbrOfTarget>0)
+	if (NbrOfTarget > 0)
 	{
 
 		AfxMessageBox(_T("Delete All Targets first!"));
@@ -1690,26 +1401,26 @@ void CRadarplotView::OnDeleteJammer()
 
 	//int nRet=-1;
 
-	int nRet= AfxMessageBox(tmpstr,MB_YESNO,1);
+	int nRet = AfxMessageBox(tmpstr, MB_YESNO, 1);
 
-//	nRet=DlgCh.DoModal();
+	//	nRet=DlgCh.DoModal();
 
-	if(nRet==IDYES)
+	if (nRet == IDYES)
 	{
 
 		CUtrustningLista::CNod *pTempPos;
 		CUtrustningLista* pLista = CUtrustningLista::getInstance();
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 
 			{
 
-				if(pTempPos->m_pUtrustning->m_strUniqID==m_strCurrentObject)
+				if (pTempPos->m_pUtrustning->m_strUniqID == m_strCurrentObject)
 
 				{
 
@@ -1719,16 +1430,16 @@ void CRadarplotView::OnDeleteJammer()
 
 				}
 
-			}	
+			}
 
 
 			pTempPos = pTempPos->m_pNext;
 
 		}
 
-//		CRadarJammer tempJammer;
+		//		CRadarJammer tempJammer;
 
-//		m_Jammer=tempJammer;
+		//		m_Jammer=tempJammer;
 
 		NbrOfJammer--;
 
@@ -1736,10 +1447,10 @@ void CRadarplotView::OnDeleteJammer()
 
 		pTempPos2 = pLista->m_pStartPos;
 
-//		m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
+		//		m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
 		Invalidate(true);
 
-		
+
 
 	}
 
@@ -1749,19 +1460,19 @@ void CRadarplotView::OnDeleteJammer()
 
 	}
 
-	
+
 
 }
 
 
 
-void CRadarplotView::OnDeleteTarget() 
+void CRadarplotView::OnDeleteTarget()
 
 {
 
 	// TODO: Add your command handler code here
 
-	if(NbrOfTarget<1)
+	if (NbrOfTarget < 1)
 
 		return;
 
@@ -1773,15 +1484,15 @@ void CRadarplotView::OnDeleteTarget()
 
 	tmpstr.Format(_T("Delete?"));
 
-	int nRet= AfxMessageBox(tmpstr,MB_YESNO,1);
+	int nRet = AfxMessageBox(tmpstr, MB_YESNO, 1);
 
-	
+
 
 	//int nRet=-1;
 
 	//nRet=DlgCh.DoModal();
 
-	if(nRet==IDYES)
+	if (nRet == IDYES)
 
 	{
 
@@ -1789,15 +1500,15 @@ void CRadarplotView::OnDeleteTarget()
 		CUtrustningLista* pLista = CUtrustningLista::getInstance();
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 
 			{
 
-				if(pTempPos->m_pUtrustning->m_strUniqID==m_strCurrentObject)
+				if (pTempPos->m_pUtrustning->m_strUniqID == m_strCurrentObject)
 
 				{
 
@@ -1807,7 +1518,7 @@ void CRadarplotView::OnDeleteTarget()
 
 				}
 
-			}	
+			}
 
 
 
@@ -1821,7 +1532,7 @@ void CRadarplotView::OnDeleteTarget()
 
 		pTempPos2 = pLista->m_pStartPos;
 
-//		m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
+		//		m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
 
 		Invalidate(true);
 
@@ -1835,51 +1546,51 @@ void CRadarplotView::OnDeleteTarget()
 
 	}
 
-	
+
 
 }
 
 
 
-void CRadarplotView::OnPropertiesRadar() 
+void CRadarplotView::OnPropertiesRadar()
 {
 
 	CString SheetTitle;
 	SheetTitle.Format(_T("Properties "));
 
 
-	CUtrustning*	pUtr;	
+	CUtrustning*	pUtr;
 	CUtrustningLista::CNod *pTempPos;
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
 	pTempPos = pLista->m_pStartPos;
-	for(int i=0;i<pLista->m_nAntalNoder;i++) 
+	for (int i = 0; i < pLista->m_nAntalNoder; i++)
 	{
-		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
 		{
-				pUtr=pTempPos->m_pUtrustning;
-				break;
-		}	
+			pUtr = pTempPos->m_pUtrustning;
+			break;
+		}
 		pTempPos = pTempPos->m_pNext;
 	}
 
-	SheetTitle.Insert(12,pUtr->m_strUniqID);
+	SheetTitle.Insert(12, pUtr->m_strUniqID);
 	CPropSheetRadar sh(SheetTitle);
 	sh.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	//kopierar från Utrustning till Radar
-//	m_Radar.operator =(*pUtr);
+	//	m_Radar.operator =(*pUtr);
 	CRadarStation* pRadar = (CRadarStation*)pUtr;
- 	sh.Init(pRadar);
+	sh.Init(pRadar);
 	int nResult = sh.DoModal();
 
-	if(nResult == IDOK)
+	if (nResult == IDOK)
 	{
-		if(pRadar->m_bCoherentIntegration==true)
+		if (pRadar->m_bCoherentIntegration == true)
 
 		{
 
-			pRadar->m_nProcessingGain=CRadarCalculate::ProcessingGain(1,pRadar->m_fWidthMainlobeRx,pRadar->m_nAntennaScanPeriod,pRadar->m_fPRI);
+			pRadar->m_nProcessingGain = CRadarCalculate::ProcessingGain(1, pRadar->m_fWidthMainlobeRx, pRadar->m_nAntennaScanPeriod, pRadar->m_fPRI);
 
-		//	if(((CRadarStation*)pUtr)->m_nProcessingGain>((CRadarStation*)pUtr)->m_fantal_pulser)
+			//	if(((CRadarStation*)pUtr)->m_nProcessingGain>((CRadarStation*)pUtr)->m_fantal_pulser)
 
 			//	((CRadarStation*)pUtr)->m_nProcessingGain=((CRadarStation*)pUtr)->m_fantal_pulser;
 
@@ -1889,33 +1600,33 @@ void CRadarplotView::OnPropertiesRadar()
 
 		{
 
-			pRadar->m_nProcessingGain=CRadarCalculate::ProcessingGain(2,pRadar->m_fWidthMainlobeRx,pRadar->m_nAntennaScanPeriod,pRadar->m_fPRI);
+			pRadar->m_nProcessingGain = CRadarCalculate::ProcessingGain(2, pRadar->m_fWidthMainlobeRx, pRadar->m_nAntennaScanPeriod, pRadar->m_fPRI);
 
-		//	if(((CRadarStation*)pUtr)->m_nProcessingGain>((CRadarStation*)pUtr)->m_fantal_pulser)
+			//	if(((CRadarStation*)pUtr)->m_nProcessingGain>((CRadarStation*)pUtr)->m_fantal_pulser)
 
-		//		((CRadarStation*)pUtr)->m_nProcessingGain=sqrt(((CRadarStation*)pUtr)->m_fantal_pulser);
+			//		((CRadarStation*)pUtr)->m_nProcessingGain=sqrt(((CRadarStation*)pUtr)->m_fantal_pulser);
 
 		}
 
 
 
-		pRadar->m_fIFBandWidth=CRadarCalculate::IFBandWidth(pRadar->m_fPulseWidth);
+		pRadar->m_fIFBandWidth = CRadarCalculate::IFBandWidth(pRadar->m_fPulseWidth);
 
-		pRadar->m_fSensitivity=CRadarCalculate::SensitivityRadar(pRadar->m_fPulseWidth,pRadar->m_fNoiseFactor,pRadar->m_fSNRRadar,pRadar->m_fLosses);
+		pRadar->m_fSensitivity = CRadarCalculate::SensitivityRadar(pRadar->m_fPulseWidth, pRadar->m_fNoiseFactor, pRadar->m_fSNRRadar, pRadar->m_fLosses);
 
-		pRadar->m_flambda=CRadarCalculate::LambdaRadar(pRadar->m_fFreqMax,pRadar->m_fFreqMin);
+		pRadar->m_flambda = CRadarCalculate::LambdaRadar(pRadar->m_fFreqMax, pRadar->m_fFreqMin);
 
-		pRadar->m_fMaxRange=CRadarCalculate::MaxRange(pRadar->m_fGainMainlobe,pRadar->m_fGainMainlobeRx,pRadar->m_flambda,pRadar->m_fSigmaRef,pRadar->m_nProcessingGain,pRadar->m_fPeakPower,pRadar->m_fSensitivity); 
+		pRadar->m_fMaxRange = CRadarCalculate::MaxRange(pRadar->m_fGainMainlobe, pRadar->m_fGainMainlobeRx, pRadar->m_flambda, pRadar->m_fSigmaRef, pRadar->m_nProcessingGain, pRadar->m_fPeakPower, pRadar->m_fSensitivity);
 
-		pRadar->m_fSvepHastighet=CRadarCalculate::AntennaScanPeriod((float)pRadar->m_nAntennaScanPeriod);
+		pRadar->m_fSvepHastighet = CRadarCalculate::AntennaScanPeriod((float)pRadar->m_nAntennaScanPeriod);
 
-		if(pRadar->m_bPulseGroup==true && pRadar->m_fantal_pulser==1 && pRadar->m_bMTIFilter==true)
+		if (pRadar->m_bPulseGroup == true && pRadar->m_fantal_pulser == 1 && pRadar->m_bMTIFilter == true)
 
 		{
 
 			AfxMessageBox(_T("Error: MTI Mode is not possible in \npulse-pulse frequency hopping!"));
 
-			pRadar->m_bMTIFilter=false;
+			pRadar->m_bMTIFilter = false;
 
 		}
 
@@ -1923,21 +1634,21 @@ void CRadarplotView::OnPropertiesRadar()
 
 		//kopierar från Radar till Utrustning
 
-//		pUtr->operator =((CUtrustning)m_Radar);
+		//		pUtr->operator =((CUtrustning)m_Radar);
 
 		//kopierar från Radar till Radar
 
-//		*((CRadarStation*)pUtr)=m_Radar;
+		//		*((CRadarStation*)pUtr)=m_Radar;
 
-	//	Invalidate(true);
+		//	Invalidate(true);
 
 	}
 
-	if(nResult == IDCANCEL)
+	if (nResult == IDCANCEL)
 
 	{
 
-		if(m_bDelete)
+		if (m_bDelete)
 
 		{
 
@@ -1945,19 +1656,19 @@ void CRadarplotView::OnPropertiesRadar()
 
 			pTempPos = pLista->m_pStartPos;
 
-			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+			for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 			{
 
-				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+				if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
 
 				{
 
-						pLista->TaBort(pTempPos->m_pUtrustning);
+					pLista->TaBort(pTempPos->m_pUtrustning);
 
-						break;
+					break;
 
-				}	
+				}
 
 
 
@@ -1965,28 +1676,28 @@ void CRadarplotView::OnPropertiesRadar()
 
 			}
 
-		
+
 
 			NbrOfRadar--;
 
 			CUtrustning* tmpUtr;
 
-		//	Invalidate(true);
+			//	Invalidate(true);
 
 		}
 
 	}
 
-	m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
+	m_pDlgOVOpenGL->InvalidateRect(NULL, FALSE);
 	Invalidate(true);
 
-	m_bDelete=false;
+	m_bDelete = false;
 
 }
 
 
 
-void CRadarplotView::OnPropertiesJammer() 
+void CRadarplotView::OnPropertiesJammer()
 {
 
 	CString SheetTitle;
@@ -2001,37 +1712,37 @@ void CRadarplotView::OnPropertiesJammer()
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
 	pTempPos = pLista->m_pStartPos;
 
-	for(int i=0;i<pLista->m_nAntalNoder;i++) 
+	for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 	{
 
-		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
 
 		{
 
-				pUtrRadar=pTempPos->m_pUtrustning;
+			pUtrRadar = pTempPos->m_pUtrustning;
 
 			//	break;
 
-		}	
+		}
 
 
 
-		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_strUniqID==m_strCurrentObject)
+			if (pTempPos->m_pUtrustning->m_strUniqID == m_strCurrentObject)
 
 			{
 
-				pUtr=pTempPos->m_pUtrustning;
+				pUtr = pTempPos->m_pUtrustning;
 
-			//	break;
+				//	break;
 
 			}
 
-		}	
+		}
 
 
 
@@ -2040,8 +1751,8 @@ void CRadarplotView::OnPropertiesJammer()
 	}
 
 	CRadarJammer* pJammer = (CRadarJammer*)pUtr;
-	 
-	SheetTitle.Insert(12,pUtr->m_strUniqID);
+
+	SheetTitle.Insert(12, pUtr->m_strUniqID);
 
 	CPropSheetJammer sh(SheetTitle);
 
@@ -2049,32 +1760,32 @@ void CRadarplotView::OnPropertiesJammer()
 
 	//kopierar från Utrustning till Jammer
 
-//	m_Jammer.operator =(*pUtr);
+	//	m_Jammer.operator =(*pUtr);
 
- 	sh.Init(pJammer,pUtrRadar);
+	sh.Init(pJammer, pUtrRadar);
 
 	int nResult = sh.DoModal();
 
-	if(nResult == IDOK)
+	if (nResult == IDOK)
 
 	{
 
 		//kopierar från Jammer till Utrustning
 
-	//	pUtr->operator =((CUtrustning)m_Jammer);
+		//	pUtr->operator =((CUtrustning)m_Jammer);
 
 		//kopierar från Jammer till Jammer
 
-	//	*((CRadarJammer*)pUtr)=m_Jammer;
+		//	*((CRadarJammer*)pUtr)=m_Jammer;
 
-	
+
 	}
 
-	if(nResult == IDCANCEL)
+	if (nResult == IDCANCEL)
 
 	{
 
-		if(m_bDelete)
+		if (m_bDelete)
 
 		{
 
@@ -2087,16 +1798,16 @@ void CRadarplotView::OnPropertiesJammer()
 
 	}
 	//Uppdatera PPI ty där beräknas objectens nya positioner.
-	m_pDlgScenOpenGL->InvalidateRect(NULL,FALSE);
-	m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
+	m_pDlgScenOpenGL->InvalidateRect(NULL, FALSE);
+	m_pDlgOVOpenGL->InvalidateRect(NULL, FALSE);
 	Invalidate(true);
-	m_bDelete=false;
+	m_bDelete = false;
 
 }
 
 
 
-void CRadarplotView::OnPropertiesTarget() 
+void CRadarplotView::OnPropertiesTarget()
 
 {
 
@@ -2108,7 +1819,7 @@ void CRadarplotView::OnPropertiesTarget()
 
 	SheetTitle.Format(_T("Properties "));
 
-	SheetTitle.Insert(12,m_strCurrentObject);
+	SheetTitle.Insert(12, m_strCurrentObject);
 
 	CUtrustning*	pUtr;
 
@@ -2116,25 +1827,25 @@ void CRadarplotView::OnPropertiesTarget()
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
 	pTempPos = pLista->m_pStartPos;
 
-	for(int i=0;i<pLista->m_nAntalNoder;i++) 
+	for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 	{
 
-		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_strUniqID==m_strCurrentObject)
+			if (pTempPos->m_pUtrustning->m_strUniqID == m_strCurrentObject)
 
 			{
 
-				pUtr=pTempPos->m_pUtrustning;
+				pUtr = pTempPos->m_pUtrustning;
 
 				break;
 
 			}
 
-		}	
+		}
 
 
 
@@ -2147,21 +1858,21 @@ void CRadarplotView::OnPropertiesTarget()
 
 	sh.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
- 	sh.Init(pUtr);
+	sh.Init(pUtr);
 
 
 	int nResult = sh.DoModal();
 
-	if(nResult == IDOK)
+	if (nResult == IDOK)
 	{
 
 	}
 
-	if(nResult == IDCANCEL)
+	if (nResult == IDCANCEL)
 
 	{
 
-		if(m_bDelete)
+		if (m_bDelete)
 
 		{
 
@@ -2176,20 +1887,20 @@ void CRadarplotView::OnPropertiesTarget()
 
 		}
 
-	}	
+	}
 
-//	m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
+	//	m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
 	//Uppdatera PPI ty där beräknas objectens nya positioner.
-	m_pDlgScenOpenGL->InvalidateRect(NULL,FALSE);
-	m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
+	m_pDlgScenOpenGL->InvalidateRect(NULL, FALSE);
+	m_pDlgOVOpenGL->InvalidateRect(NULL, FALSE);
 	Invalidate(true);
-	m_bDelete=false;
+	m_bDelete = false;
 
 }
 
 
 
-void CRadarplotView::OnInitialUpdate() 
+void CRadarplotView::OnInitialUpdate()
 
 {
 
@@ -2199,47 +1910,47 @@ void CRadarplotView::OnInitialUpdate()
 
 		dlgWorld->Init();
 
-	//	Dlg			=	new CDlgRadarPPI(this);	
+		//	Dlg			=	new CDlgRadarPPI(this);
 
 		CRect rect;
 
 		this->GetClientRect(&rect);
 
-		
 
-	//	Dlg->SetWindowPos(&wndTop,rect.right/2.37f,rect.bottom/8.4f,rect.right/1.71,rect.bottom/2.10,SWP_SHOWWINDOW);
+
+		//	Dlg->SetWindowPos(&wndTop,rect.right/2.37f,rect.bottom/8.4f,rect.right/1.71,rect.bottom/2.10,SWP_SHOWWINDOW);
 
 		dlgWorld->SetWindowPos(&wndTop,rect.right/2.37f,rect.bottom/1.68f,rect.right/1.71,rect.bottom/2.25,SWP_SHOWWINDOW);
 
-	
 
-	CRect rect;
 
-	this->GetClientRect(&rect);
+		CRect rect;
 
-	rect.left-=200;
+		this->GetClientRect(&rect);
 
-	rect.right-=200;
+		rect.left-=200;
 
-	
+		rect.right-=200;
 
 
 
-	// TODO: Add extra initialization here
 
-	m_pDisplay->Create( NULL,   //CWnd default
 
-						NULL,   //has no name
+		// TODO: Add extra initialization here
 
-						WS_CHILD|WS_CLIPSIBLINGS|WS_CLIPCHILDREN|WS_VISIBLE,
+		m_pDisplay->Create( NULL,   //CWnd default
 
-						rect,
+		NULL,   //has no name
 
-						this,   //this is the parent
+		WS_CHILD|WS_CLIPSIBLINGS|WS_CLIPCHILDREN|WS_VISIBLE,
 
-						0); 			
+		rect,
 
-*/
+		this,   //this is the parent
+
+		0);
+
+		*/
 
 
 
@@ -2247,39 +1958,39 @@ void CRadarplotView::OnInitialUpdate()
 
 	SetCapture();
 
-	::SetCursor(::LoadCursor(NULL,IDC_APPSTARTING));						
+	::SetCursor(::LoadCursor(NULL, IDC_APPSTARTING));
 
-	l=0;
+	l = 0;
 
 	SetTimer(4, 1150, NULL);
 
 
-	CView::OnInitialUpdate();	
+	CView::OnInitialUpdate();
 
 }
 
 
 
-void CRadarplotView::OnViewSenario() 
+void CRadarplotView::OnViewSenario()
 
 {
 	//JEP test 060309
-//	AfxBeginThread (RUNTIME_CLASS(CDialogThread));
+	//	AfxBeginThread (RUNTIME_CLASS(CDialogThread));
 
-	if(m_pDlgScenOpenGL->IsWindowVisible())
+	if (m_pDlgScenOpenGL->IsWindowVisible())
 		m_pDlgScenOpenGL->SendMessage(WM_CLOSE);
 	else
 	{
-		m_pDlgScenOpenGL->ShowWindow(SW_SHOW);	
+		m_pDlgScenOpenGL->ShowWindow(SW_SHOW);
 		m_pDlgScenOpenGL->UpdateWindow();
 	}
 }
 
 
-void CRadarplotView::OnViewOverview() 
+void CRadarplotView::OnViewOverview()
 
 {
-	if(m_pDlgOVOpenGL->IsWindowVisible())
+	if (m_pDlgOVOpenGL->IsWindowVisible())
 
 		m_pDlgOVOpenGL->SendMessage(WM_CLOSE);
 
@@ -2287,7 +1998,7 @@ void CRadarplotView::OnViewOverview()
 
 	{
 
-		m_pDlgOVOpenGL->ShowWindow(SW_SHOW);	
+		m_pDlgOVOpenGL->ShowWindow(SW_SHOW);
 
 		m_pDlgOVOpenGL->UpdateWindow();
 
@@ -2297,7 +2008,7 @@ void CRadarplotView::OnViewOverview()
 
 
 
-void CRadarplotView::OnUpdateViewOverview(CCmdUI* pCmdUI) 
+void CRadarplotView::OnUpdateViewOverview(CCmdUI* pCmdUI)
 
 {
 
@@ -2309,7 +2020,7 @@ void CRadarplotView::OnUpdateViewOverview(CCmdUI* pCmdUI)
 
 
 
-void CRadarplotView::OnUpdateViewSenario(CCmdUI* pCmdUI) 
+void CRadarplotView::OnUpdateViewSenario(CCmdUI* pCmdUI)
 
 {
 
@@ -2321,46 +2032,46 @@ void CRadarplotView::OnUpdateViewSenario(CCmdUI* pCmdUI)
 
 
 
-void CRadarplotView::OnOpenradar() 
+void CRadarplotView::OnOpenradar()
 
 {
 
-//Lätt sätt att göra en öppna Fildialog
+	//Lätt sätt att göra en öppna Fildialog
 
-	CFileDialog DlgRadar(true,_T("rad"),_T("*.rad"));
+	CFileDialog DlgRadar(true, _T("rad"), _T("*.rad"));
 
 	char szFileNameOfFile[5100];
-	GetModuleFileNameA(NULL,szFileNameOfFile,5100);
+	GetModuleFileNameA(NULL, szFileNameOfFile, 5100);
 	char szDrive[20], szFolder[4096],
-		 szFileName[MAX_PATH], szFileExt[10];
+		szFileName[MAX_PATH], szFileExt[10];
 
-	_splitpath(szFileNameOfFile,szDrive,szFolder,szFileName,szFileExt);
+	_splitpath(szFileNameOfFile, szDrive, szFolder, szFileName, szFileExt);
 
 	CString strFilePath = "";
 	strFilePath += szDrive;
 	strFilePath += szFolder;
 	strFilePath += "Data\\";
-//	if(strFilePath.Right(1) != "\\")
-//	{
-//		strFilePath += "\\";
-//	}
+	//	if(strFilePath.Right(1) != "\\")
+	//	{
+	//		strFilePath += "\\";
+	//	}
 
 	DlgRadar.m_ofn.lpstrInitialDir = strFilePath;
-	if(DlgRadar.DoModal()==IDOK)
+	if (DlgRadar.DoModal() == IDOK)
 	{
 
-		CString RadFile=DlgRadar.GetPathName();
+		CString RadFile = DlgRadar.GetPathName();
 
 		CFile f;
 
-		if(f.Open(RadFile,CFile::modeRead)==FALSE)
+		if (f.Open(RadFile, CFile::modeRead) == FALSE)
 
 			return;
 
 
 		CArchive ar(&f, CArchive::load);
 
-		Serialize(ar,1);	
+		Serialize(ar, 1);
 
 
 		ar.Close();
@@ -2368,38 +2079,38 @@ void CRadarplotView::OnOpenradar()
 		f.Close();
 
 		//Important (calculates new positions)
-		m_pDlgScenOpenGL->InvalidateRect(NULL,FALSE);
-	//	m_pDlgOVOpenGL->Invalidate(true);
+		m_pDlgScenOpenGL->InvalidateRect(NULL, FALSE);
+		//	m_pDlgOVOpenGL->Invalidate(true);
 		Invalidate(true);
 
 	}
 
-	
+
 
 }
 
 
 
-void CRadarplotView::OnSaveradar() 
+void CRadarplotView::OnSaveradar()
 
 {
 
 	CString FileName;
 
-	CString FileExt=".rad";
+	CString FileExt = ".rad";
 
 	FileName.Format(m_strCurrentObject);
 
-	FileName.Insert(12,FileExt);
+	FileName.Insert(12, FileExt);
 
 	CFileDialog DlgRadar(false, _T("rad"), FileName);
 
 	char szFileNameOfFile[5100];
-	GetModuleFileNameA(NULL,szFileNameOfFile,5100);
+	GetModuleFileNameA(NULL, szFileNameOfFile, 5100);
 	char szDrive[20], szFolder[4096],
-		 szFileName[MAX_PATH], szFileExt[10];
+		szFileName[MAX_PATH], szFileExt[10];
 
-	_splitpath(szFileNameOfFile,szDrive,szFolder,szFileName,szFileExt);
+	_splitpath(szFileNameOfFile, szDrive, szFolder, szFileName, szFileExt);
 
 	CString strFilePath = "";
 	strFilePath += szDrive;
@@ -2407,30 +2118,30 @@ void CRadarplotView::OnSaveradar()
 	strFilePath += "Data\\";
 
 	DlgRadar.m_ofn.lpstrInitialDir = strFilePath;
-	if(DlgRadar.DoModal()==IDOK)
+	if (DlgRadar.DoModal() == IDOK)
 
 	{
 
-		CString RadFile=DlgRadar.GetPathName();
+		CString RadFile = DlgRadar.GetPathName();
 
-	
+
 
 		CFile f;
 
-		f.Open(RadFile,CFile::modeCreate | CFile::modeWrite);
+		f.Open(RadFile, CFile::modeCreate | CFile::modeWrite);
 
-	
+
 
 		CArchive ar(&f, CArchive::store);
 
-		Serialize(ar,1);
+		Serialize(ar, 1);
 
 
 
 		ar.Close();
 
-		f.Close();	
-//		m_pDlgOVOpenGL->Invalidate(true);
+		f.Close();
+		//		m_pDlgOVOpenGL->Invalidate(true);
 		Invalidate();
 
 	}
@@ -2439,14 +2150,14 @@ void CRadarplotView::OnSaveradar()
 
 
 
-void CRadarplotView::Serialize(CArchive& ar,int val) 
+void CRadarplotView::Serialize(CArchive& ar, int val)
 
 {
 
 
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
 
-	if(val==1)//Radar
+	if (val == 1)//Radar
 
 	{
 
@@ -2456,53 +2167,53 @@ void CRadarplotView::Serialize(CArchive& ar,int val)
 
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
 
 			{
 
-				pUtr=pTempPos->m_pUtrustning;
+				pUtr = pTempPos->m_pUtrustning;
 
 				break;
 
-			}	
+			}
 
 			pTempPos = pTempPos->m_pNext;
 
 		}
 
 		CRadarStation* pRadar = (CRadarStation*)pUtr;
-		
-		int Svep_pa						= (int)pRadar->m_bSvep_pa;
 
-		int Run							= (int)pRadar->m_bRun;
+		int Svep_pa = (int)pRadar->m_bSvep_pa;
 
-		int Deflection					= (int)pRadar->m_bDeflectionMode;
+		int Run = (int)pRadar->m_bRun;
 
-		int RawVideoMode				= (int)pRadar->m_bRAWVideoMode;
+		int Deflection = (int)pRadar->m_bDeflectionMode;
 
-		int SynteticMode				= (int)pRadar->m_bSynteticMode;
+		int RawVideoMode = (int)pRadar->m_bRAWVideoMode;
 
-		int SyntAndRawVideoMode			= (int)pRadar->m_bSyntAndRAWVideoMode;
+		int SynteticMode = (int)pRadar->m_bSynteticMode;
 
-		int CoherentIntegration			= (int)pRadar->m_bCoherentIntegration;
+		int SyntAndRawVideoMode = (int)pRadar->m_bSyntAndRAWVideoMode;
 
-		int PulseGroupe					= (int)pRadar->m_bPulseGroup;
+		int CoherentIntegration = (int)pRadar->m_bCoherentIntegration;
 
-		int FixFrequency				= (int)pRadar->m_bfixfrekvens;
+		int PulseGroupe = (int)pRadar->m_bPulseGroup;
 
-		int StaggerJitter				= (int)pRadar->m_bStaggerJitterPRF;
+		int FixFrequency = (int)pRadar->m_bfixfrekvens;
 
-		int FixEllerDilvisFixPRF		= (int)pRadar->m_bFixEllerDelvisFixPRF;
+		int StaggerJitter = (int)pRadar->m_bStaggerJitterPRF;
 
-		int KlotterKarta				= (int)pRadar->m_bKlotterKarta;
+		int FixEllerDilvisFixPRF = (int)pRadar->m_bFixEllerDelvisFixPRF;
 
-		int MTIFilter					= (int)pRadar->m_bMTIFilter;
+		int KlotterKarta = (int)pRadar->m_bKlotterKarta;
 
-		int AntennaDiagramFromFile		= (int)pRadar->m_bAntennDiagramFromFile;
+		int MTIFilter = (int)pRadar->m_bMTIFilter;
+
+		int AntennaDiagramFromFile = (int)pRadar->m_bAntennDiagramFromFile;
 
 
 
@@ -2512,7 +2223,7 @@ void CRadarplotView::Serialize(CArchive& ar,int val)
 
 			//Utrustning
 
-			
+
 
 			ar << pUtr->m_strUniqID;
 
@@ -2558,31 +2269,31 @@ void CRadarplotView::Serialize(CArchive& ar,int val)
 
 			ar << pUtr->m_fCriticalBorder;
 
-			for(int i=0;i<3;i++)
+			for (int i = 0; i < 3; i++)
 
 			{
 
-			ar << pUtr->m_fColor[i];
+				ar << pUtr->m_fColor[i];
 
 			}
 
 			ar << pUtr->m_nNbrOfWayPoints;
 
-			for(int k=0;k<pUtr->m_nNbrOfWayPoints;k++)
+			for (int k = 0; k < pUtr->m_nNbrOfWayPoints; k++)
 
 			{
 
-			ar << pUtr->m_fDistWayPoints[k];
+				ar << pUtr->m_fDistWayPoints[k];
 
 			}
 
 
 
-			for(int t=0;t<20;t++)
+			for (int t = 0; t < 20; t++)
 
 			{
 
-			ar << pUtr->m_fWayPoints[t];
+				ar << pUtr->m_fWayPoints[t];
 
 			}
 
@@ -2622,7 +2333,7 @@ void CRadarplotView::Serialize(CArchive& ar,int val)
 
 			ar << pRadar->m_fSensitivity;
 
-		
+
 
 			ar << pRadar->m_fGainMainlobe;
 
@@ -2646,7 +2357,7 @@ void CRadarplotView::Serialize(CArchive& ar,int val)
 
 			ar << pRadar->m_fOffsetBacklobe;
 
-		
+
 
 			ar << pRadar->m_fGainMainlobeRx;
 
@@ -2670,7 +2381,7 @@ void CRadarplotView::Serialize(CArchive& ar,int val)
 
 			ar << pRadar->m_fOffsetBacklobeRx;
 
-			
+
 
 			ar << pRadar->m_fDynamicRange;
 
@@ -2788,33 +2499,33 @@ void CRadarplotView::Serialize(CArchive& ar,int val)
 
 			ar >> pUtr->m_fCriticalBorder;
 
-			for(int i=0;i<3;i++)
+			for (int i = 0; i < 3; i++)
 
 			{
 
-			ar >> pUtr->m_fColor[i];
+				ar >> pUtr->m_fColor[i];
 
 			}
 
 			ar >> pUtr->m_nNbrOfWayPoints;
 
-			pUtr->m_fDistWayPoints	=	(float*)malloc(pUtr->m_nNbrOfWayPoints);
+			pUtr->m_fDistWayPoints = (float*)malloc(pUtr->m_nNbrOfWayPoints);
 
-			for(int k=0;k<pUtr->m_nNbrOfWayPoints;k++)
+			for (int k = 0; k < pUtr->m_nNbrOfWayPoints; k++)
 
 			{
 
-			ar >> pUtr->m_fDistWayPoints[k];
+				ar >> pUtr->m_fDistWayPoints[k];
 
 			}
 
 
 
-			for(int t=0;t<20;t++)
+			for (int t = 0; t < 20; t++)
 
 			{
 
-			ar >> pUtr->m_fWayPoints[t];
+				ar >> pUtr->m_fWayPoints[t];
 
 			}
 
@@ -2854,7 +2565,7 @@ void CRadarplotView::Serialize(CArchive& ar,int val)
 
 			ar >> pRadar->m_fSensitivity;
 
-		
+
 
 			ar >> pRadar->m_fGainMainlobe;
 
@@ -2878,7 +2589,7 @@ void CRadarplotView::Serialize(CArchive& ar,int val)
 
 			ar >> pRadar->m_fOffsetBacklobe;
 
-		
+
 
 			ar >> pRadar->m_fGainMainlobeRx;
 
@@ -2902,7 +2613,7 @@ void CRadarplotView::Serialize(CArchive& ar,int val)
 
 			ar >> pRadar->m_fOffsetBacklobeRx;
 
-			
+
 
 			ar >> pRadar->m_fDynamicRange;
 
@@ -2972,60 +2683,60 @@ void CRadarplotView::Serialize(CArchive& ar,int val)
 
 
 
-			pRadar->m_bSvep_pa					=Svep_pa;
+			pRadar->m_bSvep_pa = Svep_pa;
 
-			pRadar->m_bRun						=Run;
+			pRadar->m_bRun = Run;
 
-			pRadar->m_bDeflectionMode			=Deflection;
+			pRadar->m_bDeflectionMode = Deflection;
 
-			pRadar->m_bRAWVideoMode				=RawVideoMode;
+			pRadar->m_bRAWVideoMode = RawVideoMode;
 
-			pRadar->m_bSynteticMode				=SynteticMode;
+			pRadar->m_bSynteticMode = SynteticMode;
 
-			pRadar->m_bSyntAndRAWVideoMode		=SyntAndRawVideoMode;
+			pRadar->m_bSyntAndRAWVideoMode = SyntAndRawVideoMode;
 
-			pRadar->m_bCoherentIntegration		=CoherentIntegration;
+			pRadar->m_bCoherentIntegration = CoherentIntegration;
 
-			pRadar->m_bPulseGroup				=PulseGroupe;
+			pRadar->m_bPulseGroup = PulseGroupe;
 
-			pRadar->m_bfixfrekvens				=FixFrequency;
+			pRadar->m_bfixfrekvens = FixFrequency;
 
-			pRadar->m_bStaggerJitterPRF			=StaggerJitter;
+			pRadar->m_bStaggerJitterPRF = StaggerJitter;
 
-			pRadar->m_bFixEllerDelvisFixPRF		=FixEllerDilvisFixPRF;
+			pRadar->m_bFixEllerDelvisFixPRF = FixEllerDilvisFixPRF;
 
-			pRadar->m_bKlotterKarta				=KlotterKarta;
+			pRadar->m_bKlotterKarta = KlotterKarta;
 
-			pRadar->m_bMTIFilter				=MTIFilter;
+			pRadar->m_bMTIFilter = MTIFilter;
 
-			pRadar->m_bAntennDiagramFromFile	=AntennaDiagramFromFile;
+			pRadar->m_bAntennDiagramFromFile = AntennaDiagramFromFile;
 
 			CDataFile df;
 			df.SetDelimiter(";");
 			if (!df.ReadFile(CT2A(pRadar->m_strAntennaDiagramFileName)))
 			{
-			//	m_fAntennTabel = new float[2];
+				//	m_fAntennTabel = new float[2];
 				AfxMessageBox(_T("Unable to open Antennadiagram File!"));
-		//		pRadar->m_fAntennTabel[0] = 1600;
-		//		pRadar->m_fAntennTabel[1] = 1000;
+				//		pRadar->m_fAntennTabel[0] = 1600;
+				//		pRadar->m_fAntennTabel[1] = 1000;
 				pRadar->m_bAntennDiagramFromFile = false;
 				pRadar->m_strAntennaDiagramFileName.Format(_T("error"));
 			}
 			else
 			{
-				int nSamps = df.GetNumberOfSamples(1); 
+				int nSamps = df.GetNumberOfSamples(1);
 				int nVars = df.GetNumberOfVariables();
-				if(pRadar->m_fAntennTabel == NULL)
+				if (pRadar->m_fAntennTabel == NULL)
 					pRadar->m_fAntennTabel = new float[nSamps];
 
-				for(int i =0;i<nSamps;i++)
+				for (int i = 0; i < nSamps; i++)
 				{
-					pRadar->m_fAntennTabel[i] = df.GetData(1,i);
+					pRadar->m_fAntennTabel[i] = df.GetData(1, i);
 				}
 			}
 
 
-		//	*((CRadarStation*)pUtr)=m_Radar;
+			//	*((CRadarStation*)pUtr)=m_Radar;
 
 		}
 
@@ -3041,19 +2752,19 @@ void CRadarplotView::Serialize(CArchive& ar,int val)
 
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 
 			{
 
-				pUtr=pTempPos->m_pUtrustning;
+				pUtr = pTempPos->m_pUtrustning;
 
 				break;
 
-			}	
+			}
 
 			pTempPos = pTempPos->m_pNext;
 
@@ -3061,25 +2772,25 @@ void CRadarplotView::Serialize(CArchive& ar,int val)
 
 		CRadarJammer* pJammer = (CRadarJammer*)pUtr;
 
-		int BrusStorning			= pJammer->m_bBrusStorning;
+		int BrusStorning = pJammer->m_bBrusStorning;
 
-		int IckeFoljande			= pJammer->m_bIckeFoljande;
+		int IckeFoljande = pJammer->m_bIckeFoljande;
 
-		int Foljande				= pJammer->m_bFoljande;
+		int Foljande = pJammer->m_bFoljande;
 
-		int RepeterStorning			= pJammer->m_bRepeterStorning;
+		int RepeterStorning = pJammer->m_bRepeterStorning;
 
-		int SynkronaFalskmal		= pJammer->m_bSynkronaFalskmal;
+		int SynkronaFalskmal = pJammer->m_bSynkronaFalskmal;
 
-		int AsynkronaFalskmal		= pJammer->m_bAsynkronaFalskmal;
+		int AsynkronaFalskmal = pJammer->m_bAsynkronaFalskmal;
 
-		int SlumpadeFalskmal		= pJammer->m_bSlumpadeFalskmal;
+		int SlumpadeFalskmal = pJammer->m_bSlumpadeFalskmal;
 
-		int EnumTyp					= pJammer->m_enumTyp;	
+		int EnumTyp = pJammer->m_enumTyp;
 
-		int EnumPowerModeNoise		= pJammer->m_enumNoisePowerMode;
+		int EnumPowerModeNoise = pJammer->m_enumNoisePowerMode;
 
-		int EnumPowerModeRepeater	= pJammer->m_enumRepeaterPowerMode;
+		int EnumPowerModeRepeater = pJammer->m_enumRepeaterPowerMode;
 
 
 
@@ -3111,9 +2822,9 @@ void CRadarplotView::Serialize(CArchive& ar,int val)
 
 			ar << pUtr->m_fOldPosY;
 
-		//	ar << pUtr->m_fStartPosY;
+			//	ar << pUtr->m_fStartPosY;
 
-		//	ar << pUtr->m_fStartPosX;
+			//	ar << pUtr->m_fStartPosX;
 
 			ar << pUtr->m_fCourse;
 
@@ -3133,139 +2844,139 @@ void CRadarplotView::Serialize(CArchive& ar,int val)
 
 			ar << pUtr->m_fCriticalBorder;
 
-			for(int i=0;i<3;i++)
+			for (int i = 0; i < 3; i++)
 
 			{
 
-			ar << pUtr->m_fColor[i];
+				ar << pUtr->m_fColor[i];
 
 			}
 
 			ar << pUtr->m_nNbrOfWayPoints;
 
-			for(int k=0;k<pUtr->m_nNbrOfWayPoints;k++)
+			for (int k = 0; k < pUtr->m_nNbrOfWayPoints; k++)
 
 			{
 
-			ar << pUtr->m_fDistWayPoints[k];
+				ar << pUtr->m_fDistWayPoints[k];
 
 			}
 
 
 
-			for(int t=0;t<20;t++)
+			for (int t = 0; t < 20; t++)
 
 			{
 
-			ar << pUtr->m_fWayPoints[t];
+				ar << pUtr->m_fWayPoints[t];
 
 			}
 
 			//Jammer parametrar
 
-			ar	<<	pJammer->m_fNoiseBandwidth;	
+			ar << pJammer->m_fNoiseBandwidth;
 
-			ar	<<	pJammer->m_nAntennaGainTX;	
+			ar << pJammer->m_nAntennaGainTX;
 
-			ar	<<	pJammer->m_nAntennaGainRX;
+			ar << pJammer->m_nAntennaGainRX;
 
-			ar	<<	pJammer->m_nBeamWidthTX;
+			ar << pJammer->m_nBeamWidthTX;
 
-			ar	<<	pJammer->m_nBeamWidthRX;
+			ar << pJammer->m_nBeamWidthRX;
 
-			ar	<<	pJammer->m_fPeakPower;
+			ar << pJammer->m_fPeakPower;
 
-			ar	<<	pJammer->m_fPeakPowerRepeater;
+			ar << pJammer->m_fPeakPowerRepeater;
 
-			ar	<<	pJammer->m_fSensitivity;
+			ar << pJammer->m_fSensitivity;
 
-			ar	<<	pJammer->m_fClockRateRepeater;
+			ar << pJammer->m_fClockRateRepeater;
 
-			ar	<<	pJammer->m_fClockRateNoise;
+			ar << pJammer->m_fClockRateNoise;
 
-			ar	<<	pJammer->m_fPRI;
+			ar << pJammer->m_fPRI;
 
-			ar	<<	pJammer->m_fAsynkDist;
+			ar << pJammer->m_fAsynkDist;
 
-			ar	<<	pJammer->m_fDutyCycleFalseTargetPerCent;
+			ar << pJammer->m_fDutyCycleFalseTargetPerCent;
 
-			ar	<<	pJammer->m_fFalseTargetVelocity;
+			ar << pJammer->m_fFalseTargetVelocity;
 
-			ar	<<	pJammer->m_fRepetedPulseWidth;
+			ar << pJammer->m_fRepetedPulseWidth;
 
-			ar	<<	BrusStorning;
+			ar << BrusStorning;
 
-			ar	<<	IckeFoljande;
+			ar << IckeFoljande;
 
-			ar	<<	Foljande;
+			ar << Foljande;
 
-			ar	<<	RepeterStorning;
+			ar << RepeterStorning;
 
-			ar	<<	SynkronaFalskmal;
+			ar << SynkronaFalskmal;
 
-			ar	<<	AsynkronaFalskmal;
+			ar << AsynkronaFalskmal;
 
-			ar	<<	pJammer->m_nRepCykelAsynkronRep;
+			ar << pJammer->m_nRepCykelAsynkronRep;
 
-			ar	<<	pJammer->m_nForskjutningStrak;
+			ar << pJammer->m_nForskjutningStrak;
 
-			ar	<<	SlumpadeFalskmal;
+			ar << SlumpadeFalskmal;
 
-			ar	<<	pJammer->m_fPropabilityFalseTargets;
+			ar << pJammer->m_fPropabilityFalseTargets;
 
-			ar	<<	pJammer->m_nSlumpFilter;
+			ar << pJammer->m_nSlumpFilter;
 
-			ar	<<	pJammer->m_fNumberOfFalseTargets;
+			ar << pJammer->m_fNumberOfFalseTargets;
 
-			ar	<<	pJammer->m_fDistanceBetweenFalseTargets;
+			ar << pJammer->m_fDistanceBetweenFalseTargets;
 
-			ar	<<	pJammer->m_ncounter2;
+			ar << pJammer->m_ncounter2;
 
-			ar	<<	pJammer->m_ncounter3;
+			ar << pJammer->m_ncounter3;
 
-			ar	<<	pJammer->m_fJ;
+			ar << pJammer->m_fJ;
 
-//			ar	<<	pJammer->m_fJ_huvudlob;
+			//			ar	<<	pJammer->m_fJ_huvudlob;
 
-//			ar	<<	pJammer->m_fS;
+			//			ar	<<	pJammer->m_fS;
 
-			ar	<<	pJammer->m_fPowerRecieved;
+			ar << pJammer->m_fPowerRecieved;
 
-			ar	<<	pJammer->m_fPower;
+			ar << pJammer->m_fPower;
 
-			ar	<<	pJammer->m_nPointAngleError;
+			ar << pJammer->m_nPointAngleError;
 
-			ar	<<	pJammer->m_nConstantPointAngleError;
+			ar << pJammer->m_nConstantPointAngleError;
 
-			ar	<<	pJammer->m_nDeltaPointAngleError;
+			ar << pJammer->m_nDeltaPointAngleError;
 
-			ar	<<	pJammer->m_foldxjammer;
+			ar << pJammer->m_foldxjammer;
 
-			ar	<<	pJammer->m_foldyjammer;
+			ar << pJammer->m_foldyjammer;
 
-			ar	<<	pJammer->m_fFreqMin;
+			ar << pJammer->m_fFreqMin;
 
-			ar	<<	pJammer->m_fFreqMax;
+			ar << pJammer->m_fFreqMax;
 
-			ar	<<	pJammer->m_fDopplerReferenceFreq;
+			ar << pJammer->m_fDopplerReferenceFreq;
 
-			ar	<<	pJammer->m_fSorSetOnDelay;
+			ar << pJammer->m_fSorSetOnDelay;
 
-			ar	<<	pJammer->m_fRepeaterThroughputDelay;
+			ar << pJammer->m_fRepeaterThroughputDelay;
 
-			ar	<<	EnumTyp;	
+			ar << EnumTyp;
 
-			ar	<<  EnumPowerModeNoise;
+			ar << EnumPowerModeNoise;
 
-			ar	<<	EnumPowerModeRepeater;
+			ar << EnumPowerModeRepeater;
 
-			ar	<<	pJammer->m_fLoopGainNoise;
+			ar << pJammer->m_fLoopGainNoise;
 
-			ar	<<	pJammer->m_fLoopGainRepeater;
+			ar << pJammer->m_fLoopGainRepeater;
 
-			ar	<<	pJammer->m_fIGDynamicRangeNoise;
+			ar << pJammer->m_fIGDynamicRangeNoise;
 
-			ar	<<	pJammer->m_fIGDynamicRangeRepeater;
+			ar << pJammer->m_fIGDynamicRangeRepeater;
 
 		}
 
@@ -3317,164 +3028,164 @@ void CRadarplotView::Serialize(CArchive& ar,int val)
 
 			ar >> pUtr->m_fCriticalBorder;
 
-			for(int i=0;i<3;i++)
+			for (int i = 0; i < 3; i++)
 
 			{
 
-			ar >> pUtr->m_fColor[i];
+				ar >> pUtr->m_fColor[i];
 
 			}
 
 			ar >> pUtr->m_nNbrOfWayPoints;
 
-			pUtr->m_fDistWayPoints	=	(float*)malloc(pUtr->m_nNbrOfWayPoints);
+			pUtr->m_fDistWayPoints = (float*)malloc(pUtr->m_nNbrOfWayPoints);
 
-			for(int k=0;k<pUtr->m_nNbrOfWayPoints;k++)
+			for (int k = 0; k < pUtr->m_nNbrOfWayPoints; k++)
 
 			{
 
-			ar >> pUtr->m_fDistWayPoints[k];
+				ar >> pUtr->m_fDistWayPoints[k];
 
 			}
 
 
 
-			for(int t=0;t<20;t++)
+			for (int t = 0; t < 20; t++)
 
 			{
 
-			ar >> pUtr->m_fWayPoints[t];
+				ar >> pUtr->m_fWayPoints[t];
 
 			}
 
-			ar	>>	pJammer->m_fNoiseBandwidth;	
+			ar >> pJammer->m_fNoiseBandwidth;
 
-			ar	>>	pJammer->m_nAntennaGainTX;	
+			ar >> pJammer->m_nAntennaGainTX;
 
-			ar	>>	pJammer->m_nAntennaGainRX;
+			ar >> pJammer->m_nAntennaGainRX;
 
-			ar	>>	pJammer->m_nBeamWidthTX;
+			ar >> pJammer->m_nBeamWidthTX;
 
-			ar	>>	pJammer->m_nBeamWidthRX;
+			ar >> pJammer->m_nBeamWidthRX;
 
-			ar	>>	pJammer->m_fPeakPower;
+			ar >> pJammer->m_fPeakPower;
 
-			ar	>>	pJammer->m_fPeakPowerRepeater;
+			ar >> pJammer->m_fPeakPowerRepeater;
 
-			ar	>>	pJammer->m_fSensitivity;
+			ar >> pJammer->m_fSensitivity;
 
-			ar	>>	pJammer->m_fClockRateRepeater;
+			ar >> pJammer->m_fClockRateRepeater;
 
-			ar	>>	pJammer->m_fClockRateNoise;
+			ar >> pJammer->m_fClockRateNoise;
 
-			ar	>>	pJammer->m_fPRI;
+			ar >> pJammer->m_fPRI;
 
-			ar	>>	pJammer->m_fAsynkDist;
+			ar >> pJammer->m_fAsynkDist;
 
-			ar	>>	pJammer->m_fDutyCycleFalseTargetPerCent;
+			ar >> pJammer->m_fDutyCycleFalseTargetPerCent;
 
-			ar	>>	pJammer->m_fFalseTargetVelocity;
+			ar >> pJammer->m_fFalseTargetVelocity;
 
-			ar	>>	pJammer->m_fRepetedPulseWidth;
+			ar >> pJammer->m_fRepetedPulseWidth;
 
-			ar	>>	BrusStorning;
+			ar >> BrusStorning;
 
-			ar	>>	IckeFoljande;
+			ar >> IckeFoljande;
 
-			ar	>>	Foljande;
+			ar >> Foljande;
 
-			ar	>>	RepeterStorning;
+			ar >> RepeterStorning;
 
-			ar	>>	SynkronaFalskmal;
+			ar >> SynkronaFalskmal;
 
-			ar	>>	AsynkronaFalskmal;
+			ar >> AsynkronaFalskmal;
 
-			ar	>>	pJammer->m_nRepCykelAsynkronRep;
+			ar >> pJammer->m_nRepCykelAsynkronRep;
 
-			ar	>>	pJammer->m_nForskjutningStrak;
+			ar >> pJammer->m_nForskjutningStrak;
 
-			ar	>>	SlumpadeFalskmal;
+			ar >> SlumpadeFalskmal;
 
-			ar	>>	pJammer->m_fPropabilityFalseTargets;
+			ar >> pJammer->m_fPropabilityFalseTargets;
 
-			ar	>>	pJammer->m_nSlumpFilter;
+			ar >> pJammer->m_nSlumpFilter;
 
-			ar	>>	pJammer->m_fNumberOfFalseTargets;
+			ar >> pJammer->m_fNumberOfFalseTargets;
 
-			ar	>>	pJammer->m_fDistanceBetweenFalseTargets;
+			ar >> pJammer->m_fDistanceBetweenFalseTargets;
 
-			ar	>>	pJammer->m_ncounter2;
+			ar >> pJammer->m_ncounter2;
 
-			ar	>>	pJammer->m_ncounter3;
+			ar >> pJammer->m_ncounter3;
 
-			ar	>>	pJammer->m_fJ;
+			ar >> pJammer->m_fJ;
 
-//			ar	>>	pJammer->m_fJ_huvudlob;
+			//			ar	>>	pJammer->m_fJ_huvudlob;
 
-//			ar	>>	pJammer->m_fS;
+			//			ar	>>	pJammer->m_fS;
 
-			ar	>>	pJammer->m_fPowerRecieved;
+			ar >> pJammer->m_fPowerRecieved;
 
-			ar	>>	pJammer->m_fPower;
+			ar >> pJammer->m_fPower;
 
-			ar	>>	pJammer->m_nPointAngleError;
+			ar >> pJammer->m_nPointAngleError;
 
-			ar	>>	pJammer->m_nConstantPointAngleError;
+			ar >> pJammer->m_nConstantPointAngleError;
 
-			ar	>>	pJammer->m_nDeltaPointAngleError;
+			ar >> pJammer->m_nDeltaPointAngleError;
 
-			ar	>>	pJammer->m_foldxjammer;
+			ar >> pJammer->m_foldxjammer;
 
-			ar	>>	pJammer->m_foldyjammer;
+			ar >> pJammer->m_foldyjammer;
 
-			ar	>>	pJammer->m_fFreqMin;
+			ar >> pJammer->m_fFreqMin;
 
-			ar	>>	pJammer->m_fFreqMax;
+			ar >> pJammer->m_fFreqMax;
 
-			ar	>>	pJammer->m_fDopplerReferenceFreq;
+			ar >> pJammer->m_fDopplerReferenceFreq;
 
-			ar	>>	pJammer->m_fSorSetOnDelay;
+			ar >> pJammer->m_fSorSetOnDelay;
 
-			ar	>>	pJammer->m_fRepeaterThroughputDelay;
+			ar >> pJammer->m_fRepeaterThroughputDelay;
 
-			ar	>>	EnumTyp;
+			ar >> EnumTyp;
 
-			ar  >>	EnumPowerModeNoise;
+			ar >> EnumPowerModeNoise;
 
-			ar	>>	EnumPowerModeRepeater;
+			ar >> EnumPowerModeRepeater;
 
-			ar	>>	pJammer->m_fLoopGainNoise;
+			ar >> pJammer->m_fLoopGainNoise;
 
-			ar	>>	pJammer->m_fLoopGainRepeater;
+			ar >> pJammer->m_fLoopGainRepeater;
 
-			ar	>>	pJammer->m_fIGDynamicRangeNoise;
+			ar >> pJammer->m_fIGDynamicRangeNoise;
 
-			ar	>>	pJammer->m_fIGDynamicRangeRepeater;
+			ar >> pJammer->m_fIGDynamicRangeRepeater;
 
 
 
-			pJammer->m_bBrusStorning		=BrusStorning;
+			pJammer->m_bBrusStorning = BrusStorning;
 
-			pJammer->m_bIckeFoljande		=IckeFoljande;
+			pJammer->m_bIckeFoljande = IckeFoljande;
 
-			pJammer->m_bFoljande			=Foljande;
+			pJammer->m_bFoljande = Foljande;
 
-			pJammer->m_bRepeterStorning		=RepeterStorning;
+			pJammer->m_bRepeterStorning = RepeterStorning;
 
-			pJammer->m_bSynkronaFalskmal	=SynkronaFalskmal;
+			pJammer->m_bSynkronaFalskmal = SynkronaFalskmal;
 
-			pJammer->m_bAsynkronaFalskmal	=AsynkronaFalskmal;
+			pJammer->m_bAsynkronaFalskmal = AsynkronaFalskmal;
 
-			pJammer->m_bSlumpadeFalskmal	=SlumpadeFalskmal;
+			pJammer->m_bSlumpadeFalskmal = SlumpadeFalskmal;
 
-			pJammer->m_enumTyp				=(CUtrustning::TYP)EnumTyp;	
-			
-			pJammer->m_enumNoisePowerMode	= (CRadarJammer::PowerMode)EnumPowerModeNoise;
+			pJammer->m_enumTyp = (CUtrustning::TYP)EnumTyp;
+
+			pJammer->m_enumNoisePowerMode = (CRadarJammer::PowerMode)EnumPowerModeNoise;
 
 			pJammer->m_enumRepeaterPowerMode = (CRadarJammer::PowerMode)EnumPowerModeRepeater;
 
 
-		//	*((CRadarJammer*)pUtr)=m_Jammer;
+			//	*((CRadarJammer*)pUtr)=m_Jammer;
 
 		}
 
@@ -3484,7 +3195,7 @@ void CRadarplotView::Serialize(CArchive& ar,int val)
 
 
 
-void CRadarplotView::OnSavejammer() 
+void CRadarplotView::OnSavejammer()
 
 {
 
@@ -3492,20 +3203,20 @@ void CRadarplotView::OnSavejammer()
 
 	CString FileName;
 
-	CString FileExt=".jam";
+	CString FileExt = ".jam";
 
 	FileName.Format(m_strCurrentObject);
 
-	FileName.Insert(12,FileExt);
+	FileName.Insert(12, FileExt);
 
-	CFileDialog DlgJammer(false,_T("jam"),FileName);
+	CFileDialog DlgJammer(false, _T("jam"), FileName);
 
 	char szFileNameOfFile[5100];
-	GetModuleFileNameA(NULL,szFileNameOfFile,5100);
+	GetModuleFileNameA(NULL, szFileNameOfFile, 5100);
 	char szDrive[20], szFolder[4096],
-		 szFileName[MAX_PATH], szFileExt[10];
+		szFileName[MAX_PATH], szFileExt[10];
 
-	_splitpath(szFileNameOfFile,szDrive,szFolder,szFileName,szFileExt);
+	_splitpath(szFileNameOfFile, szDrive, szFolder, szFileName, szFileExt);
 
 	CString strFilePath = "";
 	strFilePath += szDrive;
@@ -3514,39 +3225,39 @@ void CRadarplotView::OnSavejammer()
 
 	DlgJammer.m_ofn.lpstrInitialDir = strFilePath;
 
-	if(DlgJammer.DoModal()==IDOK)
+	if (DlgJammer.DoModal() == IDOK)
 
 	{
 
-		CString JamFile=DlgJammer.GetPathName();
-
-	
-
-	CFile f;
-
-	f.Open(JamFile,CFile::modeCreate | CFile::modeWrite);
-
-	
-
-	CArchive ar(&f, CArchive::store);
-
-	Serialize(ar,2);
+		CString JamFile = DlgJammer.GetPathName();
 
 
 
-	ar.Close();
+		CFile f;
 
-	f.Close();	
-//	m_pDlgOVOpenGL->Invalidate(true);
-	Invalidate();
+		f.Open(JamFile, CFile::modeCreate | CFile::modeWrite);
 
-	}	
+
+
+		CArchive ar(&f, CArchive::store);
+
+		Serialize(ar, 2);
+
+
+
+		ar.Close();
+
+		f.Close();
+		//	m_pDlgOVOpenGL->Invalidate(true);
+		Invalidate();
+
+	}
 
 }
 
 
 
-void CRadarplotView::OnOpenjammer() 
+void CRadarplotView::OnOpenjammer()
 
 {
 
@@ -3554,55 +3265,55 @@ void CRadarplotView::OnOpenjammer()
 
 	CFileDialog DlgJammer(true, _T("jam"), _T("*.jam"));
 	char  szFileNameOfFile[5100];
-	GetModuleFileNameA(NULL,szFileNameOfFile,5100);
+	GetModuleFileNameA(NULL, szFileNameOfFile, 5100);
 	char szDrive[20], szFolder[4096],
-		 szFileName[MAX_PATH], szFileExt[10];
+		szFileName[MAX_PATH], szFileExt[10];
 
-	_splitpath(szFileNameOfFile,szDrive,szFolder,szFileName,szFileExt);
+	_splitpath(szFileNameOfFile, szDrive, szFolder, szFileName, szFileExt);
 
 	CString strFilePath = "";
 	strFilePath += szDrive;
 	strFilePath += szFolder;
 	strFilePath += "Data\\";
-//	if(strFilePath.Right(1) != "\\")
-//	{
-//		strFilePath += "\\";
-//	}
+	//	if(strFilePath.Right(1) != "\\")
+	//	{
+	//		strFilePath += "\\";
+	//	}
 
 	DlgJammer.m_ofn.lpstrInitialDir = strFilePath;
-	
-	if(DlgJammer.DoModal()==IDOK)
+
+	if (DlgJammer.DoModal() == IDOK)
 
 	{
 
-		CString JamFile=DlgJammer.GetPathName();
-
-	
+		CString JamFile = DlgJammer.GetPathName();
 
 
 
-	CFile f;
-
-	if(f.Open(JamFile,CFile::modeRead)==FALSE)
-
-		return;
 
 
+		CFile f;
 
-	CArchive ar(&f, CArchive::load);
+		if (f.Open(JamFile, CFile::modeRead) == FALSE)
 
-	Serialize(ar,2);	
+			return;
 
 
 
-	ar.Close();
+		CArchive ar(&f, CArchive::load);
 
-	f.Close();
-	//Important (calculates new positions)
-	m_pDlgScenOpenGL->InvalidateRect(NULL,FALSE);
-	Invalidate();
+		Serialize(ar, 2);
 
-	}	
+
+
+		ar.Close();
+
+		f.Close();
+		//Important (calculates new positions)
+		m_pDlgScenOpenGL->InvalidateRect(NULL, FALSE);
+		Invalidate();
+
+	}
 
 }
 
@@ -3610,7 +3321,7 @@ void CRadarplotView::OnOpenjammer()
 
 
 
-void CRadarplotView::OnTimer(UINT nIDEvent) 
+void CRadarplotView::OnTimer(UINT nIDEvent)
 
 {
 
@@ -3620,12 +3331,12 @@ void CRadarplotView::OnTimer(UINT nIDEvent)
 
 	//efter en viss tid. Detta för att inte skymma splashen
 
-	
 
-	if(l==1)
+
+	if (l == 1)
 
 	{
-		if(m_pDlgOVOpenGL!= NULL && m_pDlgScenOpenGL!=NULL)
+		if (m_pDlgOVOpenGL != NULL && m_pDlgScenOpenGL != NULL)
 		{
 			m_pDlgOVOpenGL->ShowWindow(true);
 			m_pDlgScenOpenGL->ShowWindow(true);
@@ -3641,7 +3352,7 @@ void CRadarplotView::OnTimer(UINT nIDEvent)
 
 	//invalidate ligger här i börjar för att texten i vyn ska synas (Scenario, Radar,Jammer,Targets)
 
-	if(l<5)
+	if (l < 5)
 
 	{
 
@@ -3654,7 +3365,7 @@ void CRadarplotView::OnTimer(UINT nIDEvent)
 	else
 		KillTimer(4);
 
-//		InvalidateRect(NULL,FALSE);
+	//		InvalidateRect(NULL,FALSE);
 
 
 	CUtrustning* ptmpUtr;
@@ -3663,29 +3374,29 @@ void CRadarplotView::OnTimer(UINT nIDEvent)
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
 	pTempPos = pLista->m_pStartPos;
 
-	for(int i=0;i<pLista->m_nAntalNoder;i++) 
+	for (int i = 0; i < pLista->m_nAntalNoder; i++)
 	{
-		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 		{
-			ptmpUtr=pTempPos->m_pUtrustning;
+			ptmpUtr = pTempPos->m_pUtrustning;
 			break;
-		}	
+		}
 		pTempPos = pTempPos->m_pNext;
 	}
-//Vi kollar om jammern har ändrat status annars behöver vi inte uppdatera hela vyn
-	if(NbrOfJammer>0)
+	//Vi kollar om jammern har ändrat status annars behöver vi inte uppdatera hela vyn
+	if (NbrOfJammer > 0)
 	{
-		if(m_strJammerStatus!=ptmpUtr->m_strStatus)
+		if (m_strJammerStatus != ptmpUtr->m_strStatus)
 			Invalidate(true);
 		else
-			InvalidateRect(NULL,FALSE);	
+			InvalidateRect(NULL, FALSE);
 
-		m_strJammerStatus=ptmpUtr->m_strStatus;	
+		m_strJammerStatus = ptmpUtr->m_strStatus;
 	}
 
 
 	ShowStatus();
-	
+
 	CView::OnTimer(nIDEvent);
 }
 
@@ -3693,13 +3404,13 @@ void CRadarplotView::ShowStatus()
 {
 	CMainFrame* pFrame = (CMainFrame*)AfxGetApp()->m_pMainWnd;
 	CStatusBar* pStatus = pFrame->ReturnStatusBarPointer();
-	pStatus->SetPaneText(0,m_strSimulationStatus);
+	pStatus->SetPaneText(0, m_strSimulationStatus);
 }
 
-void CRadarplotView::OnButtonStop() 
+void CRadarplotView::OnButtonStop()
 {
 
-	if(!m_bRun)
+	if (!m_bRun)
 		return;
 
 	CUtrustning* pUtr;
@@ -3708,25 +3419,25 @@ void CRadarplotView::OnButtonStop()
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
 	pTempPos = pLista->m_pStartPos;
 
-	for(int i=0;i<pLista->m_nAntalNoder;i++) 
+	for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 	{
 
-		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 
 		{
 
-			pUtr=pTempPos->m_pUtrustning;
+			pUtr = pTempPos->m_pUtrustning;
 
 			break;
 
-		}/*	
+		}/*
 
 		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
 
 		{
 
-			((CRadarStation*)pTempPos->m_pUtrustning)->m_CellLista.TaBortAlla();
+		((CRadarStation*)pTempPos->m_pUtrustning)->m_CellLista.TaBortAlla();
 
 		}*/
 
@@ -3734,13 +3445,13 @@ void CRadarplotView::OnButtonStop()
 
 	}
 
-	pUtr->m_strStatus="OFF";
+	pUtr->m_strStatus = "OFF";
 
 	m_pDlgScenOpenGL->Stop();
 
-//	m_pDlgOVOpenGL->Stop();
+	//	m_pDlgOVOpenGL->Stop();
 
-	m_bRun=false;
+	m_bRun = false;
 
 	KillTimer(4);
 
@@ -3756,7 +3467,7 @@ void CRadarplotView::OnButtonStop()
 
 
 
-void CRadarplotView::OnCalibrateRadar() 
+void CRadarplotView::OnCalibrateRadar()
 
 {
 
@@ -3768,15 +3479,15 @@ void CRadarplotView::OnCalibrateRadar()
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
 	pTempPos = pLista->m_pStartPos;
 
-	for(int i=0;i<pLista->m_nAntalNoder;i++) 
+	for (int i = 0; i < pLista->m_nAntalNoder; i++)
 	{
 
-		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
 		{
 
-			pUtr=pTempPos->m_pUtrustning;
+			pUtr = pTempPos->m_pUtrustning;
 			break;
-		}	
+		}
 		pTempPos = pTempPos->m_pNext;
 	}
 
@@ -3785,15 +3496,15 @@ void CRadarplotView::OnCalibrateRadar()
 	CDlgCalibrateRadar DlgKal;
 	DlgKal.Init(pRadar);
 
-	int result=DlgKal.DoModal();
-	if(result == IDOK)
+	int result = DlgKal.DoModal();
+	if (result == IDOK)
 	{
 
-//		*((CRadarStation*)pUtr)=m_Radar;
-//		m_pDlgOVOpenGL->Invalidate(true);
+		//		*((CRadarStation*)pUtr)=m_Radar;
+		//		m_pDlgOVOpenGL->Invalidate(true);
 		Invalidate(true);
 	}
-	if(result == IDCANCEL)
+	if (result == IDCANCEL)
 	{
 
 	}
@@ -3804,7 +3515,7 @@ void CRadarplotView::OnCalibrateRadar()
 
 
 
-void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point) 
+void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 {
 
@@ -3816,29 +3527,29 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	CUtrustningLista::CNod *pTempPos;
 
-	pTempPos = pLista->m_pStartPos;	
+	pTempPos = pLista->m_pStartPos;
 
-	for(int i=0;i<pLista->m_nAntalNoder;i++) 
+	for(int i=0;i<pLista->m_nAntalNoder;i++)
 
 	{
 
-		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+	if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 
-		{
+	{
 
-			pTempPos->m_bActive=true;
-
-		}	
-
-		pTempPos = pTempPos->m_pNext;
+	pTempPos->m_bActive=true;
 
 	}
 
-*/
+	pTempPos = pTempPos->m_pNext;
+
+	}
+
+	*/
 
 
 
-//Hitta fönsterplacering
+	//Hitta fönsterplacering
 
 	CRect tempwindow;
 
@@ -3846,29 +3557,29 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 
 
-	CRect rectEllipse,rE1,rE2,rE3,rE4,rE5,rE6,rE7;
+	CRect rectEllipse, rE1, rE2, rE3, rE4, rE5, rE6, rE7;
 
-	CRgn Radar,Jam1,Jam2,Jam3,Tar1,Tar2,Tar3,Tar4;
+	CRgn Radar, Jam1, Jam2, Jam3, Tar1, Tar2, Tar3, Tar4;
 
-	CMenu menuRadar,menuJammer,menuTarget;
+	CMenu menuRadar, menuJammer, menuTarget;
 
 
 
 	rectEllipse = m_rectEllipse;
 
-	rE1=m_rE1;
+	rE1 = m_rE1;
 
-	rE2=m_rE2;
+	rE2 = m_rE2;
 
-	rE3=m_rE3;
+	rE3 = m_rE3;
 
-	rE4=m_rE4;
+	rE4 = m_rE4;
 
-	rE5=m_rE5;
+	rE5 = m_rE5;
 
-	rE6=m_rE6;
+	rE6 = m_rE6;
 
-	rE7=m_rE7;
+	rE7 = m_rE7;
 
 
 
@@ -3922,88 +3633,24 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 
 
-	if(Radar.PtInRegion(point) && pLista->m_nAntalNoder!=0)
+	if (Radar.PtInRegion(point) && pLista->m_nAntalNoder != 0)
 
 	{
 
 		CUtrustningLista::CNod *pTempPos;
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
 
 			{
 
 				m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
 
-				pTempPos->m_bActive=true;
-
-				break;
-
-			}
-
-
-
-			pTempPos = pTempPos->m_pNext;
-
-		}
-
-	
-
-	}
-
-	else
-
-	{
-
-		CUtrustningLista::CNod *pTempPos;
-
-		pTempPos = pLista->m_pStartPos;
-
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
-
-		{
-
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
-
-			{
-
-				pTempPos->m_bActive=false;
-
-				break;
-
-			}
-
-
-
-			pTempPos = pTempPos->m_pNext;
-
-		}
-
-	}
-
-	if(Jam1.PtInRegion(point) && NbrOfJammer>0)
-
-	{
-
-		CUtrustningLista::CNod *pTempPos;
-
-		pTempPos = pLista->m_pStartPos;
-
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
-
-		{
-
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
-
-			{
-
-				m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
-
-				pTempPos->m_bActive=true;
+				pTempPos->m_bActive = true;
 
 				break;
 
@@ -4027,15 +3674,15 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
 
 			{
 
-				pTempPos->m_bActive=false;
+				pTempPos->m_bActive = false;
 
 				break;
 
@@ -4049,33 +3696,97 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	}
 
-	if(Jam2.PtInRegion(point) && NbrOfJammer>1)
+	if (Jam1.PtInRegion(point) && NbrOfJammer > 0)
 
 	{
-
-		int l=0;
 
 		CUtrustningLista::CNod *pTempPos;
 
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+			{
+
+				m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+				pTempPos->m_bActive = true;
+
+				break;
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+
+
+	}
+
+	else
+
+	{
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
+
+		{
+
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+			{
+
+				pTempPos->m_bActive = false;
+
+				break;
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+	}
+
+	if (Jam2.PtInRegion(point) && NbrOfJammer > 1)
+
+	{
+
+		int l = 0;
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
+
+		{
+
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 
 			{
 
 				l++;
 
-				if(l>1)
+				if (l > 1)
 
 				{
 
 					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
 
-					pTempPos->m_bActive=true;
+					pTempPos->m_bActive = true;
 
 					break;
 
@@ -4095,29 +3806,29 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	{
 
-		int l=0;
+		int l = 0;
 
 		CUtrustningLista::CNod *pTempPos;
 
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 
 			{
 
 				l++;
 
-				if(l>1)
+				if (l > 1)
 
 				{
 
 					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
 
-					pTempPos->m_bActive=false;
+					pTempPos->m_bActive = false;
 
 					break;
 
@@ -4133,33 +3844,33 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	}
 
-	if(Jam3.PtInRegion(point) && NbrOfJammer>2)
+	if (Jam3.PtInRegion(point) && NbrOfJammer > 2)
 
 	{
 
-		int k=0;
+		int k = 0;
 
 		CUtrustningLista::CNod *pTempPos;
 
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 
 			{
 
 				k++;
 
-				if(k>2)
+				if (k > 2)
 
 				{
 
 					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
 
-					pTempPos->m_bActive=true;
+					pTempPos->m_bActive = true;
 
 					break;
 
@@ -4179,29 +3890,29 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	{
 
-		int k=0;
+		int k = 0;
 
 		CUtrustningLista::CNod *pTempPos;
 
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 
 			{
 
 				k++;
 
-				if(k>2)
+				if (k > 2)
 
 				{
 
 					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
 
-					pTempPos->m_bActive=false;
+					pTempPos->m_bActive = false;
 
 					break;
 
@@ -4217,7 +3928,7 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	}
 
-	if(Tar1.PtInRegion(point) && NbrOfTarget>0)
+	if (Tar1.PtInRegion(point) && NbrOfTarget > 0)
 
 	{
 
@@ -4227,17 +3938,17 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 
 			{
 
 				m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
 
-				pTempPos->m_bActive=true;
+				pTempPos->m_bActive = true;
 
 				break;
 
@@ -4259,15 +3970,15 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 
 			{
 
-				pTempPos->m_bActive=false;
+				pTempPos->m_bActive = false;
 
 				break;
 
@@ -4281,33 +3992,33 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	}
 
-	if(Tar2.PtInRegion(point) && NbrOfTarget>1)
+	if (Tar2.PtInRegion(point) && NbrOfTarget > 1)
 
 	{
 
-		int n=0;
+		int n = 0;
 
 		CUtrustningLista::CNod *pTempPos;
 
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 
 			{
 
 				n++;
 
-				if(n>1)
+				if (n > 1)
 
 				{
 
 					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
 
-					pTempPos->m_bActive=true;
+					pTempPos->m_bActive = true;
 
 					break;
 
@@ -4327,29 +4038,29 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	{
 
-		int n=0;
+		int n = 0;
 
 		CUtrustningLista::CNod *pTempPos;
 
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 
 			{
 
 				n++;
 
-				if(n>1)
+				if (n > 1)
 
 				{
 
 					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
 
-					pTempPos->m_bActive=false;
+					pTempPos->m_bActive = false;
 
 					break;
 
@@ -4365,33 +4076,33 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	}
 
-	if(Tar3.PtInRegion(point) && NbrOfTarget>2)
+	if (Tar3.PtInRegion(point) && NbrOfTarget > 2)
 
 	{
 
-		int o=0;
+		int o = 0;
 
 		CUtrustningLista::CNod *pTempPos;
 
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 
 			{
 
 				o++;
 
-				if(o>2)
+				if (o > 2)
 
 				{
 
 					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
 
-					pTempPos->m_bActive=true;
+					pTempPos->m_bActive = true;
 
 					break;
 
@@ -4411,29 +4122,29 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	{
 
-		int o=0;
+		int o = 0;
 
 		CUtrustningLista::CNod *pTempPos;
 
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 
 			{
 
 				o++;
 
-				if(o>2)
+				if (o > 2)
 
 				{
 
 					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
 
-					pTempPos->m_bActive=false;
+					pTempPos->m_bActive = false;
 
 					break;
 
@@ -4449,33 +4160,33 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	}
 
-	if(Tar4.PtInRegion(point) && NbrOfTarget>3)
+	if (Tar4.PtInRegion(point) && NbrOfTarget > 3)
 
 	{
 
-		int p=0;
+		int p = 0;
 
 		CUtrustningLista::CNod *pTempPos;
 
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 
 			{
 
 				p++;
 
-				if(p>3)
+				if (p > 3)
 
 				{
 
 					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
 
-					pTempPos->m_bActive=true;
+					pTempPos->m_bActive = true;
 
 					break;
 
@@ -4497,29 +4208,29 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	{
 
-		int p=0;
+		int p = 0;
 
 		CUtrustningLista::CNod *pTempPos;
 
 		pTempPos = pLista->m_pStartPos;
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 
 			{
 
 				p++;
 
-				if(p>3)
+				if (p > 3)
 
 				{
 
 					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
 
-					pTempPos->m_bActive=false;
+					pTempPos->m_bActive = false;
 
 					break;
 
@@ -4535,7 +4246,7 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	}
 
-//	m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
+	//	m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
 	Invalidate();
 
 	CView::OnLButtonDown(nFlags, point);
@@ -4543,42 +4254,42 @@ void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point)
 }
 
 
-void CRadarplotView::OnScenarioAddradar() 
+void CRadarplotView::OnScenarioAddradar()
 {
-	OnButtonCreateRadar();	
+	OnButtonCreateRadar();
 }
 
-void CRadarplotView::OnScenarioClear() 
+void CRadarplotView::OnScenarioClear()
 {
-	OnButtonClearall();	
+	OnButtonClearall();
 }
 
-void CRadarplotView::OnScenarioAddjammer() 
+void CRadarplotView::OnScenarioAddjammer()
 {
 	OnButtonCreateJammer();
-	
+
 }
 
-void CRadarplotView::OnScenarioAddtarget() 
+void CRadarplotView::OnScenarioAddtarget()
 {
-	OnButtonCreateTarget();	
+	OnButtonCreateTarget();
 }
 
-void CRadarplotView::OnSimulationStart() 
+void CRadarplotView::OnSimulationStart()
 {
 	m_strSimulationStatus.Format(_T("Running.."));
 	ShowStatus();
-	OnButtonPpi();	
+	OnButtonPpi();
 }
 
-void CRadarplotView::OnSimulationStop() 
+void CRadarplotView::OnSimulationStop()
 {
 	OnButtonStop();
 }
 
-void CRadarplotView::OnSimulationFullscreen() 
+void CRadarplotView::OnSimulationFullscreen()
 {
-	if(!m_bRun)
+	if (!m_bRun)
 	{
 		AfxMessageBox(_T("Simulation not running!"));
 		return;
@@ -4588,82 +4299,82 @@ void CRadarplotView::OnSimulationFullscreen()
 	m_pDlgScenOpenGL->MoveMenu();
 }
 
-void CRadarplotView::OnRFullsceen() 
+void CRadarplotView::OnRFullsceen()
 {
 	OnSimulationFullscreen();
 }
 
-void CRadarplotView::OnRJammode1() 
+void CRadarplotView::OnRJammode1()
 {
 	m_pDlgScenOpenGL->OnButtonJammode1();
 	Invalidate();
 }
 
-void CRadarplotView::OnRJammode2() 
+void CRadarplotView::OnRJammode2()
 {
 	m_pDlgScenOpenGL->OnButtonJammode2();
 	Invalidate();
 }
 
-void CRadarplotView::OnRJammeroff() 
+void CRadarplotView::OnRJammeroff()
 {
 	m_pDlgScenOpenGL->OnButtonOff();
 	Invalidate();
 }
 
-void CRadarplotView::OnRStop() 
+void CRadarplotView::OnRStop()
 {
 	OnButtonStop();
 }
 
-void CRadarplotView::OnRResume() 
+void CRadarplotView::OnRResume()
 {
 	m_strSimulationStatus.Format(_T("Running"));
 	ShowStatus();
 	m_pDlgScenOpenGL->OnButton1();
-	
+
 }
 
-void CRadarplotView::OnRPause() 
+void CRadarplotView::OnRPause()
 {
 	m_strSimulationStatus.Format(_T("Paused"));
 	ShowStatus();
 	m_pDlgScenOpenGL->OnMenuPause();
-	
+
 }
 
-void CRadarplotView::OnSimulationPause() 
+void CRadarplotView::OnSimulationPause()
 {
 	m_strSimulationStatus.Format(_T("Paused"));
 	ShowStatus();
 	OnRPause();
 }
 
-void CRadarplotView::OnSimulationResume() 
+void CRadarplotView::OnSimulationResume()
 {
 	m_strSimulationStatus.Format(_T("Running"));
 	ShowStatus();
 	OnRResume();
 }
 
-void CRadarplotView::OnFileSave() 
+void CRadarplotView::OnFileSave()
 {
 	AfxMessageBox(_T("Not possible in Demo version!"));
 }
 
-void CRadarplotView::OnFileOpen() 
+void CRadarplotView::OnFileOpen()
 {
 	AfxMessageBox(_T("Not possible in Demo version!"));
-	
+
 }
 
-void CRadarplotView::OnFileNew() 
+void CRadarplotView::OnFileNew()
 {
 	AfxMessageBox(_T("Not possible in Demo version!"));
-	
+
 }
 
-void CRadarplotView::OnSize(UINT nType, int cx, int cy) 
+void CRadarplotView::OnSize(UINT nType, int cx, int cy)
 {
 	CView::OnSize(nType, cx, cy);
 
@@ -4672,33 +4383,33 @@ void CRadarplotView::OnSize(UINT nType, int cx, int cy)
 	CMainFrame* pFrame = NULL;
 	pFrame = (CMainFrame*)AfxGetApp()->m_pMainWnd;
 	CMDIChildWnd *pChild;
-	if(pFrame!=NULL)
+	if (pFrame != NULL)
 	{
-		pChild = (CMDIChildWnd*) pFrame->GetActiveFrame();
+		pChild = (CMDIChildWnd*)pFrame->GetActiveFrame();
 		CWnd* pWnd = AfxGetApp()->m_pMainWnd;
-	//	pWnd->GetClientRect(&rect);
-		if(m_pDlgOVOpenGL == NULL)
+		//	pWnd->GetClientRect(&rect);
+		if (m_pDlgOVOpenGL == NULL)
 		{
-			m_pDlgOVOpenGL		=   new CDlgOverViewOpenGL;
-			m_pDlgOVOpenGL->Create(CDlgOverViewOpenGL::IDD,pWnd);
-			
+			m_pDlgOVOpenGL = new CDlgOverViewOpenGL;
+			m_pDlgOVOpenGL->Create(CDlgOverViewOpenGL::IDD, pWnd);
+
 			//m_pDlgOVOpenGL->ShowWindow(true);
 		}
-		m_pDlgOVOpenGL->SetWindowPos(&CWnd::wndBottom   ,rect.right/2.37f,rect.bottom/1.56f,rect.right/1.71,rect.bottom/2.25,SWP_HIDEWINDOW);
-		if(m_pDlgScenOpenGL==NULL)
+		m_pDlgOVOpenGL->SetWindowPos(&CWnd::wndBottom, rect.right / 2.37f, rect.bottom / 1.56f, rect.right / 1.71, rect.bottom / 2.25, SWP_HIDEWINDOW);
+		if (m_pDlgScenOpenGL == NULL)
 		{
-			m_pDlgScenOpenGL	=	new CDlgRadarPPI;
-			m_pDlgScenOpenGL->Create(CDlgRadarPPI::IDD,pWnd);
+			m_pDlgScenOpenGL = new CDlgRadarPPI;
+			m_pDlgScenOpenGL->Create(CDlgRadarPPI::IDD, pWnd);
 
 		}
-			m_pDlgScenOpenGL->SetWindowPos(&CWnd::wndBottom   ,rect.right/2.37f,rect.bottom/10.8f,rect.right/1.71,rect.bottom/1.82,SWP_HIDEWINDOW);
-				
-	
-	//	m_pDlgScenOpenGL->SetWindowPos(&CWnd::wndBottom   ,rect.right/2.37f,rect.bottom/10.8f,rect.right/1.71,rect.bottom/1.82,SWP_SHOWWINDOW);
-	//	m_pDlgOVOpenGL->SetWindowPos(&CWnd::wndBottom   ,rect.right/2.37f,rect.bottom/1.56f,rect.right/1.71,rect.bottom/2.25,SWP_SHOWWINDOW);
+		m_pDlgScenOpenGL->SetWindowPos(&CWnd::wndBottom, rect.right / 2.37f, rect.bottom / 10.8f, rect.right / 1.71, rect.bottom / 1.82, SWP_HIDEWINDOW);
+
+
+		//	m_pDlgScenOpenGL->SetWindowPos(&CWnd::wndBottom   ,rect.right/2.37f,rect.bottom/10.8f,rect.right/1.71,rect.bottom/1.82,SWP_SHOWWINDOW);
+		//	m_pDlgOVOpenGL->SetWindowPos(&CWnd::wndBottom   ,rect.right/2.37f,rect.bottom/1.56f,rect.right/1.71,rect.bottom/2.25,SWP_SHOWWINDOW);
 	}
-//	m_pDlgOVOpenGL->ShowWindow(true);
-//	m_pDlgScenOpenGL->ShowWindow(true);
-	
+	//	m_pDlgOVOpenGL->ShowWindow(true);
+	//	m_pDlgScenOpenGL->ShowWindow(true);
+
 }
 
