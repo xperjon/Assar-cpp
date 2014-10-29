@@ -1,0 +1,11 @@
+!MS$FREEFORM
+! Microsoft Developer Studio generated include file.
+! Used by radarplot.rc
+!
+      integer, parameter :: IDD_ABOUTBOX                    = 100
+      integer, parameter :: IDD_DIALOG_PPI_PLOT             = 103
+      integer, parameter :: IDR_MAINFRAME                   = 128
+      integer, parameter :: IDR_RADARPTYPE                  = 129
+      integer, parameter :: IDC_PPIPLOT_STATIC              = 1354
+      integer, parameter :: ID_BUTTON_PPI                   = 32771
+      integer, parameter :: ID_BUTTON_UTR                   = 32773

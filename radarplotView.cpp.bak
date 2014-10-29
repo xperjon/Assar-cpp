@@ -1,0 +1,4587 @@
+// radarplotView.cpp : implementation of the CRadarplotView class
+
+//
+
+
+
+#include "stdafx.h"
+
+#include "ASSAR.h"
+#include "MainFrm.h"
+
+#include "radarplotDoc.h"
+
+#include "radarplotView.h"
+
+#include "utrustningsklasser.h"
+
+//#include "utrustningsLista.h"
+
+#include "DlgRadarPPI.h"
+
+#include "RadarCalculate.h"
+
+#include "DialogKalibreraRadar.h"
+
+#include "PropSheetUtrustning.h"
+
+#include "PropSheetUtrustning1.h"
+
+#include "PropSheetUtrustning2.h"
+
+#include "DialogChoise.h"
+
+//#include "RadarPPI.h"
+
+#include "radarppi.h"
+
+#include "DlgOverViewOpenGL.h"
+
+#include <math.h>
+
+
+
+#ifdef _DEBUG
+
+#define new DEBUG_NEW
+
+#undef THIS_FILE
+
+static char THIS_FILE[] = __FILE__;
+
+#endif
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+// CRadarplotView
+
+
+
+IMPLEMENT_DYNCREATE(CRadarplotView, CView)
+
+
+
+BEGIN_MESSAGE_MAP(CRadarplotView, CView)
+
+	//{{AFX_MSG_MAP(CRadarplotView)
+	ON_COMMAND(ID_BUTTON_PPI, OnButtonPpi)
+	ON_WM_CONTEXTMENU()
+	ON_COMMAND(ID_BUTTON_CREATE_RADAR, OnButtonCreateRadar)
+	ON_COMMAND(ID_BUTTON_CREATE_JAMMER, OnButtonCreateJammer)
+	ON_COMMAND(ID_BUTTON_CREATE_TARGET, OnButtonCreateTarget)
+	ON_COMMAND(ID_BUTTON_CLEARALL, OnButtonClearall)
+	ON_COMMAND(ID_DELETE_RADAR, OnDeleteRadar)
+	ON_COMMAND(ID_DELETE_JAMMER, OnDeleteJammer)
+	ON_COMMAND(ID_DELETE_TARGET, OnDeleteTarget)
+	ON_COMMAND(ID_PROPERTIES_RADAR, OnPropertiesRadar)
+	ON_COMMAND(ID_PROPERTIES_JAMMER, OnPropertiesJammer)
+	ON_COMMAND(ID_PROPERTIES_TARGET, OnPropertiesTarget)
+	ON_COMMAND(ID_VIEW_SENARIO, OnViewSenario)
+	ON_COMMAND(ID_VIEW_OVERVIEW, OnViewOverview)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_OVERVIEW, OnUpdateViewOverview)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_SENARIO, OnUpdateViewSenario)
+	ON_COMMAND(ID_OPENRADAR, OnOpenradar)
+	ON_COMMAND(ID_SAVERADAR, OnSaveradar)
+	ON_COMMAND(ID_SAVEJAMMER, OnSavejammer)
+	ON_COMMAND(ID_OPENJAMMER, OnOpenjammer)
+	ON_WM_TIMER()
+	ON_COMMAND(ID_BUTTON_STOP, OnButtonStop)
+	ON_COMMAND(ID_KALIBRERA_RADAR, OnCalibrateRadar)
+	ON_WM_LBUTTONDOWN()
+	ON_COMMAND(ID_SCENARIO_ADDRADAR, OnScenarioAddradar)
+	ON_COMMAND(ID_SCENARIO_CLEAR, OnScenarioClear)
+	ON_COMMAND(ID_SCENARIO_ADDJAMMER, OnScenarioAddjammer)
+	ON_COMMAND(ID_SCENARIO_ADDTARGET, OnScenarioAddtarget)
+	ON_COMMAND(ID_SIMULATION_START, OnSimulationStart)
+	ON_COMMAND(ID_SIMULATION_STOP, OnSimulationStop)
+	ON_COMMAND(ID_SIMULATION_FULLSCREEN, OnSimulationFullscreen)
+	ON_COMMAND(ID_R_FULLSCEEN, OnRFullsceen)
+	ON_COMMAND(ID_R_JAMMODE1, OnRJammode1)
+	ON_COMMAND(ID_R_JAMMODE2, OnRJammode2)
+	ON_COMMAND(ID_R_JAMMEROFF, OnRJammeroff)
+	ON_COMMAND(ID_R_STOP, OnRStop)
+	ON_COMMAND(ID_R_RESUME, OnRResume)
+	ON_COMMAND(ID_R_PAUSE, OnRPause)
+	ON_COMMAND(ID_SIMULATION_PAUSE, OnSimulationPause)
+	ON_COMMAND(ID_SIMULATION_RESUME, OnSimulationResume)
+	//}}AFX_MSG_MAP
+
+	// Standard printing commands
+	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
+	ON_COMMAND(ID_FILE_PRINT_DIRECT, CView::OnFilePrint)
+	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
+END_MESSAGE_MAP()
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+// CRadarplotView construction/destruction
+
+																																	
+
+CRadarplotView::CRadarplotView():m_rectEllipse(50,-345,550,-430),m_rE1(60,-615,560,-700),m_rE2(60,-860,560,-945),m_rE3(60,-1105,560,-1190),m_rE4(60,-1075,560,-1160),m_rE5(60,-1320,560,-1405),m_rE6(60,-1565,560,-1650),m_rE7(60,-1810,560,-1895)
+
+{
+
+	// TODO: add construction code here
+
+
+
+	NbrOfRadar			=	0;
+
+	NbrOfJammer			=	0;
+
+	NbrOfTarget			=	0;
+
+	countJ				=	0;
+
+	countT				=	0;
+
+	m_bRun				=	false;
+
+	m_strSimulationStatus = "Ready";
+
+//	m_pDisplay = new COpenGL(this);
+
+	
+
+}
+
+
+
+CRadarplotView::~CRadarplotView()
+
+{
+
+	TRACE("~CRadarplotView\n");
+
+
+
+	delete m_pDlgOVOpenGL;
+
+	delete	m_pDlgScenOpenGL;
+
+
+
+}
+
+
+
+BOOL CRadarplotView::PreCreateWindow(CREATESTRUCT& cs)
+
+{
+
+	// TODO: Modify the Window class or styles here by modifying
+
+	//  the CREATESTRUCT cs
+
+
+
+
+
+	return CView::PreCreateWindow(cs);
+
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+// CRadarplotView drawing
+
+void CRadarplotView::ShowText(CDC* pDC,int nXPos,int nYPos, int textSize,CString* pstrText)
+
+{
+
+	TEXTMETRIC	tm;
+
+	CFont		fontText;
+
+	CString		strText		=	*pstrText;
+
+	CSize		sizeText;
+
+
+
+	pDC->SetMapMode(MM_TWIPS);
+
+
+
+
+
+	fontText.CreateFont(-textSize,0,0,0,400,false,false,0,ANSI_CHARSET,
+
+						OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
+
+						DEFAULT_PITCH | FF_SWISS,"Arial");
+
+
+
+	CFont* pOldFont= (CFont*) pDC->SelectObject(&fontText);
+
+	pDC->GetTextMetrics(&tm);
+
+	sizeText=pDC->GetTextExtent(strText);
+
+	pDC->TextOut(nXPos,-nYPos,strText);
+
+
+
+}
+
+void CRadarplotView::OnDraw(CDC* pDC)
+
+{
+
+
+
+	CRadarplotDoc* pDoc = GetDocument();
+
+	CString text;
+
+	pDC->SetBkColor(RGB(150,150,150));
+
+	pDC->SetTextColor(RGB(255,255,255));
+
+	text.Format("SCENARIO");
+
+	ShowText(pDC,2500,200,480,&text);
+
+	pDC->SetBkColor(RGB(255,255,255));
+
+	pDC->SetTextColor(RGB(0,0,0));
+
+	text.Format("Radar:");
+
+	ShowText(pDC,200,1200,320,&text);
+
+	pDC->MoveTo(200,-1520);
+
+	pDC->LineTo(7000,-1520);
+
+	text.Format("Jammer:");
+
+	ShowText(pDC,200,2800,320,&text);
+
+	pDC->MoveTo(200,-3120);
+
+	pDC->LineTo(7000,-3120);
+
+	text.Format("Targets:");
+
+	ShowText(pDC,200,5400,320,&text);
+
+	pDC->MoveTo(200,-5720);
+
+	pDC->LineTo(7000,-5720);
+
+
+
+	CUtrustning* tempRadar;
+
+	CUtrustningLista::CNod *pTempPos;
+
+	CUtrustningLista* pLista = CUtrustningLista::getInstance();
+	pTempPos = pLista->m_pStartPos;
+
+	int J=0;
+
+	int T=0;
+
+	for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+	{
+
+		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+
+		{
+
+			if(pTempPos->m_bActive==true)
+
+				pDC->SetTextColor(RGB(255,0,0));
+
+			else
+
+				pDC->SetTextColor(RGB(0,0,0));
+
+
+
+			text.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+			ShowText(pDC,1700,2100,240,&text);
+
+			text.Format("Max Range: %4.1f [km]",((CRadarStation*)pTempPos->m_pUtrustning)->m_fMaxRange/1000);
+
+			ShowText(pDC,3400,1600,180,&text);
+
+			text.Format("Frequency: min %3.1f [MHz] max %3.1f [MHz]",((CRadarStation*)pTempPos->m_pUtrustning)->m_fFreqMin*1000,((CRadarStation*)pTempPos->m_pUtrustning)->m_fFreqMax*1000);
+
+			ShowText(pDC,3400,1800,180,&text);
+
+			text.Format("PRI: %3.1f [ms] PRF: %3.1f [kHz] ",((CRadarStation*)pTempPos->m_pUtrustning)->m_fPRI*1000,(1/((CRadarStation*)pTempPos->m_pUtrustning)->m_fPRI)/1000);
+
+			ShowText(pDC,3400,2000,180,&text);
+
+			text.Format("Width Mainlobe Tx: %d [Degrees] ",(int)(((CRadarStation*)pTempPos->m_pUtrustning)->m_fWidthMainlobe));
+
+			ShowText(pDC,3400,2200,180,&text);
+
+			text.Format("Width Mainlobe Rx: %d [Degrees] ",(int)(((CRadarStation*)pTempPos->m_pUtrustning)->m_fWidthMainlobeRx));
+
+			ShowText(pDC,3400,2200,180,&text);
+
+			text.Format("Scan Period: %d [rpm] ",(int)(((CRadarStation*)pTempPos->m_pUtrustning)->m_nAntennaScanPeriod));
+
+			ShowText(pDC,3400,2400,180,&text);	
+
+			text.Format("Pulse Width: %3.1f [us] ",(((CRadarStation*)pTempPos->m_pUtrustning)->m_fPulseWidth*1000000));
+
+			ShowText(pDC,3400,2600,180,&text);
+
+			text.Format("Peakpower: %d [W] ",(int)(((CRadarStation*)pTempPos->m_pUtrustning)->m_fPeakPower));
+
+			ShowText(pDC,3400,2800,180,&text);
+
+			
+
+			CBitmap bitmap;
+
+			CDC dcDisplayMemory;
+
+			bitmap.LoadBitmap(IDB_BITMAP_RADARPPI);
+
+			dcDisplayMemory.CreateCompatibleDC(pDC);
+
+			dcDisplayMemory.SelectObject(&bitmap);
+
+			pDC->SetMapMode(MM_LOMETRIC);
+
+			pDC->BitBlt(50,-430,200,85,&dcDisplayMemory,0,0,SRCCOPY);
+
+			
+
+			tempRadar=pTempPos->m_pUtrustning;
+
+	
+
+		
+
+		}
+
+		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+		{
+
+
+
+			if(pTempPos->m_bActive==true)
+
+				pDC->SetTextColor(RGB(255,0,0));
+
+			else
+
+				pDC->SetTextColor(RGB(0,0,0));
+
+
+
+				text.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+				ShowText(pDC,1700,3700+980*J,240,&text);
+
+				text.Format("Jam Mode: %s ",pTempPos->m_pUtrustning->m_strStatus);
+
+				ShowText(pDC,3400,3500+1100*J,180,&text);
+
+				if(((CRadarJammer*)pTempPos->m_pUtrustning)->m_bBrusStorning==true && pTempPos->m_pUtrustning->m_strStatus!="OFF")
+
+				{
+
+					text.Format("ERP: %3.1f [W]",(((CRadarJammer*)pTempPos->m_pUtrustning)->m_fPeakPower)*(((CRadarJammer*)pTempPos->m_pUtrustning)->m_nAntennaGainTX));
+
+					ShowText(pDC,3400,3700+1100*J,180,&text);
+
+
+
+					text.Format("Frequency: min %3.1f [MHz] max %3.1f [MHz]",((CRadarJammer*)pTempPos->m_pUtrustning)->m_fFreqMin*1000,((CRadarJammer*)pTempPos->m_pUtrustning)->m_fFreqMax*1000);
+
+					ShowText(pDC,3400,3900,180,&text);
+
+
+				//	text.Format("J/S: %3.1f [dB]",((CRadarJammer*)pTempPos->m_pUtrustning)->m_fPeakPower);
+
+				//	ShowText(pDC,3400,3700+1100*J,180,&text);
+
+				}
+
+				else if(((CRadarJammer*)pTempPos->m_pUtrustning)->m_bRepeterStorning==true && pTempPos->m_pUtrustning->m_strStatus!="OFF")
+
+				{
+
+					text.Format("ERP: %3.1f [W]",(((CRadarJammer*)pTempPos->m_pUtrustning)->m_fPeakPowerRepeater)*(((CRadarJammer*)pTempPos->m_pUtrustning)->m_nAntennaGainTX));
+
+					ShowText(pDC,3400,3700+1100*J,180,&text);
+
+					text.Format("Power Received: %3.1f [dBm]",CRadarCalculate::FromGgrTodBm(CRadarCalculate::PowerRecieved(((CRadarStation*)tempRadar)->m_fPeakPower,((CRadarStation*)tempRadar)->m_fGainMainlobe,((CRadarStation*)tempRadar)->m_flambda,((CRadarJammer*)pTempPos->m_pUtrustning)->ReturnAntennaGain(2,(180+((CRadarJammer*)pTempPos->m_pUtrustning)->m_fBaring)-((CRadarJammer*)pTempPos->m_pUtrustning)->m_fCourse),pTempPos->m_pUtrustning->m_fDistanceToRadar)));
+
+					ShowText(pDC,3400,3900+1100*J,180,&text);
+
+					text.Format("Velocity False Targets: %d [m/s]",(int)(((CRadarJammer*)pTempPos->m_pUtrustning)->m_fFalseTargetVelocity+pTempPos->m_pUtrustning->m_fVelocity));
+
+					ShowText(pDC,3400,4100+1100*J,180,&text);
+
+
+
+				}
+
+				else
+
+				{
+
+					text.Format("ERP: %d [W]",0);
+
+					ShowText(pDC,3400,3700+1100*J,180,&text);
+
+				}
+
+				text.Format("Distance to Radar: %3.1f [km]",pTempPos->m_pUtrustning->m_fDistanceToRadar/1000.0f);
+
+				ShowText(pDC,3400,4300+1100*J,180,&text);
+
+				text.Format("Velocity: %d [m/s]",(int)pTempPos->m_pUtrustning->m_fVelocity);
+
+				ShowText(pDC,3400,4500+1100*J,180,&text);
+
+				text.Format("SNR: %3.1f [dB]",CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR));
+				ShowText(pDC,3400,4700,180,&text);
+
+				CBitmap bitmap;
+
+				CDC dcDisplayMemory;
+
+				bitmap.LoadBitmap(IDB_BITMAP_JAS2);
+
+				dcDisplayMemory.CreateCompatibleDC(pDC);
+
+				dcDisplayMemory.SelectObject(&bitmap);
+
+				pDC->SetMapMode(MM_LOMETRIC);
+
+				pDC->BitBlt(60,-700-245*J,200,85,&dcDisplayMemory,0,0,SRCCOPY);
+
+				J++;
+
+				
+
+		}
+
+
+
+		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+
+		{
+
+			if(pTempPos->m_bActive==true)
+
+				pDC->SetTextColor(RGB(255,0,0));
+
+			else
+
+				pDC->SetTextColor(RGB(0,0,0));
+
+				text.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+				ShowText(pDC,1700,6200+1400*T,240,&text);
+
+				text.Format("Bearing: %d [Grader]",(int)pTempPos->m_pUtrustning->m_fBaring);
+
+				ShowText(pDC,3400,5800+1400*T,180,&text);
+
+				text.Format("Course: %d [Grader]",(int)pTempPos->m_pUtrustning->m_fCourse);
+
+				ShowText(pDC,3400,6000+1400*T,180,&text);
+
+				text.Format("Velocity: %d [m/s]",(int)pTempPos->m_pUtrustning->m_fVelocity);
+
+				ShowText(pDC,3400,6200+1400*T,180,&text);
+
+				text.Format("Radar Cross Section: %d [m^2]",(int)pTempPos->m_pUtrustning->m_fSigma);
+
+				ShowText(pDC,3400,6400+1400*T,180,&text);
+
+				text.Format("Distance to Radar: %3.1f [km]",pTempPos->m_pUtrustning->m_fDistanceToRadar/1000.0f);
+
+				ShowText(pDC,3400,6600+1400*T,180,&text);
+
+				text.Format("SNR: %3.1f [dB]",CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR));
+
+				ShowText(pDC,3400,6800+1400*T,180,&text);
+
+				
+
+	//			text.Format("J/S: %d [dB]",10*log(pTempPos->m_pUtrustning->m_fJ_mal/pTempPos->m_pUtrustning->m_fSignal));//     m_fFalseTargetVelocity+pTempPos->m_pUtrustning->m_fVelocity))  //pTempPos->m_pUtrustning->m_ppTarget[i]->m_fJ_mal)/m_pUtrustning->m_fSignal;
+
+	//			ShowText(pDC,3400,6800+1400*T,180,&text);
+
+			
+
+				CBitmap bitmap;
+
+				CDC dcDisplayMemory;
+
+				bitmap.LoadBitmap(IDB_BITMAP6);
+
+				dcDisplayMemory.CreateCompatibleDC(pDC);
+
+				dcDisplayMemory.SelectObject(&bitmap);
+
+				pDC->SetMapMode(MM_LOMETRIC);
+
+				pDC->BitBlt(60,-1160-245*T,140,85,&dcDisplayMemory,0,0,SRCCOPY);
+
+				T++;
+
+				
+
+		}
+
+		pTempPos = pTempPos->m_pNext;
+
+	}
+
+
+
+	CUtrustning* tmpUtr;
+
+	CUtrustningLista::CNod *pTempPos1;
+
+	pTempPos1 = pLista->m_pStartPos;
+
+	for(int t=0;t<pLista->m_nAntalNoder;t++) 
+
+	{
+
+		if(pTempPos1->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+
+		{	//Detta skulle man behöva göra nåt åt
+
+			//Problemet orsakas av kopiorna m_Radar och m_Jammer som behöver 
+
+			//information som tillfogats listans object i beräkningsklasser(filen DIALOG_PPI_PLOT2)
+
+			tmpUtr=pTempPos1->m_pUtrustning;
+
+			m_bRun=((CRadarStation*)pTempPos1->m_pUtrustning)->m_bRun;
+
+			m_Radar.m_CellLista=(*((CRadarStation*)pTempPos1->m_pUtrustning)).m_CellLista;
+
+			break;
+
+		}
+
+
+
+		pTempPos1 = pTempPos1->m_pNext;
+
+	}	
+
+	if(m_bRun==false)
+
+	{
+
+		KillTimer(3);
+
+	}
+
+	else
+
+	//	KillTimer(0);
+
+		SetTimer(4,1500,NULL);
+
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+// CRadarplotView printing
+
+
+
+BOOL CRadarplotView::OnPreparePrinting(CPrintInfo* pInfo)
+
+{
+
+	// default preparation
+
+	return DoPreparePrinting(pInfo);
+
+}
+
+
+
+void CRadarplotView::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
+
+{
+
+	// TODO: add extra initialization before printing
+
+}
+
+
+
+void CRadarplotView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
+
+{
+
+	// TODO: add cleanup after printing
+
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+// CRadarplotView diagnostics
+
+
+
+#ifdef _DEBUG
+
+void CRadarplotView::AssertValid() const
+
+{
+
+	CView::AssertValid();
+
+}
+
+
+
+void CRadarplotView::Dump(CDumpContext& dc) const
+
+{
+
+	CView::Dump(dc);
+
+}
+
+
+
+CRadarplotDoc* CRadarplotView::GetDocument() // non-debug version is inline
+
+{
+
+	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CRadarplotDoc)));
+
+	return (CRadarplotDoc*)m_pDocument;
+
+}
+
+#endif //_DEBUG
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+// CRadarplotView message handlers
+
+
+
+void CRadarplotView::OnButtonPpi() 
+
+{
+
+	if(m_bRun)
+
+		return;
+
+	if(NbrOfJammer>0)
+
+	{
+
+		m_bRun=true;
+
+		CUtrustning*		tmpUtr;
+
+		CUtrustning*		utrjam;
+
+	
+
+		CUtrustningLista::CNod *pTempPos;
+		CUtrustningLista* pLista = CUtrustningLista::getInstance();
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+
+			{
+
+				tmpUtr=pTempPos->m_pUtrustning;
+
+				//break;
+
+			}
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+			{
+
+				utrjam=pTempPos->m_pUtrustning;
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}	
+
+	//Kopiera över från kopian till orginalet (om någon trycker på/av på/av osv.)
+
+	//Vi kopierar ej utrustningen då detta skulle innebära ett waypoints försvann(de ligger ej i kopian)
+
+		*((CRadarJammer*)utrjam)=m_Jammer;
+
+		((CRadarStation*)tmpUtr)->m_bRun=true;
+
+		//m_pDlgScenOpenGL->ShowWindow(SW_MAXIMIZE);
+
+		m_pDlgScenOpenGL->Init(tmpUtr,utrjam,NbrOfTarget);
+
+	//	m_pDlgScenOpenGL->SetFocus();	
+
+		Invalidate();
+
+	}
+
+	else
+		AfxMessageBox("You have not specified your scenario correctly!");
+
+	m_strSimulationStatus.Format("Running");
+	ShowStatus();
+
+}
+
+void CRadarplotView::OnContextMenu(CWnd* pWnd, CPoint point) 
+
+{
+
+	
+	//Hitta fönsterplacering
+	CRect tempwindow;
+	GetWindowRect(tempwindow);
+
+	//Dra bort en offset på muspekaren
+	point.x=point.x-tempwindow.left;
+	point.y=point.y-tempwindow.top;
+
+	if(m_bRun)
+	{
+
+		CMenu menuRun;
+		VERIFY(menuRun.LoadMenu(IDR_MENU_VIEW_RUN));
+		CMenu* pPop = menuRun.GetSubMenu(0);
+		ASSERT(pPop != NULL);
+		pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
+	
+	}
+	else
+	{
+
+		CUtrustningLista* pLista = CUtrustningLista::getInstance();
+
+
+		CRect rectEllipse,rE1,rE2,rE3,rE4,rE5,rE6,rE7;
+
+		CRgn Radar,Jam1,Jam2,Jam3,Tar1,Tar2,Tar3,Tar4;
+
+		CMenu menuRadar,menuJammer,menuTarget;
+
+
+
+		rectEllipse = m_rectEllipse;
+
+		rE1=m_rE1;
+
+		rE2=m_rE2;
+
+		rE3=m_rE3;
+
+		rE4=m_rE4;
+
+		rE5=m_rE5;
+
+		rE6=m_rE6;
+
+		rE7=m_rE7;
+
+
+
+
+
+
+
+		CClientDC dc(this);
+
+		OnPrepareDC(&dc);
+
+		dc.SetMapMode(MM_LOMETRIC);
+
+		dc.LPtoDP(rectEllipse);
+
+		dc.LPtoDP(rE1);
+
+		dc.LPtoDP(rE2);
+
+		dc.LPtoDP(rE3);
+
+		dc.LPtoDP(rE4);
+
+		dc.LPtoDP(rE5);
+
+		dc.LPtoDP(rE6);
+
+		dc.LPtoDP(rE7);
+
+
+
+		Radar.CreateRectRgnIndirect(rectEllipse);
+
+		Jam1.CreateRectRgnIndirect(rE1);
+
+		Jam2.CreateRectRgnIndirect(rE2);
+
+		Jam3.CreateRectRgnIndirect(rE3);
+
+
+
+		Tar1.CreateRectRgnIndirect(rE4);
+
+		Tar2.CreateRectRgnIndirect(rE5);
+
+		Tar3.CreateRectRgnIndirect(rE6);
+
+		Tar4.CreateRectRgnIndirect(rE7);
+
+
+
+
+
+		if(Radar.PtInRegion(point) && pLista->m_nAntalNoder!=0)
+
+		{
+
+			CUtrustningLista::CNod *pTempPos;
+			pTempPos = pLista->m_pStartPos;
+
+			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+			{
+
+				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+
+				{
+
+					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+					break;
+
+				}
+
+
+
+				pTempPos = pTempPos->m_pNext;
+
+			}
+
+			VERIFY(menuRadar.LoadMenu(IDR_MENU_RADAR));
+
+
+
+			CMenu* pPop = menuRadar.GetSubMenu(0);
+
+			ASSERT(pPop != NULL);
+
+		
+			pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
+
+			
+
+		}
+
+		if(Jam1.PtInRegion(point) && NbrOfJammer>0)
+
+		{
+
+			CUtrustningLista::CNod *pTempPos;
+
+			pTempPos = pLista->m_pStartPos;
+
+			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+			{
+
+				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+				{
+
+					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+					break;
+
+				}
+
+
+
+				pTempPos = pTempPos->m_pNext;
+
+			}
+
+			VERIFY(menuJammer.LoadMenu(IDR_MENU_JAMMER));
+
+
+
+			CMenu* pPop = menuJammer.GetSubMenu(0);
+
+			ASSERT(pPop != NULL);
+
+			
+
+			pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
+
+		}
+
+		if(Jam2.PtInRegion(point) && NbrOfJammer>1)
+
+		{
+
+			int l=0;
+
+			CUtrustningLista::CNod *pTempPos;
+
+			pTempPos = pLista->m_pStartPos;
+
+			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+			{
+
+				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+				{
+
+					l++;
+
+					if(l>1)
+
+					{
+
+						m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+						break;
+
+					}
+
+				}
+
+
+
+				pTempPos = pTempPos->m_pNext;
+
+			}
+
+			VERIFY(menuJammer.LoadMenu(IDR_MENU_JAMMER));
+
+
+
+			CMenu* pPop = menuJammer.GetSubMenu(0);
+
+			ASSERT(pPop != NULL);
+
+			
+
+			pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
+
+		}
+
+		if(Jam3.PtInRegion(point) && NbrOfJammer>2)
+
+		{
+
+			int k=0;
+
+			CUtrustningLista::CNod *pTempPos;
+		
+			pTempPos = pLista->m_pStartPos;
+
+			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+			{
+
+				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+				{
+
+					k++;
+
+					if(k>2)
+
+					{
+
+						m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+						break;
+
+					}
+
+				}
+
+
+
+				pTempPos = pTempPos->m_pNext;
+
+			}
+
+			VERIFY(menuJammer.LoadMenu(IDR_MENU_JAMMER));
+
+
+
+			CMenu* pPop = menuJammer.GetSubMenu(0);
+
+			ASSERT(pPop != NULL);
+
+			
+
+			pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
+
+		}
+
+		if(Tar1.PtInRegion(point) && NbrOfTarget>0)
+
+		{
+
+
+
+			CUtrustningLista::CNod *pTempPos;
+
+			pTempPos = pLista->m_pStartPos;
+
+			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+			{
+
+				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+
+				{
+
+					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+					break;
+
+				}
+
+
+
+				pTempPos = pTempPos->m_pNext;
+
+			}
+
+			VERIFY(menuTarget.LoadMenu(IDR_MENU_TARGET));
+
+
+
+			CMenu* pPop = menuTarget.GetSubMenu(0);
+
+			ASSERT(pPop != NULL);
+
+			
+
+			pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
+
+		}
+
+		if(Tar2.PtInRegion(point) && NbrOfTarget>1)
+
+		{
+
+			int n=0;
+
+			CUtrustningLista::CNod *pTempPos;
+
+			pTempPos = pLista->m_pStartPos;
+
+			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+			{
+
+				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+
+				{
+
+					n++;
+
+					if(n>1)
+
+					{
+
+						m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+						break;
+
+					}
+
+				}
+
+
+
+				pTempPos = pTempPos->m_pNext;
+
+			}
+
+			VERIFY(menuTarget.LoadMenu(IDR_MENU_TARGET));
+
+
+
+			CMenu* pPop = menuTarget.GetSubMenu(0);
+
+			ASSERT(pPop != NULL);
+
+			
+
+			pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
+
+		}
+
+		if(Tar3.PtInRegion(point) && NbrOfTarget>2)
+
+		{
+
+			int o=0;
+
+			CUtrustningLista::CNod *pTempPos;
+
+			pTempPos = pLista->m_pStartPos;
+
+			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+			{
+
+				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+
+				{
+
+					o++;
+
+					if(o>2)
+
+					{
+
+						m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+						break;
+
+					}
+
+				}
+
+
+
+				pTempPos = pTempPos->m_pNext;
+
+			}
+
+			VERIFY(menuTarget.LoadMenu(IDR_MENU_TARGET));
+
+
+
+			CMenu* pPop = menuTarget.GetSubMenu(0);
+
+			ASSERT(pPop != NULL);
+
+			
+
+			pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
+
+		}
+
+		if(Tar4.PtInRegion(point) && NbrOfTarget>3)
+
+		{
+
+			int p=0;
+
+			CUtrustningLista::CNod *pTempPos;
+
+			pTempPos = pLista->m_pStartPos;
+
+			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+			{
+
+				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+
+				{
+
+					p++;
+
+					if(p>3)
+
+					{
+
+						m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+						break;
+
+					}
+
+				}
+
+
+
+				pTempPos = pTempPos->m_pNext;
+
+			}
+
+			VERIFY(menuTarget.LoadMenu(IDR_MENU_TARGET));
+
+
+
+			CMenu* pPop = menuTarget.GetSubMenu(0);
+
+			ASSERT(pPop != NULL);
+
+			
+
+			pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x+tempwindow.left, point.y+tempwindow.top, this);
+
+		}
+	}
+
+}
+
+
+
+void CRadarplotView::OnButtonCreateRadar() 
+
+{
+
+	if(m_bRun)
+
+		return;
+
+	if(NbrOfRadar>0)
+
+			AfxMessageBox("Not available in DEMO version!");
+
+	else
+
+	{
+
+	CUtrustning*		tmpUtr;
+
+	CUtrustningLista* pLista = CUtrustningLista::getInstance();
+
+	tmpUtr = new CRadarStation();
+
+	tmpUtr->m_fPosX = 0;
+
+	tmpUtr->m_fPosY = 0;
+
+	tmpUtr->m_strUniqID.Format("Radar_1");
+
+	pLista->LaggTill(tmpUtr);
+
+
+
+	NbrOfRadar++;
+
+	Invalidate(true);
+
+	m_bDelete=true;
+
+	OnPropertiesRadar();
+
+	}
+
+}
+
+
+
+void CRadarplotView::OnButtonCreateJammer() 
+
+{
+
+	if(m_bRun)
+
+		return;
+
+	if(NbrOfRadar!=0)
+
+		{
+
+		if(NbrOfJammer>0)
+
+				AfxMessageBox("Not available in DEMO version!");
+
+		else
+
+		{
+
+		CUtrustning*		tmpUtr;
+		CUtrustningLista* pLista = CUtrustningLista::getInstance();
+		tmpUtr = new CRadarJammer();
+
+//Här kan man göra ändringar i Utrustningen för Jammern
+
+		tmpUtr->m_strStatus="OFF";
+
+		tmpUtr->m_fColor[0]=0.5f;
+
+		tmpUtr->m_fColor[1]=0.75f;
+
+		tmpUtr->m_fColor[2]=1.0f;
+
+		tmpUtr->m_fBaring=45.0f*countJ+45.0f;
+
+		tmpUtr->m_strUniqID.Format("Jammer_%d",countJ+1);
+
+		m_strCurrentObject=tmpUtr->m_strUniqID;
+
+		pLista->LaggTill(tmpUtr);	
+
+
+
+		countJ++;
+
+		NbrOfJammer++;
+
+		Invalidate(true);
+
+		m_bDelete=true;
+
+		OnPropertiesJammer();
+
+		}
+
+	}
+
+	else
+
+		AfxMessageBox("Start by adding a Radar!");
+
+
+
+}
+
+
+
+
+
+void CRadarplotView::OnButtonCreateTarget() 
+
+{
+
+	if(m_bRun)
+
+		return;
+
+	if(NbrOfRadar!=0)
+
+	{
+
+		if(NbrOfJammer!=0)
+
+		{
+
+			if(NbrOfTarget>3)
+
+					AfxMessageBox("The maximal amount of Targets is four");
+
+			else
+
+			{
+
+			CUtrustning*		tmpUtr;
+
+			CUtrustningLista* pLista = CUtrustningLista::getInstance();
+
+			tmpUtr = new CRadarTarget();
+
+			tmpUtr->m_fVelocity = 250;
+
+			tmpUtr->m_fCourse = 180.0f+90.0f*countT;
+
+			if(tmpUtr->m_fCourse>360)
+
+				tmpUtr->m_fCourse-=360;
+
+			tmpUtr->m_fBaring=90.0f*countT;
+
+			tmpUtr->m_strUniqID.Format("Target_%d",countT+1);
+
+			m_strCurrentObject=tmpUtr->m_strUniqID;
+
+			pLista->LaggTill(tmpUtr);
+
+
+
+			NbrOfTarget++;
+
+			countT++;
+
+			Invalidate(true);
+
+			m_bDelete=true;
+
+			OnPropertiesTarget();
+
+			}
+
+		}
+
+		else
+
+			AfxMessageBox("Add Jammer first!");
+
+	}
+
+	else
+
+		AfxMessageBox("Start by adding a Radar!");
+
+		
+
+}
+
+
+
+void CRadarplotView::OnButtonClearall() 
+
+{
+
+	if(m_bRun)
+		return;
+	CUtrustningLista* pLista = CUtrustningLista::getInstance();
+	pLista->TaBortAlla();
+
+
+	NbrOfRadar=0;
+
+	NbrOfJammer=0;
+
+	NbrOfTarget=0;
+
+	countJ=0;
+
+	countT=0;
+
+	/*JEP 060316 vet inte riktikgt varför dessa rader finns här
+	CRadarStation tempRadar;
+
+	m_Radar=tempRadar;
+
+	CRadarJammer tempJammer;
+
+	m_Jammer=tempJammer;
+	*/
+	Invalidate(true);
+
+
+}
+
+
+
+void CRadarplotView::OnDeleteRadar() 
+
+{
+
+	// TODO: Add your command handler code here
+
+	if(NbrOfJammer>0 || NbrOfTarget>0)
+
+	{
+
+		AfxMessageBox("Delete All Targets and/or Jammers first!");
+
+		return;
+
+	}
+	
+	CString tmpstr;
+
+	tmpstr.Format("Delete?");
+
+	int nRet= AfxMessageBox(tmpstr,MB_YESNO,1);
+
+	if(nRet==IDYES)
+
+	{
+
+		CUtrustningLista::CNod *pTempPos;
+		CUtrustningLista* pLista = CUtrustningLista::getInstance();
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+
+			{
+
+				pLista->TaBort(pTempPos->m_pUtrustning);
+
+				break;
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+		CRadarStation tempRadar;
+
+		m_Radar=tempRadar;
+
+		NbrOfRadar=0;
+
+		Invalidate(true);
+
+		m_pDlgScenOpenGL->Invalidate(true);
+
+	}
+
+	else
+
+	{
+
+	}
+
+}
+
+
+
+void CRadarplotView::OnDeleteJammer() 
+
+{
+
+	// TODO: Add your command handler code here
+
+	if(NbrOfJammer<1)
+
+		return;
+
+
+
+	//CDialogChoise DlgCh;
+
+	//DlgCh.m_strChoise.Format("Delete?");
+
+	CString tmpstr;
+
+	tmpstr.Format("Delete?");
+
+	//int nRet=-1;
+
+	int nRet= AfxMessageBox(tmpstr,MB_YESNO,1);
+
+//	nRet=DlgCh.DoModal();
+
+	if(nRet==IDYES)
+
+	{
+
+		CUtrustningLista::CNod *pTempPos;
+		CUtrustningLista* pLista = CUtrustningLista::getInstance();
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+			{
+
+				if(pTempPos->m_pUtrustning->m_strUniqID==m_strCurrentObject)
+
+				{
+
+					pLista->TaBort(pTempPos->m_pUtrustning);
+
+					break;
+
+				}
+
+			}	
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+		CRadarJammer tempJammer;
+
+		m_Jammer=tempJammer;
+
+		NbrOfJammer--;
+
+		CUtrustningLista::CNod *pTempPos2;
+
+		pTempPos2 = pLista->m_pStartPos;
+
+		Invalidate(true);
+
+		
+
+	}
+
+	else
+
+	{
+
+	}
+
+	
+
+}
+
+
+
+void CRadarplotView::OnDeleteTarget() 
+
+{
+
+	// TODO: Add your command handler code here
+
+	if(NbrOfTarget<1)
+
+		return;
+
+	//CDialogChoise DlgCh;
+
+	//DlgCh.m_strChoise.Format("Delete?");
+
+	CString tmpstr;
+
+	tmpstr.Format("Delete?");
+
+	int nRet= AfxMessageBox(tmpstr,MB_YESNO,1);
+
+	
+
+	//int nRet=-1;
+
+	//nRet=DlgCh.DoModal();
+
+	if(nRet==IDYES)
+
+	{
+
+		CUtrustningLista::CNod *pTempPos;
+		CUtrustningLista* pLista = CUtrustningLista::getInstance();
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+
+			{
+
+				if(pTempPos->m_pUtrustning->m_strUniqID==m_strCurrentObject)
+
+				{
+
+					pLista->TaBort(pTempPos->m_pUtrustning);
+
+					break;
+
+				}
+
+			}	
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+		NbrOfTarget--;
+
+		CUtrustningLista::CNod *pTempPos2;
+
+		pTempPos2 = pLista->m_pStartPos;
+
+		Invalidate(true);
+
+	}
+
+	else
+
+	{
+
+
+
+	}
+
+	
+
+}
+
+
+
+void CRadarplotView::OnPropertiesRadar() 
+
+{
+
+
+
+	CString SheetTitle;
+
+	SheetTitle.Format("Properties ");
+
+	
+
+
+
+	CUtrustning*	pUtr;
+		
+	CUtrustningLista::CNod *pTempPos;
+	CUtrustningLista* pLista = CUtrustningLista::getInstance();
+	pTempPos = pLista->m_pStartPos;
+
+	for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+	{
+
+		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+
+		{
+
+				pUtr=pTempPos->m_pUtrustning;
+
+				break;
+
+		}	
+
+
+
+		pTempPos = pTempPos->m_pNext;
+
+	}
+
+
+
+	SheetTitle.Insert(12,pUtr->m_strUniqID);
+
+	CPropSheetRadar sh(SheetTitle);
+
+	sh.m_psh.dwFlags |= PSH_NOAPPLYNOW;
+
+	//kopierar från Utrustning till Radar
+
+	m_Radar.operator =(*pUtr);
+
+ 	sh.Init(&m_Radar);
+
+	int nResult = sh.DoModal();
+
+
+
+	if(nResult == IDOK)
+
+	{
+
+		if(m_Radar.m_bCoherentIntegration==true)
+
+		{
+
+			m_Radar.m_nProcessingGain=CRadarCalculate::ProcessingGain(1,m_Radar.m_fWidthMainlobeRx,m_Radar.m_nAntennaScanPeriod,m_Radar.m_fPRI);
+
+		//	if(((CRadarStation*)pUtr)->m_nProcessingGain>((CRadarStation*)pUtr)->m_fantal_pulser)
+
+			//	((CRadarStation*)pUtr)->m_nProcessingGain=((CRadarStation*)pUtr)->m_fantal_pulser;
+
+		}
+
+		else
+
+		{
+
+			m_Radar.m_nProcessingGain=CRadarCalculate::ProcessingGain(2,m_Radar.m_fWidthMainlobeRx,m_Radar.m_nAntennaScanPeriod,m_Radar.m_fPRI);
+
+		//	if(((CRadarStation*)pUtr)->m_nProcessingGain>((CRadarStation*)pUtr)->m_fantal_pulser)
+
+		//		((CRadarStation*)pUtr)->m_nProcessingGain=sqrt(((CRadarStation*)pUtr)->m_fantal_pulser);
+
+		}
+
+
+
+		m_Radar.m_fIFBandWidth=CRadarCalculate::IFBandWidth(m_Radar.m_fPulseWidth);
+
+		m_Radar.m_fSensitivity=CRadarCalculate::SensitivityRadar(m_Radar.m_fPulseWidth,m_Radar.m_fNoiseFactor,m_Radar.m_fSNRRadar,m_Radar.m_fLosses);
+
+		m_Radar.m_flambda=CRadarCalculate::LambdaRadar(m_Radar.m_fFreqMax,m_Radar.m_fFreqMin);
+
+		m_Radar.m_fMaxRange=CRadarCalculate::MaxRange(m_Radar.m_fGainMainlobe,m_Radar.m_fGainMainlobeRx,m_Radar.m_flambda,m_Radar.m_fSigmaRef,m_Radar.m_nProcessingGain,m_Radar.m_fPeakPower,m_Radar.m_fSensitivity); 
+
+		m_Radar.m_fSvepHastighet=CRadarCalculate::AntennaScanPeriod((float)m_Radar.m_nAntennaScanPeriod);
+
+		if(m_Radar.m_bPulseGroup==true && m_Radar.m_fantal_pulser==1 && m_Radar.m_bMTIFilter==true)
+
+		{
+
+			AfxMessageBox("Error: MTI Mode is not possible in \npulse-pulse frequency hopping!");
+
+			m_Radar.m_bMTIFilter=false;
+
+		}
+
+
+
+		//kopierar från Radar till Utrustning
+
+		pUtr->operator =((CUtrustning)m_Radar);
+
+		//kopierar från Radar till Radar
+
+		*((CRadarStation*)pUtr)=m_Radar;
+
+		Invalidate(true);
+
+	}
+
+	if(nResult == IDCANCEL)
+
+	{
+
+		if(m_bDelete)
+
+		{
+
+			CUtrustningLista::CNod *pTempPos;
+
+			pTempPos = pLista->m_pStartPos;
+
+			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+			{
+
+				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+
+				{
+
+						pLista->TaBort(pTempPos->m_pUtrustning);
+
+						break;
+
+				}	
+
+
+
+				pTempPos = pTempPos->m_pNext;
+
+			}
+
+		
+
+			NbrOfRadar--;
+
+			CUtrustning* tmpUtr;
+
+			Invalidate(true);
+
+		}
+
+	}
+
+	m_bDelete=false;
+
+}
+
+
+
+void CRadarplotView::OnPropertiesJammer() 
+
+{
+
+	// TODO: Add your command handler code here
+
+
+
+	CString SheetTitle;
+
+	SheetTitle.Format("Properties ");
+
+	CUtrustning*	pUtr;
+
+	CUtrustning*	pUtrRadar;
+
+	CUtrustningLista::CNod *pTempPos;
+	CUtrustningLista* pLista = CUtrustningLista::getInstance();
+	pTempPos = pLista->m_pStartPos;
+
+	for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+	{
+
+		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+
+		{
+
+				pUtrRadar=pTempPos->m_pUtrustning;
+
+			//	break;
+
+		}	
+
+
+
+		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_strUniqID==m_strCurrentObject)
+
+			{
+
+				pUtr=pTempPos->m_pUtrustning;
+
+			//	break;
+
+			}
+
+		}	
+
+
+
+		pTempPos = pTempPos->m_pNext;
+
+	}
+
+	SheetTitle.Insert(12,pUtr->m_strUniqID);
+
+	CPropSheetJammer sh(SheetTitle);
+
+	sh.m_psh.dwFlags |= PSH_NOAPPLYNOW;
+
+	//kopierar från Utrustning till Jammer
+
+	m_Jammer.operator =(*pUtr);
+
+ 	sh.Init(&m_Jammer,pUtrRadar);
+
+	int nResult = sh.DoModal();
+
+
+
+
+
+	if(nResult == IDOK)
+
+	{
+
+		//kopierar från Jammer till Utrustning
+
+		pUtr->operator =((CUtrustning)m_Jammer);
+
+		//kopierar från Jammer till Jammer
+
+		*((CRadarJammer*)pUtr)=m_Jammer;
+
+		Invalidate(true);
+
+		m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
+
+	}
+
+	if(nResult == IDCANCEL)
+
+	{
+
+		if(m_bDelete)
+
+		{
+
+			pLista->TaBort(pUtr);
+
+			NbrOfJammer--;
+
+			Invalidate(true);
+
+		}
+
+	}
+
+	m_bDelete=false;
+
+}
+
+
+
+void CRadarplotView::OnPropertiesTarget() 
+
+{
+
+	// TODO: Add your command handler code here
+
+
+
+	CString SheetTitle;
+
+	SheetTitle.Format("Properties ");
+
+	SheetTitle.Insert(12,m_strCurrentObject);
+
+	CUtrustning*	pUtr;
+
+	CUtrustningLista::CNod *pTempPos;
+	CUtrustningLista* pLista = CUtrustningLista::getInstance();
+	pTempPos = pLista->m_pStartPos;
+
+	for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+	{
+
+		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_strUniqID==m_strCurrentObject)
+
+			{
+
+				pUtr=pTempPos->m_pUtrustning;
+
+				break;
+
+			}
+
+		}	
+
+
+
+		pTempPos = pTempPos->m_pNext;
+
+	}
+
+
+
+	CPropSheetTarget sh(SheetTitle);
+
+	sh.m_psh.dwFlags |= PSH_NOAPPLYNOW;
+
+ 	sh.Init(pUtr);
+
+
+
+	int nResult = sh.DoModal();
+
+
+
+
+
+	if(nResult == IDOK)
+
+	{
+
+		Invalidate(true);
+
+	}
+
+	if(nResult == IDCANCEL)
+
+	{
+
+		if(m_bDelete)
+
+		{
+
+			/*
+
+			CUtrustningLista::CNod *pTempPos;
+
+			pTempPos = pLista->m_pStartPos;
+
+			for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+			{
+
+				if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+
+				{
+
+					if(pTempPos->m_pUtrustning->m_strUniqID==m_strCurrentObject)
+
+					{
+
+						pLista->TaBort(pTempPos->m_pUtrustning);
+
+						break;
+
+					}
+
+				}	
+
+
+
+				pTempPos = pTempPos->m_pNext;
+
+			}*/
+
+			pLista->TaBort(pUtr);
+
+			NbrOfTarget--;
+
+			CUtrustningLista::CNod *pTempPos2;
+
+			pTempPos2 = pLista->m_pStartPos;
+
+			Invalidate(true);
+
+		}
+
+	}	
+
+	m_bDelete=false;
+
+}
+
+
+
+void CRadarplotView::OnInitialUpdate() 
+
+{
+
+	/*
+
+		dlgWorld	=	new CRadarPPI(this);
+
+		dlgWorld->Init();
+
+	//	Dlg			=	new CDlgRadarPPI(this);	
+
+		CRect rect;
+
+		this->GetClientRect(&rect);
+
+		
+
+	//	Dlg->SetWindowPos(&wndTop,rect.right/2.37f,rect.bottom/8.4f,rect.right/1.71,rect.bottom/2.10,SWP_SHOWWINDOW);
+
+		dlgWorld->SetWindowPos(&wndTop,rect.right/2.37f,rect.bottom/1.68f,rect.right/1.71,rect.bottom/2.25,SWP_SHOWWINDOW);
+
+	
+
+	CRect rect;
+
+	this->GetClientRect(&rect);
+
+	rect.left-=200;
+
+	rect.right-=200;
+
+	
+
+
+
+	// TODO: Add extra initialization here
+
+	m_pDisplay->Create( NULL,   //CWnd default
+
+						NULL,   //has no name
+
+						WS_CHILD|WS_CLIPSIBLINGS|WS_CLIPCHILDREN|WS_VISIBLE,
+
+						rect,
+
+						this,   //this is the parent
+
+						0); 			
+
+*/
+
+
+
+
+
+	SetCapture();
+
+	::SetCursor(::LoadCursor(NULL,IDC_APPSTARTING));						
+
+	l=0;
+
+	SetTimer(4, 1150, NULL);
+
+
+
+	CView::OnInitialUpdate();	
+
+}
+
+
+
+void CRadarplotView::OnViewSenario() 
+
+{
+	//JEP test 060309
+//	AfxBeginThread (RUNTIME_CLASS(CDialogThread));
+
+	if(m_pDlgScenOpenGL->IsWindowVisible())
+		m_pDlgScenOpenGL->SendMessage(WM_CLOSE);
+	else
+	{
+		m_pDlgScenOpenGL->ShowWindow(SW_SHOW);	
+		m_pDlgScenOpenGL->UpdateWindow();
+	}
+}
+
+
+void CRadarplotView::OnViewOverview() 
+
+{
+	if(m_pDlgOVOpenGL->IsWindowVisible())
+
+		m_pDlgOVOpenGL->SendMessage(WM_CLOSE);
+
+	else
+
+	{
+
+		m_pDlgOVOpenGL->ShowWindow(SW_SHOW);	
+
+		m_pDlgOVOpenGL->UpdateWindow();
+
+	}
+
+}
+
+
+
+void CRadarplotView::OnUpdateViewOverview(CCmdUI* pCmdUI) 
+
+{
+
+	// TODO: Add your command update UI handler code here
+
+	pCmdUI->SetCheck(m_pDlgOVOpenGL->IsWindowVisible());
+
+}
+
+
+
+void CRadarplotView::OnUpdateViewSenario(CCmdUI* pCmdUI) 
+
+{
+
+	// TODO: Add your command update UI handler code here
+
+	pCmdUI->SetCheck(m_pDlgScenOpenGL->IsWindowVisible());
+
+}
+
+
+
+void CRadarplotView::OnOpenradar() 
+
+{
+
+//Lätt sätt att göra en öppna Fildialog
+
+	CFileDialog DlgRadar(true,"rad","*.rad");
+
+	if(DlgRadar.DoModal()==IDOK)
+
+	{
+
+		CString RadFile=DlgRadar.GetPathName();
+
+	
+
+
+
+		CFile f;
+
+		if(f.Open(RadFile,CFile::modeRead)==FALSE)
+
+			return;
+
+
+
+		CArchive ar(&f, CArchive::load);
+
+		Serialize(ar,1);	
+
+
+
+		ar.Close();
+
+		f.Close();
+
+		//Invalidate();
+
+		InvalidateRect(NULL,FALSE);
+
+	}
+
+	
+
+}
+
+
+
+void CRadarplotView::OnSaveradar() 
+
+{
+
+
+
+	CString FileName;
+
+	CString FileExt=".rad";
+
+	FileName.Format(m_strCurrentObject);
+
+	FileName.Insert(12,FileExt);
+
+	CFileDialog DlgRadar(false,"rad",FileName);
+
+	if(DlgRadar.DoModal()==IDOK)
+
+	{
+
+		CString RadFile=DlgRadar.GetPathName();
+
+	
+
+		CFile f;
+
+		f.Open(RadFile,CFile::modeCreate | CFile::modeWrite);
+
+	
+
+		CArchive ar(&f, CArchive::store);
+
+		Serialize(ar,1);
+
+
+
+		ar.Close();
+
+		f.Close();	
+
+		Invalidate();
+
+	}
+
+}
+
+
+
+void CRadarplotView::Serialize(CArchive& ar,int val) 
+
+{
+
+
+	CUtrustningLista* pLista = CUtrustningLista::getInstance();
+
+	if(val==1)//Radar
+
+	{
+
+		CUtrustning* pUtr;
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+
+			{
+
+				pUtr=pTempPos->m_pUtrustning;
+
+				break;
+
+			}	
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+		int Svep_pa						= (int)m_Radar.m_bSvep_pa;
+
+		int Run							= (int)m_Radar.m_bRun;
+
+		int Deflection					= (int)m_Radar.m_bDeflectionMode;
+
+		int RawVideoMode				= (int)m_Radar.m_bRAWVideoMode;
+
+		int SynteticMode				= (int)m_Radar.m_bSynteticMode;
+
+		int SyntAndRawVideoMode			= (int)m_Radar.m_bSyntAndRAWVideoMode;
+
+		int CoherentIntegration			= (int)m_Radar.m_bCoherentIntegration;
+
+		int PulseGroupe					= (int)m_Radar.m_bPulseGroup;
+
+		int FixFrequency				= (int)m_Radar.m_bfixfrekvens;
+
+		int StaggerJitter				= (int)m_Radar.m_bStaggerJitterPRF;
+
+		int FixEllerDilvisFixPRF		= (int)m_Radar.m_bFixEllerDelvisFixPRF;
+
+		int KlotterKarta				= (int)m_Radar.m_bKlotterKarta;
+
+		int MTIFilter					= (int)m_Radar.m_bMTIFilter;
+
+		int AntennaDiagramFromFile		= (int)m_Radar.m_bAntennDiagramFromFile;
+
+
+
+		if (ar.IsStoring())
+
+		{// storing code
+
+			//Utrustning
+
+			
+
+			ar << pUtr->m_strUniqID;
+
+			ar << pUtr->m_fBaring;
+
+			ar << pUtr->m_strStatus;
+
+			ar << pUtr->m_nHitTime;
+
+			ar << pUtr->m_fAngle;
+
+			ar << pUtr->m_fPosX;
+
+			ar << pUtr->m_fPosY;
+
+			ar << pUtr->m_fXstop;
+
+			ar << pUtr->m_fYstop;
+
+			ar << pUtr->m_fOldPosX;
+
+			ar << pUtr->m_fOldPosY;
+
+			ar << pUtr->m_fCourse;
+
+			ar << pUtr->m_fVelocity;
+
+			ar << pUtr->m_fSigma;
+
+			ar << pUtr->m_fJ_mal;
+
+			ar << pUtr->m_fSignal;
+
+			ar << pUtr->m_fDistanceToRadar;
+
+			ar << pUtr->m_fOldDistanceToRadar;
+
+			ar << pUtr->m_fMapDistance;
+
+			ar << pUtr->m_fCriticalBorder;
+
+			for(int i=0;i<3;i++)
+
+			{
+
+			ar << pUtr->m_fColor[i];
+
+			}
+
+			ar << pUtr->m_nNbrOfWayPoints;
+
+			for(int k=0;k<pUtr->m_nNbrOfWayPoints;k++)
+
+			{
+
+			ar << pUtr->m_fDistWayPoints[k];
+
+			}
+
+
+
+			for(int t=0;t<20;t++)
+
+			{
+
+			ar << pUtr->m_fWayPoints[t];
+
+			}
+
+			//Radar Parametrar			
+
+			ar << Svep_pa;
+
+			ar << Run;
+
+			ar << m_Radar.m_nAntennaScanPeriod;
+
+			ar << m_Radar.m_fSvepHastighet;
+
+			ar << m_Radar.m_fGgrRealTime;
+
+
+
+			ar << Deflection;
+
+			ar << RawVideoMode;
+
+			ar << SynteticMode;
+
+			ar << SyntAndRawVideoMode;
+
+
+
+			ar << m_Radar.m_fIndicatorIntensity;
+
+			ar << m_Radar.m_nTimeUnit;
+
+			ar << m_Radar.m_fPeakPower;
+
+			ar << m_Radar.m_flambda;
+
+			ar << m_Radar.m_fPulseWidth;
+
+			ar << m_Radar.m_fSensitivity;
+
+		
+
+			ar << m_Radar.m_fGainMainlobe;
+
+			ar << m_Radar.m_fSideLobeSupression;
+
+			ar << m_Radar.m_fBackLobeSupression;
+
+			ar << m_Radar.m_fSpilloverLobeSupression;
+
+			ar << m_Radar.m_fGainSpilloverlobe;
+
+			ar << m_Radar.m_fGainBacklobe;
+
+			ar << m_Radar.m_fWidthMainlobe;
+
+			ar << m_Radar.m_fWidthSpilloverlobe;
+
+			ar << m_Radar.m_fOffsetSpilloverlobe;
+
+			ar << m_Radar.m_fWidthBacklobe;
+
+			ar << m_Radar.m_fOffsetBacklobe;
+
+		
+
+			ar << m_Radar.m_fGainMainlobeRx;
+
+			ar << m_Radar.m_fSideLobeSupressionRx;
+
+			ar << m_Radar.m_fBackLobeSupressionRx;
+
+			ar << m_Radar.m_fSpilloverLobeSupressionRx;
+
+			ar << m_Radar.m_fGainSpilloverlobeRx;
+
+			ar << m_Radar.m_fGainBacklobeRx;
+
+			ar << m_Radar.m_fWidthMainlobeRx;
+
+			ar << m_Radar.m_fWidthSpilloverlobeRx;
+
+			ar << m_Radar.m_fOffsetSpilloverlobeRx;
+
+			ar << m_Radar.m_fWidthBacklobeRx;
+
+			ar << m_Radar.m_fOffsetBacklobeRx;
+
+			
+
+			ar << m_Radar.m_fDynamicRange;
+
+			ar << m_Radar.m_fIFBandWidth;
+
+			ar << m_Radar.m_nProcessingGain;
+
+			ar << m_Radar.m_fPRI;
+
+			ar << m_Radar.m_fPRIDeviation;
+
+			ar << m_Radar.m_fSigmaRef;
+
+			ar << m_Radar.m_fNoiseFactor;
+
+			ar << m_Radar.m_fSNRRadar;
+
+			ar << m_Radar.m_fLosses;
+
+			ar << m_Radar.m_fChannelSeparation;
+
+			ar << CoherentIntegration;
+
+			ar << m_Radar.m_nklotterkarta_slump;
+
+			ar << m_Radar.m_nPulseCompRatio;
+
+			ar << AntennaDiagramFromFile;
+
+			ar << PulseGroupe;
+
+			ar << m_Radar.m_fantal_pulser;
+
+			ar << FixFrequency;
+
+			ar << StaggerJitter;
+
+			ar << FixEllerDilvisFixPRF;
+
+			ar << KlotterKarta;
+
+			ar << m_Radar.m_nPlotSannolikhetKlotterKarta;
+
+			ar << m_Radar.m_nKlotterKartaSlump;
+
+			ar << m_Radar.m_nNedrakningCellutslackningKlotterKarta;
+
+			ar << m_Radar.m_nAntalFalskmalForAktiveringKlotterKarta;
+
+			ar << m_Radar.m_nKlotterKartaSlump2;
+
+			ar << m_Radar.m_nplottsannolikhet;
+
+			ar << m_Radar.m_fMaxRange;
+
+			ar << m_Radar.m_fFreqMin;
+
+			ar << m_Radar.m_fFreqMax;
+
+			ar << m_Radar.m_fMTILowerVelocityLimit;
+
+			ar << m_Radar.m_fMTIAttenuation;
+
+			ar << MTIFilter;
+
+			ar << m_Radar.m_strAntennaDiagramFileName;
+
+		}
+
+		else
+
+		{	// loading code
+
+			ar >> pUtr->m_strUniqID;
+
+			ar >> pUtr->m_fBaring;
+
+			ar >> pUtr->m_strStatus;
+
+			ar >> pUtr->m_nHitTime;
+
+			ar >> pUtr->m_fAngle;
+
+			ar >> pUtr->m_fPosX;
+
+			ar >> pUtr->m_fPosY;
+
+			ar >> pUtr->m_fXstop;
+
+			ar >> pUtr->m_fYstop;
+
+			ar >> pUtr->m_fOldPosX;
+
+			ar >> pUtr->m_fOldPosY;
+
+			ar >> pUtr->m_fCourse;
+
+			ar >> pUtr->m_fVelocity;
+
+			ar >> pUtr->m_fSigma;
+
+			ar >> pUtr->m_fJ_mal;
+
+			ar >> pUtr->m_fSignal;
+
+			ar >> pUtr->m_fDistanceToRadar;
+
+			ar >> pUtr->m_fOldDistanceToRadar;
+
+			ar >> pUtr->m_fMapDistance;
+
+			ar >> pUtr->m_fCriticalBorder;
+
+			for(int i=0;i<3;i++)
+
+			{
+
+			ar >> pUtr->m_fColor[i];
+
+			}
+
+			ar >> pUtr->m_nNbrOfWayPoints;
+
+			pUtr->m_fDistWayPoints	=	(float*)malloc(pUtr->m_nNbrOfWayPoints);
+
+			for(int k=0;k<pUtr->m_nNbrOfWayPoints;k++)
+
+			{
+
+			ar >> pUtr->m_fDistWayPoints[k];
+
+			}
+
+
+
+			for(int t=0;t<20;t++)
+
+			{
+
+			ar >> pUtr->m_fWayPoints[t];
+
+			}
+
+			//Radar Parametrar
+
+			ar >> Svep_pa;
+
+			ar >> Run;
+
+			ar >> m_Radar.m_nAntennaScanPeriod;
+
+			ar >> m_Radar.m_fSvepHastighet;
+
+			ar >> m_Radar.m_fGgrRealTime;
+
+
+
+			ar >> Deflection;
+
+			ar >> RawVideoMode;
+
+			ar >> SynteticMode;
+
+			ar >> SyntAndRawVideoMode;
+
+
+
+			ar >> m_Radar.m_fIndicatorIntensity;
+
+			ar >> m_Radar.m_nTimeUnit;
+
+			ar >> m_Radar.m_fPeakPower;
+
+			ar >> m_Radar.m_flambda;
+
+			ar >> m_Radar.m_fPulseWidth;
+
+			ar >> m_Radar.m_fSensitivity;
+
+		
+
+			ar >> m_Radar.m_fGainMainlobe;
+
+			ar >> m_Radar.m_fSideLobeSupression;
+
+			ar >> m_Radar.m_fBackLobeSupression;
+
+			ar >> m_Radar.m_fSpilloverLobeSupression;
+
+			ar >> m_Radar.m_fGainSpilloverlobe;
+
+			ar >> m_Radar.m_fGainBacklobe;
+
+			ar >> m_Radar.m_fWidthMainlobe;
+
+			ar >> m_Radar.m_fWidthSpilloverlobe;
+
+			ar >> m_Radar.m_fOffsetSpilloverlobe;
+
+			ar >> m_Radar.m_fWidthBacklobe;
+
+			ar >> m_Radar.m_fOffsetBacklobe;
+
+		
+
+			ar >> m_Radar.m_fGainMainlobeRx;
+
+			ar >> m_Radar.m_fSideLobeSupressionRx;
+
+			ar >> m_Radar.m_fBackLobeSupressionRx;
+
+			ar >> m_Radar.m_fSpilloverLobeSupressionRx;
+
+			ar >> m_Radar.m_fGainSpilloverlobeRx;
+
+			ar >> m_Radar.m_fGainBacklobeRx;
+
+			ar >> m_Radar.m_fWidthMainlobeRx;
+
+			ar >> m_Radar.m_fWidthSpilloverlobeRx;
+
+			ar >> m_Radar.m_fOffsetSpilloverlobeRx;
+
+			ar >> m_Radar.m_fWidthBacklobeRx;
+
+			ar >> m_Radar.m_fOffsetBacklobeRx;
+
+			
+
+			ar >> m_Radar.m_fDynamicRange;
+
+			ar >> m_Radar.m_fIFBandWidth;
+
+			ar >> m_Radar.m_nProcessingGain;
+
+			ar >> m_Radar.m_fPRI;
+
+			ar >> m_Radar.m_fPRIDeviation;
+
+			ar >> m_Radar.m_fSigmaRef;
+
+			ar >> m_Radar.m_fNoiseFactor;
+
+			ar >> m_Radar.m_fSNRRadar;
+
+			ar >> m_Radar.m_fLosses;
+
+			ar >> m_Radar.m_fChannelSeparation;
+
+			ar >> CoherentIntegration;
+
+			ar >> m_Radar.m_nklotterkarta_slump;
+
+			ar >> m_Radar.m_nPulseCompRatio;
+
+			ar >> AntennaDiagramFromFile;
+
+			ar >> PulseGroupe;
+
+			ar >> m_Radar.m_fantal_pulser;
+
+			ar >> FixFrequency;
+
+			ar >> StaggerJitter;
+
+			ar >> FixEllerDilvisFixPRF;
+
+			ar >> KlotterKarta;
+
+			ar >> m_Radar.m_nPlotSannolikhetKlotterKarta;
+
+			ar >> m_Radar.m_nKlotterKartaSlump;
+
+			ar >> m_Radar.m_nNedrakningCellutslackningKlotterKarta;
+
+			ar >> m_Radar.m_nAntalFalskmalForAktiveringKlotterKarta;
+
+			ar >> m_Radar.m_nKlotterKartaSlump2;
+
+			ar >> m_Radar.m_nplottsannolikhet;
+
+			ar >> m_Radar.m_fMaxRange;
+
+			ar >> m_Radar.m_fFreqMin;
+
+			ar >> m_Radar.m_fFreqMax;
+
+			ar >> m_Radar.m_fMTILowerVelocityLimit;
+
+			ar >> m_Radar.m_fMTIAttenuation;
+
+			ar >> MTIFilter;
+
+			ar >> m_Radar.m_strAntennaDiagramFileName;
+
+
+
+			
+
+		
+
+
+
+			m_Radar.m_bSvep_pa					=Svep_pa;
+
+			m_Radar.m_bRun						=Run;
+
+			m_Radar.m_bDeflectionMode			=Deflection;
+
+			m_Radar.m_bRAWVideoMode				=RawVideoMode;
+
+			m_Radar.m_bSynteticMode				=SynteticMode;
+
+			m_Radar.m_bSyntAndRAWVideoMode		=SyntAndRawVideoMode;
+
+			m_Radar.m_bCoherentIntegration		=CoherentIntegration;
+
+			m_Radar.m_bPulseGroup				=PulseGroupe;
+
+			m_Radar.m_bfixfrekvens				=FixFrequency;
+
+			m_Radar.m_bStaggerJitterPRF			=StaggerJitter;
+
+			m_Radar.m_bFixEllerDelvisFixPRF		=FixEllerDilvisFixPRF;
+
+			m_Radar.m_bKlotterKarta				=KlotterKarta;
+
+			m_Radar.m_bMTIFilter				=MTIFilter;
+
+			m_Radar.m_bAntennDiagramFromFile	=AntennaDiagramFromFile;
+
+
+
+			*((CRadarStation*)pUtr)=m_Radar;
+
+		}
+
+
+
+	}
+
+	else//Jammer
+
+	{
+
+		CUtrustning* pUtr;
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+			{
+
+				pUtr=pTempPos->m_pUtrustning;
+
+				break;
+
+			}	
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+		int BrusStorning			= m_Jammer.m_bBrusStorning;
+
+		int IckeFoljande			= m_Jammer.m_bIckeFoljande;
+
+		int Foljande				= m_Jammer.m_bFoljande;
+
+		int RepeterStorning			= m_Jammer.m_bRepeterStorning;
+
+		int SynkronaFalskmal		= m_Jammer.m_bSynkronaFalskmal;
+
+		int AsynkronaFalskmal		= m_Jammer.m_bAsynkronaFalskmal;
+
+		int SlumpadeFalskmal		= m_Jammer.m_bSlumpadeFalskmal;
+
+		int EnumTyp					= m_Jammer.m_enumTyp;	
+
+		int EnumPowerModeNoise		= m_Jammer.m_enumNoisePowerMode;
+
+		int EnumPowerModeRepeater	= m_Jammer.m_enumRepeaterPowerMode;
+
+
+
+		if (ar.IsStoring())
+
+		{// storing code
+
+			//Utrustning
+
+			ar << pUtr->m_strUniqID;
+
+			ar << pUtr->m_fBaring;
+
+			ar << pUtr->m_strStatus;
+
+			ar << pUtr->m_nHitTime;
+
+			ar << pUtr->m_fAngle;
+
+			ar << pUtr->m_fPosX;
+
+			ar << pUtr->m_fPosY;
+
+			ar << pUtr->m_fXstop;
+
+			ar << pUtr->m_fYstop;
+
+			ar << pUtr->m_fOldPosX;
+
+			ar << pUtr->m_fOldPosY;
+
+			ar << pUtr->m_fCourse;
+
+			ar << pUtr->m_fVelocity;
+
+			ar << pUtr->m_fSigma;
+
+			ar << pUtr->m_fJ_mal;
+
+			ar << pUtr->m_fSignal;
+
+			ar << pUtr->m_fDistanceToRadar;
+
+			ar << pUtr->m_fOldDistanceToRadar;
+
+			ar << pUtr->m_fMapDistance;
+
+			ar << pUtr->m_fCriticalBorder;
+
+			for(int i=0;i<3;i++)
+
+			{
+
+			ar << pUtr->m_fColor[i];
+
+			}
+
+			ar << pUtr->m_nNbrOfWayPoints;
+
+			for(int k=0;k<pUtr->m_nNbrOfWayPoints;k++)
+
+			{
+
+			ar << pUtr->m_fDistWayPoints[k];
+
+			}
+
+
+
+			for(int t=0;t<20;t++)
+
+			{
+
+			ar << pUtr->m_fWayPoints[t];
+
+			}
+
+			//Jammer parametrar
+
+			ar	<<	m_Jammer.m_fNoiseBandwidth;	
+
+			ar	<<	m_Jammer.m_nAntennaGainTX;	
+
+			ar	<<	m_Jammer.m_nAntennaGainRX;
+
+			ar	<<	m_Jammer.m_nBeamWidthTX;
+
+			ar	<<	m_Jammer.m_nBeamWidthRX;
+
+			ar	<<	m_Jammer.m_fPeakPower;
+
+			ar	<<	m_Jammer.m_fPeakPowerRepeater;
+
+			ar	<<	m_Jammer.m_fSensitivity;
+
+			ar	<<	m_Jammer.m_fClockRateRepeater;
+
+			ar	<<	m_Jammer.m_fClockRateNoise;
+
+			ar	<<	m_Jammer.m_fPRI;
+
+			ar	<<	m_Jammer.m_fAsynkDist;
+
+			ar	<<	m_Jammer.m_fDutyCycleFalseTargetPerCent;
+
+			ar	<<	m_Jammer.m_fFalseTargetVelocity;
+
+			ar	<<	m_Jammer.m_fRepetedPulseWidth;
+
+			ar	<<	BrusStorning;
+
+			ar	<<	IckeFoljande;
+
+			ar	<<	Foljande;
+
+			ar	<<	RepeterStorning;
+
+			ar	<<	SynkronaFalskmal;
+
+			ar	<<	AsynkronaFalskmal;
+
+			ar	<<	m_Jammer.m_nRepCykelAsynkronRep;
+
+			ar	<<	m_Jammer.m_nForskjutningStrak;
+
+			ar	<<	SlumpadeFalskmal;
+
+			ar	<<	m_Jammer.m_fPropabilityFalseTargets;
+
+			ar	<<	m_Jammer.m_nSlumpFilter;
+
+			ar	<<	m_Jammer.m_fNumberOfFalseTargets;
+
+			ar	<<	m_Jammer.m_fDistanceBetweenFalseTargets;
+
+			ar	<<	m_Jammer.m_ncounter2;
+
+			ar	<<	m_Jammer.m_ncounter3;
+
+			ar	<<	m_Jammer.m_fJ;
+
+//			ar	<<	m_Jammer.m_fJ_huvudlob;
+
+//			ar	<<	m_Jammer.m_fS;
+
+			ar	<<	m_Jammer.m_fPowerRecieved;
+
+			ar	<<	m_Jammer.m_fPower;
+
+			ar	<<	m_Jammer.m_nPointAngleError;
+
+			ar	<<	m_Jammer.m_nConstantPointAngleError;
+
+			ar	<<	m_Jammer.m_nDeltaPointAngleError;
+
+			ar	<<	m_Jammer.m_foldxjammer;
+
+			ar	<<	m_Jammer.m_foldyjammer;
+
+			ar	<<	m_Jammer.m_fFreqMin;
+
+			ar	<<	m_Jammer.m_fFreqMax;
+
+			ar	<<	m_Jammer.m_fDopplerReferenceFreq;
+
+			ar	<<	m_Jammer.m_fSorSetOnDelay;
+
+			ar	<<	m_Jammer.m_fRepeaterThroughputDelay;
+
+			ar	<<	EnumTyp;	
+
+			ar	<<  EnumPowerModeNoise;
+
+			ar	<<	EnumPowerModeRepeater;
+
+			ar	<<	m_Jammer.m_fLoopGainNoise;
+
+			ar	<<	m_Jammer.m_fLoopGainRepeater;
+
+			ar	<<	m_Jammer.m_fIGDynamicRangeNoise;
+
+			ar	<<	m_Jammer.m_fIGDynamicRangeRepeater;
+
+		}
+
+		else
+
+		{	// loading code
+
+			ar >> pUtr->m_strUniqID;
+
+			ar >> pUtr->m_fBaring;
+
+			ar >> pUtr->m_strStatus;
+
+			ar >> pUtr->m_nHitTime;
+
+			ar >> pUtr->m_fAngle;
+
+			ar >> pUtr->m_fPosX;
+
+			ar >> pUtr->m_fPosY;
+
+			ar >> pUtr->m_fXstop;
+
+			ar >> pUtr->m_fYstop;
+
+			ar >> pUtr->m_fOldPosX;
+
+			ar >> pUtr->m_fOldPosY;
+
+			ar >> pUtr->m_fCourse;
+
+			ar >> pUtr->m_fVelocity;
+
+			ar >> pUtr->m_fSigma;
+
+			ar >> pUtr->m_fJ_mal;
+
+			ar >> pUtr->m_fSignal;
+
+			ar >> pUtr->m_fDistanceToRadar;
+
+			ar >> pUtr->m_fOldDistanceToRadar;
+
+			ar >> pUtr->m_fMapDistance;
+
+			ar >> pUtr->m_fCriticalBorder;
+
+			for(int i=0;i<3;i++)
+
+			{
+
+			ar >> pUtr->m_fColor[i];
+
+			}
+
+			ar >> pUtr->m_nNbrOfWayPoints;
+
+			pUtr->m_fDistWayPoints	=	(float*)malloc(pUtr->m_nNbrOfWayPoints);
+
+			for(int k=0;k<pUtr->m_nNbrOfWayPoints;k++)
+
+			{
+
+			ar >> pUtr->m_fDistWayPoints[k];
+
+			}
+
+
+
+			for(int t=0;t<20;t++)
+
+			{
+
+			ar >> pUtr->m_fWayPoints[t];
+
+			}
+
+			ar	>>	m_Jammer.m_fNoiseBandwidth;	
+
+			ar	>>	m_Jammer.m_nAntennaGainTX;	
+
+			ar	>>	m_Jammer.m_nAntennaGainRX;
+
+			ar	>>	m_Jammer.m_nBeamWidthTX;
+
+			ar	>>	m_Jammer.m_nBeamWidthRX;
+
+			ar	>>	m_Jammer.m_fPeakPower;
+
+			ar	>>	m_Jammer.m_fPeakPowerRepeater;
+
+			ar	>>	m_Jammer.m_fSensitivity;
+
+			ar	>>	m_Jammer.m_fClockRateRepeater;
+
+			ar	>>	m_Jammer.m_fClockRateNoise;
+
+			ar	>>	m_Jammer.m_fPRI;
+
+			ar	>>	m_Jammer.m_fAsynkDist;
+
+			ar	>>	m_Jammer.m_fDutyCycleFalseTargetPerCent;
+
+			ar	>>	m_Jammer.m_fFalseTargetVelocity;
+
+			ar	>>	m_Jammer.m_fRepetedPulseWidth;
+
+			ar	>>	BrusStorning;
+
+			ar	>>	IckeFoljande;
+
+			ar	>>	Foljande;
+
+			ar	>>	RepeterStorning;
+
+			ar	>>	SynkronaFalskmal;
+
+			ar	>>	AsynkronaFalskmal;
+
+			ar	>>	m_Jammer.m_nRepCykelAsynkronRep;
+
+			ar	>>	m_Jammer.m_nForskjutningStrak;
+
+			ar	>>	SlumpadeFalskmal;
+
+			ar	>>	m_Jammer.m_fPropabilityFalseTargets;
+
+			ar	>>	m_Jammer.m_nSlumpFilter;
+
+			ar	>>	m_Jammer.m_fNumberOfFalseTargets;
+
+			ar	>>	m_Jammer.m_fDistanceBetweenFalseTargets;
+
+			ar	>>	m_Jammer.m_ncounter2;
+
+			ar	>>	m_Jammer.m_ncounter3;
+
+			ar	>>	m_Jammer.m_fJ;
+
+//			ar	>>	m_Jammer.m_fJ_huvudlob;
+
+//			ar	>>	m_Jammer.m_fS;
+
+			ar	>>	m_Jammer.m_fPowerRecieved;
+
+			ar	>>	m_Jammer.m_fPower;
+
+			ar	>>	m_Jammer.m_nPointAngleError;
+
+			ar	>>	m_Jammer.m_nConstantPointAngleError;
+
+			ar	>>	m_Jammer.m_nDeltaPointAngleError;
+
+			ar	>>	m_Jammer.m_foldxjammer;
+
+			ar	>>	m_Jammer.m_foldyjammer;
+
+			ar	>>	m_Jammer.m_fFreqMin;
+
+			ar	>>	m_Jammer.m_fFreqMax;
+
+			ar	>>	m_Jammer.m_fDopplerReferenceFreq;
+
+			ar	>>	m_Jammer.m_fSorSetOnDelay;
+
+			ar	>>	m_Jammer.m_fRepeaterThroughputDelay;
+
+			ar	>>	EnumTyp;
+
+			ar  >>	EnumPowerModeNoise;
+
+			ar	>>	EnumPowerModeRepeater;
+
+			ar	>>	m_Jammer.m_fLoopGainNoise;
+
+			ar	>>	m_Jammer.m_fLoopGainRepeater;
+
+			ar	>>	m_Jammer.m_fIGDynamicRangeNoise;
+
+			ar	>>	m_Jammer.m_fIGDynamicRangeRepeater;
+
+
+
+			m_Jammer.m_bBrusStorning		=BrusStorning;
+
+			m_Jammer.m_bIckeFoljande		=IckeFoljande;
+
+			m_Jammer.m_bFoljande			=Foljande;
+
+			m_Jammer.m_bRepeterStorning		=RepeterStorning;
+
+			m_Jammer.m_bSynkronaFalskmal	=SynkronaFalskmal;
+
+			m_Jammer.m_bAsynkronaFalskmal	=AsynkronaFalskmal;
+
+			m_Jammer.m_bSlumpadeFalskmal	=SlumpadeFalskmal;
+
+			m_Jammer.m_enumTyp				=(CUtrustning::TYP)EnumTyp;	
+			
+			m_Jammer.m_enumNoisePowerMode	= (CRadarJammer::PowerMode)EnumPowerModeNoise;
+
+			m_Jammer.m_enumRepeaterPowerMode = (CRadarJammer::PowerMode)EnumPowerModeRepeater;
+
+
+			*((CRadarJammer*)pUtr)=m_Jammer;
+
+		}
+
+	}
+
+}
+
+
+
+void CRadarplotView::OnSavejammer() 
+
+{
+
+	// TODO: Add your command handler code here
+
+	CString FileName;
+
+	CString FileExt=".jam";
+
+	FileName.Format(m_strCurrentObject);
+
+	FileName.Insert(12,FileExt);
+
+	CFileDialog DlgJammer(false,"jam",FileName);
+
+	if(DlgJammer.DoModal()==IDOK)
+
+	{
+
+		CString JamFile=DlgJammer.GetPathName();
+
+	
+
+	CFile f;
+
+	f.Open(JamFile,CFile::modeCreate | CFile::modeWrite);
+
+	
+
+	CArchive ar(&f, CArchive::store);
+
+	Serialize(ar,2);
+
+
+
+	ar.Close();
+
+	f.Close();	
+
+	Invalidate();
+
+	}	
+
+}
+
+
+
+void CRadarplotView::OnOpenjammer() 
+
+{
+
+	// TODO: Add your command handler code here
+
+	CFileDialog DlgJammer(true,"jam","*.jam");
+
+	if(DlgJammer.DoModal()==IDOK)
+
+	{
+
+		CString JamFile=DlgJammer.GetPathName();
+
+	
+
+
+
+	CFile f;
+
+	if(f.Open(JamFile,CFile::modeRead)==FALSE)
+
+		return;
+
+
+
+	CArchive ar(&f, CArchive::load);
+
+	Serialize(ar,2);	
+
+
+
+	ar.Close();
+
+	f.Close();
+
+	Invalidate();
+
+	}	
+
+}
+
+
+
+
+
+void CRadarplotView::OnTimer(UINT nIDEvent) 
+
+{
+
+	// TODO: Add your message handler code here and/or call default
+
+	//Nedanstående if-sats visar/skapar PPI-dialog och OverView-dialog
+
+	//efter en viss tid. Detta för att inte skymma splashen
+
+	
+
+	if(l==1)
+
+	{
+
+	
+		m_pDlgOVOpenGL		=   new CDlgOverViewOpenGL;
+
+		m_pDlgOVOpenGL->Create(CDlgOverViewOpenGL::IDD,this);
+	
+		m_pDlgScenOpenGL	=	new CDlgRadarPPI;
+
+		m_pDlgScenOpenGL->Create(CDlgRadarPPI::IDD,this);
+
+		CRect rect;
+
+		this->GetClientRect(&rect);
+
+		
+
+		m_pDlgScenOpenGL->SetWindowPos(&wndTop,rect.right/2.37f,rect.bottom/10.8f,rect.right/1.71,rect.bottom/1.82,SWP_SHOWWINDOW);
+
+		m_pDlgOVOpenGL->SetWindowPos(&wndTop,rect.right/2.37f,rect.bottom/1.56f,rect.right/1.71,rect.bottom/2.25,SWP_SHOWWINDOW);
+
+		m_pDlgOVOpenGL->ShowWindow(true);
+
+		m_pDlgScenOpenGL->ShowWindow(true);
+
+		::ReleaseCapture();
+
+	}
+
+	//Denna if-sats begränsar l så att den inte blir för stor under programmets gång
+
+	//invalidate ligger här i börjar för att texten i vyn ska synas (Scenario, Radar,Jammer,Targets)
+
+	if(l<5)
+
+	{
+
+		l++;
+
+		Invalidate(true);
+
+	}
+
+//	else
+
+//		InvalidateRect(NULL,FALSE);
+
+
+
+	CUtrustning* ptmpUtr;
+
+	CUtrustningLista::CNod *pTempPos;
+	CUtrustningLista* pLista = CUtrustningLista::getInstance();
+	pTempPos = pLista->m_pStartPos;
+
+	for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+	{
+
+		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+		{
+
+			ptmpUtr=pTempPos->m_pUtrustning;
+
+			break;
+
+		}	
+
+
+
+		pTempPos = pTempPos->m_pNext;
+
+	}
+
+//Vi kollar om jammern har ändrat status annars behöver vi inte uppdatera hela vyn
+
+	if(NbrOfJammer>0)
+
+	{
+
+		if(m_strJammerStatus!=ptmpUtr->m_strStatus)
+
+			Invalidate(true);
+
+		else
+
+			InvalidateRect(NULL,FALSE);	
+
+
+
+		m_strJammerStatus=ptmpUtr->m_strStatus;	
+
+	}
+
+	ShowStatus();
+
+	CView::OnTimer(nIDEvent);
+
+}
+
+void CRadarplotView::ShowStatus()
+{
+	CMainFrame* pFrame = (CMainFrame*)AfxGetApp()->m_pMainWnd;
+	CStatusBar* pStatus = pFrame->ReturnStatusBarPointer();
+	pStatus->SetPaneText(0,m_strSimulationStatus);
+}
+
+void CRadarplotView::OnButtonStop() 
+
+{
+
+	if(!m_bRun)
+
+		return;
+
+
+
+	CUtrustning* pUtr;
+
+	CUtrustningLista::CNod *pTempPos;
+	CUtrustningLista* pLista = CUtrustningLista::getInstance();
+	pTempPos = pLista->m_pStartPos;
+
+	for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+	{
+
+		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+		{
+
+			pUtr=pTempPos->m_pUtrustning;
+
+			break;
+
+		}/*	
+
+		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+
+		{
+
+			((CRadarStation*)pTempPos->m_pUtrustning)->m_CellLista.TaBortAlla();
+
+		}*/
+
+		pTempPos = pTempPos->m_pNext;
+
+	}
+
+	pUtr->m_strStatus="OFF";
+
+	m_pDlgScenOpenGL->Stop();
+
+//	m_pDlgOVOpenGL->Stop();
+
+	m_bRun=false;
+
+//	KillTimer(4);
+
+	m_pDlgScenOpenGL->m_pRadar->m_CellLista.TaBortAlla();
+
+	m_pDlgScenOpenGL->Invalidate();
+
+	m_strSimulationStatus.Format("Ready");
+	ShowStatus();
+
+	Invalidate();
+}
+
+
+
+void CRadarplotView::OnCalibrateRadar() 
+
+{
+
+	// TODO: Add your command handler code here
+
+	CUtrustning* pUtr;
+
+	CUtrustningLista::CNod *pTempPos;
+	CUtrustningLista* pLista = CUtrustningLista::getInstance();
+	pTempPos = pLista->m_pStartPos;
+
+	for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+	{
+
+		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+
+		{
+
+			pUtr=pTempPos->m_pUtrustning;
+
+			break;
+
+		}	
+
+		pTempPos = pTempPos->m_pNext;
+
+	}
+
+
+
+
+	CDlgCalibrateRadar DlgKal;
+
+	DlgKal.Init(&m_Radar);
+
+
+
+	int result=DlgKal.DoModal();
+
+	if(result == IDOK)
+
+	{
+
+		*((CRadarStation*)pUtr)=m_Radar;
+
+		Invalidate(true);
+
+	}
+
+	if(result == IDCANCEL)
+
+	{
+
+
+
+	}
+
+}
+
+
+
+
+
+void CRadarplotView::OnLButtonDown(UINT nFlags, CPoint point) 
+
+{
+
+	CUtrustningLista* pLista = CUtrustningLista::getInstance();
+
+
+
+	/*
+
+	CUtrustningLista::CNod *pTempPos;
+
+	pTempPos = pLista->m_pStartPos;	
+
+	for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+	{
+
+		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+		{
+
+			pTempPos->m_bActive=true;
+
+		}	
+
+		pTempPos = pTempPos->m_pNext;
+
+	}
+
+*/
+
+
+
+//Hitta fönsterplacering
+
+	CRect tempwindow;
+
+	GetWindowRect(tempwindow);
+
+
+
+	CRect rectEllipse,rE1,rE2,rE3,rE4,rE5,rE6,rE7;
+
+	CRgn Radar,Jam1,Jam2,Jam3,Tar1,Tar2,Tar3,Tar4;
+
+	CMenu menuRadar,menuJammer,menuTarget;
+
+
+
+	rectEllipse = m_rectEllipse;
+
+	rE1=m_rE1;
+
+	rE2=m_rE2;
+
+	rE3=m_rE3;
+
+	rE4=m_rE4;
+
+	rE5=m_rE5;
+
+	rE6=m_rE6;
+
+	rE7=m_rE7;
+
+
+
+
+
+
+
+	CClientDC dc(this);
+
+	OnPrepareDC(&dc);
+
+	dc.SetMapMode(MM_LOMETRIC);
+
+	dc.LPtoDP(rectEllipse);
+
+	dc.LPtoDP(rE1);
+
+	dc.LPtoDP(rE2);
+
+	dc.LPtoDP(rE3);
+
+	dc.LPtoDP(rE4);
+
+	dc.LPtoDP(rE5);
+
+	dc.LPtoDP(rE6);
+
+	dc.LPtoDP(rE7);
+
+
+
+	Radar.CreateRectRgnIndirect(rectEllipse);
+
+	Jam1.CreateRectRgnIndirect(rE1);
+
+	Jam2.CreateRectRgnIndirect(rE2);
+
+	Jam3.CreateRectRgnIndirect(rE3);
+
+
+
+	Tar1.CreateRectRgnIndirect(rE4);
+
+	Tar2.CreateRectRgnIndirect(rE5);
+
+	Tar3.CreateRectRgnIndirect(rE6);
+
+	Tar4.CreateRectRgnIndirect(rE7);
+
+
+
+
+
+	if(Radar.PtInRegion(point) && pLista->m_nAntalNoder!=0)
+
+	{
+
+		CUtrustningLista::CNod *pTempPos;
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+
+			{
+
+				m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+				pTempPos->m_bActive=true;
+
+				break;
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+	
+
+	}
+
+	else
+
+	{
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+
+			{
+
+				pTempPos->m_bActive=false;
+
+				break;
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+	}
+
+	if(Jam1.PtInRegion(point) && NbrOfJammer>0)
+
+	{
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+			{
+
+				m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+				pTempPos->m_bActive=true;
+
+				break;
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+
+
+	}
+
+	else
+
+	{
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+			{
+
+				pTempPos->m_bActive=false;
+
+				break;
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+	}
+
+	if(Jam2.PtInRegion(point) && NbrOfJammer>1)
+
+	{
+
+		int l=0;
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+			{
+
+				l++;
+
+				if(l>1)
+
+				{
+
+					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+					pTempPos->m_bActive=true;
+
+					break;
+
+				}
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+	}
+
+	else
+
+	{
+
+		int l=0;
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+			{
+
+				l++;
+
+				if(l>1)
+
+				{
+
+					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+					pTempPos->m_bActive=false;
+
+					break;
+
+				}
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+	}
+
+	if(Jam3.PtInRegion(point) && NbrOfJammer>2)
+
+	{
+
+		int k=0;
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+			{
+
+				k++;
+
+				if(k>2)
+
+				{
+
+					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+					pTempPos->m_bActive=true;
+
+					break;
+
+				}
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+	}
+
+	else
+
+	{
+
+		int k=0;
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+
+			{
+
+				k++;
+
+				if(k>2)
+
+				{
+
+					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+					pTempPos->m_bActive=false;
+
+					break;
+
+				}
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+	}
+
+	if(Tar1.PtInRegion(point) && NbrOfTarget>0)
+
+	{
+
+
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+
+			{
+
+				m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+				pTempPos->m_bActive=true;
+
+				break;
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+	}
+
+	else
+
+	{
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+
+			{
+
+				pTempPos->m_bActive=false;
+
+				break;
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+	}
+
+	if(Tar2.PtInRegion(point) && NbrOfTarget>1)
+
+	{
+
+		int n=0;
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+
+			{
+
+				n++;
+
+				if(n>1)
+
+				{
+
+					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+					pTempPos->m_bActive=true;
+
+					break;
+
+				}
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+	}
+
+	else
+
+	{
+
+		int n=0;
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+
+			{
+
+				n++;
+
+				if(n>1)
+
+				{
+
+					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+					pTempPos->m_bActive=false;
+
+					break;
+
+				}
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+	}
+
+	if(Tar3.PtInRegion(point) && NbrOfTarget>2)
+
+	{
+
+		int o=0;
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+
+			{
+
+				o++;
+
+				if(o>2)
+
+				{
+
+					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+					pTempPos->m_bActive=true;
+
+					break;
+
+				}
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+	}
+
+	else
+
+	{
+
+		int o=0;
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+
+			{
+
+				o++;
+
+				if(o>2)
+
+				{
+
+					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+					pTempPos->m_bActive=false;
+
+					break;
+
+				}
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+	}
+
+	if(Tar4.PtInRegion(point) && NbrOfTarget>3)
+
+	{
+
+		int p=0;
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+
+			{
+
+				p++;
+
+				if(p>3)
+
+				{
+
+					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+					pTempPos->m_bActive=true;
+
+					break;
+
+				}
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+
+
+	}
+
+	else
+
+	{
+
+		int p=0;
+
+		CUtrustningLista::CNod *pTempPos;
+
+		pTempPos = pLista->m_pStartPos;
+
+		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+
+		{
+
+			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+
+			{
+
+				p++;
+
+				if(p>3)
+
+				{
+
+					m_strCurrentObject.Format(pTempPos->m_pUtrustning->m_strUniqID);
+
+					pTempPos->m_bActive=false;
+
+					break;
+
+				}
+
+			}
+
+
+
+			pTempPos = pTempPos->m_pNext;
+
+		}
+
+	}
+
+	Invalidate();
+
+	CView::OnLButtonDown(nFlags, point);
+
+}
+
+
+void CRadarplotView::OnScenarioAddradar() 
+{
+	OnButtonCreateRadar();	
+}
+
+void CRadarplotView::OnScenarioClear() 
+{
+	OnButtonClearall();	
+}
+
+void CRadarplotView::OnScenarioAddjammer() 
+{
+	OnButtonCreateJammer();
+	
+}
+
+void CRadarplotView::OnScenarioAddtarget() 
+{
+	OnButtonCreateTarget();	
+}
+
+void CRadarplotView::OnSimulationStart() 
+{
+	m_strSimulationStatus.Format("Running..");
+	ShowStatus();
+	OnButtonPpi();	
+}
+
+void CRadarplotView::OnSimulationStop() 
+{
+	OnButtonStop();
+}
+
+void CRadarplotView::OnSimulationFullscreen() 
+{
+	if(!m_bRun)
+	{
+		AfxMessageBox("Simulation not running!");
+		return;
+	}
+	m_pDlgScenOpenGL->ShowWindow(SW_MAXIMIZE);
+	m_pDlgScenOpenGL->ShowMenu();
+	m_pDlgScenOpenGL->MoveMenu();
+}
+
+void CRadarplotView::OnRFullsceen() 
+{
+	OnSimulationFullscreen();
+}
+
+void CRadarplotView::OnRJammode1() 
+{
+	m_pDlgScenOpenGL->OnButtonJammode1();
+	Invalidate();
+}
+
+void CRadarplotView::OnRJammode2() 
+{
+	m_pDlgScenOpenGL->OnButtonJammode2();
+	Invalidate();
+}
+
+void CRadarplotView::OnRJammeroff() 
+{
+	m_pDlgScenOpenGL->OnButtonOff();
+	Invalidate();
+}
+
+void CRadarplotView::OnRStop() 
+{
+	OnButtonStop();
+}
+
+void CRadarplotView::OnRResume() 
+{
+	m_strSimulationStatus.Format("Running");
+	ShowStatus();
+	m_pDlgScenOpenGL->OnButton1();
+	
+}
+
+void CRadarplotView::OnRPause() 
+{
+	m_strSimulationStatus.Format("Paused");
+	ShowStatus();
+	m_pDlgScenOpenGL->OnMenuPause();
+	
+}
+
+void CRadarplotView::OnSimulationPause() 
+{
+	m_strSimulationStatus.Format("Paused");
+	ShowStatus();
+	OnRPause();
+}
+
+void CRadarplotView::OnSimulationResume() 
+{
+	m_strSimulationStatus.Format("Running");
+	ShowStatus();
+	OnRResume();
+}

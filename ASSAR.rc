@@ -1,0 +1,1572 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\ASSAR.ico"
+IDR_RADARPTYPE          ICON    DISCARDABLE     "res\\ASSARDOC.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR DISCARDABLE  32, 30
+BEGIN
+    BUTTON      ID_BUTTON_CREATE_RADAR
+    SEPARATOR
+    BUTTON      ID_BUTTON_CREATE_JAMMER
+    SEPARATOR
+    BUTTON      ID_BUTTON_CREATE_TARGET
+    SEPARATOR
+    BUTTON      ID_BUTTON_CLEARALL
+    SEPARATOR
+    BUTTON      ID_BUTTON_PPI
+    SEPARATOR
+    BUTTON      ID_BUTTON_STOP
+    BUTTON      ID_BUTTON32816
+    BUTTON      ID_BUTTON32817
+    BUTTON      ID_BUTTON32818
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "New",                         ID_FILE_NEW, GRAYED
+        MENUITEM "Open",                        ID_FILE_OPEN, INACTIVE
+        MENUITEM "Close",                       ID_FILE_CLOSE, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "Save",                        ID_FILE_SAVE, GRAYED
+        MENUITEM "Save As..",                   ID_FILE_SAVEAS
+        MENUITEM "Save All",                    ID_FILE_SAVEALL
+        MENUITEM SEPARATOR
+        MENUITEM "Import...",                   ID_FILE_IMPORT
+        MENUITEM "Export...",                   ID_FILE_EXPORT
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    MENUITEM "Edit",                        65535, GRAYED
+    POPUP "Scenario"
+    BEGIN
+        MENUITEM "Add Radar...",                ID_SCENARIO_ADDRADAR
+        MENUITEM "Add Jammer...",               ID_SCENARIO_ADDJAMMER
+        MENUITEM "Add Target...",               ID_SCENARIO_ADDTARGET
+        MENUITEM "Clear",                       ID_SCENARIO_CLEAR
+    END
+    POPUP "Simulation"
+    BEGIN
+        MENUITEM "Start",                       ID_SIMULATION_START
+        MENUITEM "Stop",                        ID_SIMULATION_STOP
+        MENUITEM "Pause",                       ID_SIMULATION_PAUSE
+        MENUITEM "Resume",                      ID_SIMULATION_RESUME
+        MENUITEM SEPARATOR
+        MENUITEM "Full Screen",                 ID_SIMULATION_FULLSCREEN
+        MENUITEM SEPARATOR
+        MENUITEM "Preferences",                 ID_SIMULATION_PREFERENCES
+        , GRAYED
+    END
+    MENUITEM "Analysis",                    65535, GRAYED
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+        MENUITEM "&Scenario",                   ID_VIEW_SENARIO
+        MENUITEM "&OverView",                   ID_VIEW_OVERVIEW
+    END
+    POPUP "&Help", GRAYED
+    BEGIN
+        MENUITEM "&About ASSAR...",             ID_APP_ABOUT, GRAYED
+    END
+END
+
+IDR_MENU_VIEW_RUN MENU DISCARDABLE 
+BEGIN
+    POPUP "R"
+    BEGIN
+        MENUITEM "Stop",                        ID_R_STOP
+        MENUITEM "Pause",                       ID_R_PAUSE
+        MENUITEM "Resume",                      ID_R_RESUME
+        MENUITEM SEPARATOR
+        MENUITEM "JamMode 1",                   ID_R_JAMMODE1
+        MENUITEM "JamMode 2",                   ID_R_JAMMODE2
+        MENUITEM "Jammer off",                  ID_R_JAMMEROFF
+        MENUITEM SEPARATOR
+        MENUITEM "Full Sceen",                  ID_R_FULLSCEEN
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS PRELOAD MOVEABLE PURE 
+BEGIN
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  20, 20, 264, 63
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About ASSAR"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,12,14,20,20
+    LTEXT           "ASSAR DEMO ver 6.2",IDC_STATIC,41,13,75,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2003",IDC_STATIC,41,26,64,8
+    DEFPUSHBUTTON   "OK",IDOK,207,7,50,14,WS_GROUP
+    CONTROL         170,IDC_STATIC,"Static",SS_BITMAP,109,24,34,12
+    LTEXT           "Static",IDC_STATIC,83,13,19,8
+END
+
+IDD_DIALOG_PPI_PLOT DIALOGEX 281, 25, 340, 342
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+FONT 8, "Courier"
+BEGIN
+    PUSHBUTTON      "Button1",IDC_BUTTON1,154,310,15,17,BS_ICON
+    PUSHBUTTON      "Jam Mode 1",IDC_BUTTON_JAMMODE1,1,203,55,20
+    PUSHBUTTON      "Jam Mode 2",IDC_BUTTON_JAMMODE2,1,223,55,20
+    PUSHBUTTON      "Jam Mode 3",IDC_BUTTON_JAMMODE3,1,243,55,20,WS_DISABLED
+    CONTROL         "Slider2",IDC_TIMELINE,"msctls_trackbar32",TBS_TOP | 
+                    TBS_NOTICKS | WS_TABSTOP,112,302,120,8
+    PUSHBUTTON      "Jam Mode 4",IDC_BUTTON_JAMMODE4,1,263,55,20,WS_DISABLED
+    PUSHBUTTON      "",IDC_BUTTON_PAUS,171,310,15,17,BS_ICON
+    EDITTEXT        IDC_EDIT_JAM1,1,42,99,29,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER,
+                    WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT_JAM2,1,10,99,29,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER,
+                    WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT_JAM5,1,139,99,29,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER,
+                    WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT_JAM6,1,171,99,29,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER,
+                    WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT_JAM4,1,105,99,29,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER,
+                    WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT_TIMELINE,116,290,115,12,ES_CENTER | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+    PUSHBUTTON      "OFF",IDC_BUTTON_OFF,1,283,55,20
+    EDITTEXT        IDC_EDIT_JAM3,1,73,99,29,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER,
+                    WS_EX_STATICEDGE
+    PUSHBUTTON      "Toggle Fullscreen",IDC_BUTTON_RESTORE,1,320,73,19,
+                    BS_FLAT
+    EDITTEXT        IDC_EDIT_RAD1,232,9,99,29,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER,
+                    WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT_RAD2,232,74,99,29,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER,
+                    WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT_RAD5,232,141,99,29,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER,
+                    WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT_RAD6,232,174,99,29,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER,
+                    WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT_RAD4,232,107,99,29,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER,
+                    WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT_RAD3,232,41,99,29,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER,
+                    WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT_RAD7,232,208,99,29,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER,
+                    WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT_RAD8,232,241,99,29,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER,
+                    WS_EX_STATICEDGE
+    PUSHBUTTON      "Syntetic",IDC_BUTTON_RADSYNTETIC,276,319,55,20,
+                    WS_DISABLED
+    PUSHBUTTON      "Raw Video",IDC_BUTTON_RADRAWVIDEO,276,295,55,20,
+                    WS_DISABLED
+    PUSHBUTTON      "Scale",IDC_BUT_SHOWDISK,1,303,28,20,BS_VCENTER
+    PUSHBUTTON      "Grad",IDC_BUT_DEGREES,29,303,27,20
+    PUSHBUTTON      "Faster",IDC_BUT_FFW,108,65,50,14
+    PUSHBUTTON      "Slower",IDC_BUT_REW,108,80,50,14
+END
+
+IDD_PROP_RADAR_ECCM DIALOG DISCARDABLE  0, 0, 302, 282
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "ECCM"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT1,165,118,40,14,ES_AUTOHSCROLL | WS_DISABLED
+    LTEXT           "Sensitivity Jambearing Indication :",IDC_STATIC,48,121,
+                    107,8,WS_DISABLED
+    LTEXT           "[dB] above Threshold",IDC_STATIC,217,122,72,8,
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT2,165,157,40,14,ES_AUTOHSCROLL | WS_DISABLED
+    LTEXT           "Attenuation :",IDC_STATIC,48,161,41,8,WS_DISABLED
+    LTEXT           "[dB]",IDC_STATIC,217,178,14,8,WS_DISABLED
+    CONTROL         "",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,165,22,16,8
+    LTEXT           "Constant False Alarm Rate (CFAR):",IDC_STATIC,21,21,111,
+                    8,WS_DISABLED
+    LTEXT           "Dicke Fix :",IDC_STATIC,21,41,34,8,WS_DISABLED
+    CONTROL         "",IDC_CHECK3,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,165,41,16,8
+    LTEXT           "Repeater ECCM :",IDC_STATIC,21,61,56,8,WS_DISABLED
+    CONTROL         "",IDC_CHECK4,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,165,61,50,11
+    LTEXT           "Pulse Width Discrimination :",IDC_STATIC,21,81,88,8,
+                    WS_DISABLED
+    CONTROL         "",IDC_CHECK5,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,165,81,50,11
+    LTEXT           "Jambearing Indication :",IDC_STATIC,21,101,74,8,
+                    WS_DISABLED
+    CONTROL         "",IDC_CHECK6,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,165,100,50,11
+    LTEXT           "Coherent Sidelobe Canceller :",IDC_STATIC,21,141,90,8,
+                    WS_DISABLED
+    CONTROL         "",IDC_CHECK7,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,165,140,50,11
+    EDITTEXT        IDC_EDIT3,166,179,40,14,ES_AUTOHSCROLL | WS_DISABLED
+    LTEXT           "Number of Guard Antennas :",IDC_STATIC,48,181,91,8,
+                    WS_DISABLED
+    LTEXT           "Sidelobe Blanker :",IDC_STATIC,21,201,58,8,WS_DISABLED
+    CONTROL         "",IDC_CHECK8,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,166,203,50,8
+    GROUPBOX        "ECCM",IDC_STATIC,7,5,288,217,WS_DISABLED
+END
+
+IDD_PROP_RADAR_RXSIGNALPROCESSING2 DIALOG DISCARDABLE  0, 0, 303, 282
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "RX/Signal processing 2"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_CHECK_MTI,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,62,162,16,8
+    EDITTEXT        IDC_EDIT_LOWERVELOCITYLIMIT,119,181,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_ATTENUATION,119,209,40,14,ES_AUTOHSCROLL
+    GROUPBOX        "Plot Extractor",IDC_STATIC,17,17,260,110,WS_DISABLED
+    EDITTEXT        IDC_EDIT1,119,40,40,14,ES_AUTOHSCROLL | WS_DISABLED
+    LTEXT           "Bin Size:",IDC_STATIC,30,42,46,8,WS_DISABLED
+    EDITTEXT        IDC_EDIT2,119,67,40,14,ES_AUTOHSCROLL | WS_DISABLED
+    LTEXT           "Threshold :",IDC_STATIC,30,68,36,8,WS_DISABLED
+    EDITTEXT        IDC_EDIT3,119,94,40,14,ES_AUTOHSCROLL | WS_DISABLED
+    LTEXT           "Max Capacity :",IDC_STATIC,30,97,48,8,WS_DISABLED
+    GROUPBOX        "MTI",IDC_STATIC,17,145,260,114
+    LTEXT           "MTI :",IDC_STATIC,30,162,18,8
+    LTEXT           "Lower Velocity Limit :",IDC_STATIC,30,183,67,8
+    LTEXT           "Attenuation :",IDC_STATIC,30,209,41,8
+    LTEXT           "[m/s]",IDC_STATIC,171,184,17,8
+    LTEXT           "[dB]",IDC_STATIC,171,211,19,11
+    LTEXT           "[pulses]",IDC_STATIC,165,42,25,8,WS_DISABLED
+    LTEXT           "[pulses]",IDC_STATIC,165,70,25,8,WS_DISABLED
+    LTEXT           "[plots]",IDC_STATIC,165,97,20,8,WS_DISABLED
+    LTEXT           "MTI Filter Order :",IDC_STATIC,30,238,50,8
+    CONTROL         "Spin1",IDC_SPIN1,"msctls_updown32",UDS_ARROWKEYS,138,
+                    234,10,14
+    EDITTEXT        IDC_EDIT5,119,234,18,14,ES_AUTOHSCROLL | WS_DISABLED
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "ASSAR MFC Application\0"
+            VALUE "FileVersion", "6, 1, 0, 0\0"
+            VALUE "InternalName", "ASSAR\0"
+            VALUE "LegalCopyright", "Copyright (C) 2002\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "ASSAR.EXE\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "ASSAR Application\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 257
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 56
+    END
+
+    IDD_DIALOG_PPI_PLOT, DIALOG
+    BEGIN
+        LEFTMARGIN, 1
+        RIGHTMARGIN, 331
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 339
+    END
+
+    IDD_PROP_RADAR_ECCM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 295
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 275
+    END
+
+    IDD_PROP_RADAR_RXSIGNALPROCESSING2, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 296
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 275
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    IDR_MAINFRAME           "ASSAR Demo version\n\nASSAR\nScenario Files (*.sce)\n.sce\nASSAR.Document\nASSAR Document"
+END
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    AFX_IDS_APP_TITLE       "ASSAR Demo Version"
+    AFX_IDS_IDLEMESSAGE     "Ready"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_NEW             "Create a new document\nNew"
+    ID_FILE_OPEN            "Open an existing document\nOpen"
+    ID_FILE_CLOSE           "Close the active document\nClose"
+    ID_FILE_SAVE            "Save the active document\nSave"
+    ID_FILE_SAVE_AS         "Save the active document with a new name\nSave As"
+    ID_FILE_PAGE_SETUP      "Change the printing options\nPage Setup"
+    ID_FILE_PRINT_SETUP     "Change the printer and printing options\nPrint Setup"
+    ID_FILE_PRINT           "Print the active document\nPrint"
+    ID_FILE_PRINT_PREVIEW   "Display full pages\nPrint Preview"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
+    ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_MRU_FILE1       "Open this document"
+    ID_FILE_MRU_FILE2       "Open this document"
+    ID_FILE_MRU_FILE3       "Open this document"
+    ID_FILE_MRU_FILE4       "Open this document"
+    ID_FILE_MRU_FILE5       "Open this document"
+    ID_FILE_MRU_FILE6       "Open this document"
+    ID_FILE_MRU_FILE7       "Open this document"
+    ID_FILE_MRU_FILE8       "Open this document"
+    ID_FILE_MRU_FILE9       "Open this document"
+    ID_FILE_MRU_FILE10      "Open this document"
+    ID_FILE_MRU_FILE11      "Open this document"
+    ID_FILE_MRU_FILE12      "Open this document"
+    ID_FILE_MRU_FILE13      "Open this document"
+    ID_FILE_MRU_FILE14      "Open this document"
+    ID_FILE_MRU_FILE15      "Open this document"
+    ID_FILE_MRU_FILE16      "Open this document"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
+    ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_EDIT_CLEAR           "Erase the selection\nErase"
+    ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
+    ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
+    ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
+    ID_EDIT_FIND            "Find the specified text\nFind"
+    ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
+    ID_EDIT_REPEAT          "Repeat the last action\nRepeat"
+    ID_EDIT_REPLACE         "Replace specific text with different text\nReplace"
+    ID_EDIT_SELECT_ALL      "Select the entire document\nSelect All"
+    ID_EDIT_UNDO            "Undo the last action\nUndo"
+    ID_EDIT_REDO            "Redo the previously undone action\nRedo"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
+    ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCSIZE          "Change the window size"
+    AFX_IDS_SCMOVE          "Change the window position"
+    AFX_IDS_SCMINIMIZE      "Reduce the window to an icon"
+    AFX_IDS_SCMAXIMIZE      "Enlarge the window to full size"
+    AFX_IDS_SCNEXTWINDOW    "Switch to the next document window"
+    AFX_IDS_SCPREVWINDOW    "Switch to the previous document window"
+    AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCRESTORE       "Restore the window to normal size"
+    AFX_IDS_SCTASKLIST      "Activate Task List"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_PREVIEW_CLOSE   "Close print preview mode\nCancel Preview"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_BUTTON_PPI           "Play Scenario \n Play"
+    ID_BUTTON_UTR           "Create Radar"
+    ID_BUTTON_CLR           "Create Target"
+    ID_BUTTON_BRUS          "Skapa en brusstörare samt mål"
+    ID_SETTINGS_GENERAL     "General Settings"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_BUTTON_CREATE_RADAR  "Create a Radarstation and add it to the Scenario\n Add Radar"
+    ID_BUTTON_CREATE_JAMMER "Create a Jammer and add it to the Scenario\n Add Jammer"
+    ID_BUTTON_CREATE_TARGET "Create a Target and add it to the Scenario\n Add Target"
+    ID_BUTTON_CLEARALL      "Clear the Scenario \nClear "
+    ID_VIEW_SENARIO         "Show or hide the Senario window\nToggle Senario"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_BUTTON_STOP          "Stop the scenario \n Stop"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_INDICATOR_SIMTIME    "hej"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Swedish resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_SVE)
+#ifdef _WIN32
+LANGUAGE LANG_SWEDISH, SUBLANG_DEFAULT
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICONSTOP            ICON    DISCARDABLE     "res\\iconstop.ico"
+IDI_ICON_PLAY           ICON    DISCARDABLE     "res\\icon3_j.ico"
+IDI_ICON_PAUS           ICON    DISCARDABLE     "res\\icon1_j.ico"
+IDI_ICON_WARNING        ICON    DISCARDABLE     "res\\iconwarn.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP1             BITMAP  DISCARDABLE     "res\\bitmap1.bmp"
+IDB_BITMAP2             BITMAP  DISCARDABLE     "res\\bitmap2.bmp"
+IDB_BITMAP3             BITMAP  DISCARDABLE     "res\\bitmap3.bmp"
+IDB_BITMAP4             BITMAP  DISCARDABLE     "res\\fmvlogga.bmp"
+IDB_BITMAP5             BITMAP  DISCARDABLE     "res\\fmvloggaliten.bmp"
+IDB_BITMAP6             BITMAP  DISCARDABLE     "res\\JAS392.bmp"
+IDB_BITMAP_JAS2         BITMAP  DISCARDABLE     "res\\JAS39.bmp"
+IDB_BITMAP_VISBY        BITMAP  DISCARDABLE     "res\\visby2profil.bmp"
+IDB_BITMAP_RADARPPI     BITMAP  DISCARDABLE     "res\\RadarPPI.bmp"
+IDB_SPLASH              BITMAP  DISCARDABLE     "res\\Splash.bmp"
+IDB_BIT_MOVE            BITMAP  DISCARDABLE     "res\\bitmap7.bmp"
+IDB_BITMAP_MONA         BITMAP  DISCARDABLE     "res\\MONA.BMP"
+IDB_BITMAP_RUNNER       BITMAP  DISCARDABLE     "res\\Exempel.bmp"
+IDB_BITMAP_L39          BITMAP  DISCARDABLE     "res\\L-39.bmp"
+IDB_BITMAP_L_39         BITMAP  DISCARDABLE     "res\\l39.bmp"
+IDB_BITMAP_L39299X160   BITMAP  DISCARDABLE     "res\\L-39200x160.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU_RADAR MENU DISCARDABLE 
+BEGIN
+    POPUP "A"
+    BEGIN
+        MENUITEM "Open from File...",           ID_OPENRADAR
+        MENUITEM "Save to File...",             ID_SAVERADAR
+        MENUITEM "Properties Radar...",         ID_PROPERTIES_RADAR
+        MENUITEM "Calibrate...",                ID_KALIBRERA_RADAR
+        MENUITEM "Delete",                      ID_DELETE_RADAR
+    END
+    POPUP ""
+    BEGIN
+        MENUITEM "Inställningar Radar",         ID_PROPERTIES_RADAR
+        MENUITEM "Delete",                      ID_DELETE_RADAR
+    END
+END
+
+IDR_MENU_JAMMER MENU DISCARDABLE 
+BEGIN
+    POPUP "B"
+    BEGIN
+        MENUITEM "Open from File...",           ID_OPENJAMMER
+        MENUITEM "Save to File...",             ID_SAVEJAMMER
+        MENUITEM "Properties Jammer...",        ID_PROPERTIES_JAMMER
+        MENUITEM "Delete",                      ID_DELETE_JAMMER
+    END
+END
+
+IDR_MENU_TARGET MENU DISCARDABLE 
+BEGIN
+    POPUP "C"
+    BEGIN
+        MENUITEM "Properties Target...",        ID_PROPERTIES_TARGET
+        MENUITEM "Delete",                      ID_DELETE_TARGET
+    END
+END
+
+IDR_MENU_RUN MENU DISCARDABLE 
+BEGIN
+    POPUP "D"
+    BEGIN
+        MENUITEM "Stop",                        ID_MENU_STOP
+        MENUITEM "Continue",                    ID_MENU_RUN
+        MENUITEM "Pause",                       ID_MENU_PAUSE
+        MENUITEM SEPARATOR
+        MENUITEM "Faster",                      ID_MENU_FASTER
+        MENUITEM "Slower",                      ID_MENU_SLOWER
+        MENUITEM SEPARATOR
+        MENUITEM "Zoom in",                     ID_MENUD_ZOOMIN
+        MENUITEM "Zoom out",                    ID_MENUD_ZOOMOUT
+        MENUITEM "Fit to Screen",               ID_MENUD_FITTOSCREEN
+        MENUITEM SEPARATOR
+        MENUITEM "Raw Video Mode",              ID_MENUD_RAWVIDEOMODE
+        MENUITEM "Syntetic Mode",               ID_MENUD_SYNTETICMODE
+        MENUITEM "Raw Video && Syntetic",       ID_MENUD_RAWVIDEOSYNTETIC
+        , GRAYED
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PROP_RADAR_IDENTITY DIALOG DISCARDABLE  0, 0, 281, 279
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Identity"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT_NAME,91,48,136,15,ES_AUTOHSCROLL
+    GROUPBOX        "Identity",IDC_STATIC,26,23,230,89
+    LTEXT           "Name :",IDC_STATIC,47,51,24,8
+    GROUPBOX        "Position",IDC_STATIC,26,126,230,92
+    LTEXT           "The Radar position is fixed at coordinates [0,0].",
+                    IDC_STATIC,48,144,213,14
+END
+
+IDD_PROP_RADAR_TX DIALOG DISCARDABLE  0, 0, 295, 290
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "TX"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT_PEAKPOWER,69,13,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_PULSEWIDTH,202,13,40,14,ES_AUTOHSCROLL
+    CONTROL         "Pulse Group",IDC_CHECK_PULSEGROUP,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,21,55,55,10
+    CONTROL         "Fix Frequency",IDC_CHECK_FIXFREQ,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,199,55,60,10
+    EDITTEXT        IDC_EDIT_NBROFPULSES,97,73,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_CHANNELSEPARATION,97,95,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_MINFREQ,70,145,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_MAXFREQ,190,145,40,14,ES_AUTOHSCROLL
+    COMBOBOX        IDC_COMBO_PRITYPE,103,196,79,65,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT_PRI,49,215,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_PRF,49,236,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_PRIDEVIATION,103,260,40,14,ES_AUTOHSCROLL | 
+                    WS_DISABLED | NOT WS_TABSTOP
+    LTEXT           "Peak Power :",IDC_STATIC,19,16,44,8
+    LTEXT           "Pulse Width :",IDC_STATIC,150,16,43,8
+    GROUPBOX        "Carrier Type",IDC_STATIC,13,35,264,86
+    LTEXT           "Number of Pulses :",IDC_STATIC,21,77,60,8
+    LTEXT           "Channel Separation :",IDC_STATIC,21,97,67,8
+    LTEXT           "Min Freq :",IDC_STATIC,33,148,32,8
+    LTEXT           "Max Freq :",IDC_STATIC,148,148,34,8
+    GROUPBOX        "Frequency",IDC_STATIC,13,132,265,39
+    GROUPBOX        "PRI / PRF",IDC_STATIC,14,183,265,97
+    LTEXT           "PRI/PRF Type :",IDC_STATIC,25,197,52,8
+    LTEXT           "PRI :",IDC_STATIC,25,217,17,8
+    LTEXT           "Jitter PRI/PRF Deviation :",IDC_STATIC,25,262,66,8
+    LTEXT           "[MHz]",IDC_STATIC,113,148,20,8
+    LTEXT           "[MHz]",IDC_STATIC,235,148,20,8
+    LTEXT           "[us]",IDC_STATIC,249,16,12,8
+    LTEXT           "[W]",IDC_STATIC,115,16,12,8
+    LTEXT           "[s]",IDC_STATIC,99,218,8,8
+    LTEXT           "[%]",IDC_STATIC,152,263,10,8
+    LTEXT           "(1 = pulse-pulse freqhopping)",IDC_STATIC,145,76,92,8
+    LTEXT           "PRF :",IDC_STATIC,25,238,19,8
+    LTEXT           "[Hz]",IDC_STATIC,98,239,14,8
+    LTEXT           "[MHz]",IDC_STATIC,141,97,20,8
+    PUSHBUTTON      "Stagger Pattern from file...",IDC_BUTTON1,181,223,89,14,
+                    WS_DISABLED
+END
+
+IDD_PROP_RADAR_RXSIGNALPROCESSING DIALOG DISCARDABLE  0, 0, 297, 293
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "RX/Signalprocessing"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT_IFBANDWIDTH,69,22,40,14,ES_AUTOHSCROLL | 
+                    ES_READONLY | NOT WS_TABSTOP
+    EDITTEXT        IDC_EDIT_NOISEFIGURE,224,22,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_LOSSES,69,47,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_JSRATIO,224,47,40,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_COHERENTINTEGRATION,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,98,93,16,8
+    EDITTEXT        IDC_EDIT_PULSECOMPRATIO,224,90,40,14,ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_SNRMIN,55,151,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_PROCESSINGGAIN,224,119,40,14,ES_AUTOHSCROLL | 
+                    ES_READONLY | NOT WS_TABSTOP
+    CONTROL         "Clutter Map ",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED,25,198,54,10
+    EDITTEXT        IDC_EDIT12,224,213,40,14,ES_AUTOHSCROLL | WS_DISABLED | 
+                    NOT WS_TABSTOP
+    EDITTEXT        IDC_EDIT13,224,236,40,14,ES_AUTOHSCROLL | WS_DISABLED | 
+                    NOT WS_TABSTOP
+    EDITTEXT        IDC_EDIT14,224,259,40,14,ES_AUTOHSCROLL | WS_DISABLED | 
+                    NOT WS_TABSTOP
+    LTEXT           "IF_Bandwidth :",IDC_STATIC,15,25,48,8
+    LTEXT           "Dynamic Range :",IDC_STATIC,144,50,79,8
+    LTEXT           "Coherent Integration :",IDC_STATIC,19,93,69,8
+    LTEXT           "Processing Gain :",IDC_STATIC,144,122,56,8
+    LTEXT           "Pulse Comp Ratio :",IDC_STATIC,144,93,61,8
+    LTEXT           "[MHz]",IDC_STATIC,113,25,20,8
+    LTEXT           "[dB]",IDC_STATIC,268,50,14,8
+    LTEXT           "[ggr]",IDC_STATIC,268,122,15,8
+    LTEXT           "[ggr]",IDC_STATIC,268,92,15,8
+    LTEXT           "SNR Min:",IDC_STATIC,19,153,32,8
+    LTEXT           "[dB]",IDC_STATIC,101,153,14,8
+    GROUPBOX        "Clutter Map",IDC_STATIC,7,186,283,99,WS_DISABLED
+    LTEXT           "Number of False targets for activation :",IDC_STATIC,25,
+                    219,122,8,WS_DISABLED
+    LTEXT           "Propability of cellblock :",IDC_STATIC,25,240,75,8,
+                    WS_DISABLED
+    LTEXT           "Update Frequency :",IDC_STATIC,25,262,64,8,WS_DISABLED
+    LTEXT           "[Hz]",IDC_STATIC,268,262,14,8,WS_DISABLED
+    GROUPBOX        "RX",IDC_STATIC,7,7,283,66
+    GROUPBOX        "Signalprocessing",IDC_STATIC,7,79,283,98
+    LTEXT           "Losses :",IDC_STATIC,15,50,27,8
+    LTEXT           "[dB]",IDC_STATIC,113,50,14,8
+    LTEXT           "Noise Figure :",IDC_STATIC,144,25,48,8
+    LTEXT           "[dB]",IDC_STATIC,268,25,14,8
+    LTEXT           "Pfa :",IDC_STATIC,127,153,14,8
+    LTEXT           "Pd :",IDC_STATIC,199,153,13,8
+    EDITTEXT        IDC_EDIT1,147,151,40,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_EDIT2,223,151,40,14,ES_AUTOHSCROLL | WS_DISABLED
+END
+
+IDD_PROP_RADAR_ANTENNA DIALOG DISCARDABLE  0, 0, 315, 290
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Antenna"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT_SCANPERIOD,116,14,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_SIDELOBESUPRESSION,116,68,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_WIDTHMAINLOBE,116,46,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_GAINMAINLOBE,116,91,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_SPILLOVERLOBESUPRESSION,116,114,40,14,
+                    ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_WIDTHSPILLOVERLOBE,116,137,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_OFFSETSPILLOVERLOBE,116,160,40,14,
+                    ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_BACKLOBESUPRESSION,116,183,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_WIDTHBACKLOBE,116,206,40,14,ES_AUTOHSCROLL
+    COMBOBOX        IDC_COMBO_POLARIZATION,58,246,64,53,CBS_DROPDOWN | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Width Mainlobe :",IDC_STATIC,21,49,54,8
+    LTEXT           "Gain Mainlobe :",IDC_STATIC,21,94,50,8
+    LTEXT           "Spilloverlobe Suppression:",IDC_STATIC,21,117,84,8
+    LTEXT           "Width Spilloverlobe :",IDC_STATIC,21,140,66,8
+    LTEXT           "Offset Spilloverlobe :",IDC_STATIC,21,163,66,8
+    LTEXT           "Backlobe Suppression :",IDC_STATIC,21,186,76,8
+    LTEXT           "Width Backlobe :",IDC_STATIC,21,209,56,8
+    GROUPBOX        "Polarization",IDC_STATIC,24,230,122,40
+    LTEXT           "Type :",IDC_STATIC,32,248,21,8
+    LTEXT           "Sidelobe Supression :",IDC_STATIC,21,71,69,8
+    LTEXT           "Scan Period :",IDC_STATIC,21,17,44,8
+    EDITTEXT        IDC_EDIT_SIDELOBESUPRESSION3,184,68,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_WIDTHMAINLOBE2,183,46,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_GAINMAINLOBE2,184,91,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_SPILLOVERLOBESUPRESSION2,184,113,40,14,
+                    ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_WIDTHSPILLOVERLOBE2,184,136,40,14,
+                    ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_OFFSETSPILLOVERLOBE2,184,160,40,14,
+                    ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_BACKLOBESUPRESSION2,184,182,40,14,
+                    ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_WIDTHBACKLOBE2,184,206,40,14,ES_AUTOHSCROLL
+    LTEXT           "[Degrees]",IDC_STATIC,237,48,32,8
+    LTEXT           "[dBi]",IDC_STATIC,237,94,15,8
+    LTEXT           "[dB]",IDC_STATIC,237,117,14,8
+    LTEXT           "[Degrees]",IDC_STATIC,237,139,32,8
+    LTEXT           "[Degrees]",IDC_STATIC,237,163,32,8
+    LTEXT           "[dB]",IDC_STATIC,237,185,14,8
+    LTEXT           "[Degrees]",IDC_STATIC,237,208,32,8
+    LTEXT           "[dB]",IDC_STATIC,237,71,14,8
+    LTEXT           "[RPM]",IDC_STATIC,219,17,21,8
+    LTEXT           "Tx characteristics",IDC_STATIC,108,33,56,8
+    LTEXT           "Rx Characteristics",IDC_STATIC,174,33,58,8
+    PUSHBUTTON      "File...",IDC_LOOKUP_BUTTON,271,254,31,14
+    CONTROL         "From File",IDC_CHECK_FROMFILE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,167,239,46,10
+    LTEXT           "",IDC_STATIC_FILENAME,166,254,104,28,SS_SUNKEN
+END
+
+IDD_PROP_RADAR_INDICATOR DIALOG DISCARDABLE  0, 0, 290, 284
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Indicator / Range"
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_COMBO_INDICATORTYPE,113,39,103,62,CBS_DROPDOWN | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT_SIGMAREF,150,127,40,14,ES_AUTOHSCROLL
+    GROUPBOX        "Indicator",IDC_STATIC,19,18,245,143
+    LTEXT           "Indicator Type :",IDC_STATIC,37,41,50,8
+    LTEXT           "Reference Radar Cross Section :",IDC_STATIC,37,130,105,
+                    8
+    LTEXT           "[m^2]",IDC_STATIC,199,130,18,8
+    LTEXT           "Indicator Intensity :",IDC_STATIC,37,92,60,8
+    LTEXT           "[1.0 - 2.0]",IDC_STATIC,199,90,31,8
+    EDITTEXT        IDC_EDIT_SIGMAREF2,150,88,40,14,ES_AUTOHSCROLL
+END
+
+IDD_PROP_JAMMER_IDENTITY DIALOG DISCARDABLE  0, 0, 281, 271
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Identity"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT_JAMMERNAME,74,36,136,14,ES_AUTOHSCROLL
+    COMBOBOX        IDC_COMBO_COLOR,74,60,48,51,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT_DISTANCETORADAR,96,116,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_BEARING,95,139,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_VELOCITY,61,162,35,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_VELOCITY_KMH,127,162,35,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_VELOCITY_KNOP,196,162,35,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_SIGMA,108,230,40,14,ES_AUTOHSCROLL
+    GROUPBOX        "Identity",IDC_STATIC,15,20,251,69
+    LTEXT           "Name :",IDC_STATIC,26,39,24,8
+    GROUPBOX        "Position",IDC_STATIC,15,96,254,99
+    LTEXT           "Distance to Radar :",IDC_STATIC,26,118,62,8
+    LTEXT           "Bearing :",IDC_STATIC,26,141,29,8
+    LTEXT           "Velocity :",IDC_STATIC,26,164,30,8
+    LTEXT           "[km]",IDC_STATIC,147,119,14,8
+    LTEXT           "[Degrees]",IDC_STATIC,147,142,36,9
+    LTEXT           "[m/s]",IDC_STATIC,103,164,17,8
+    GROUPBOX        "Dimension",IDC_STATIC,15,208,254,55
+    LTEXT           "Radar Cross Section :",IDC_STATIC,26,233,70,8
+    LTEXT           "[m^2]",IDC_STATIC,162,233,18,8
+    LTEXT           "Color :",IDC_STATIC,26,62,21,8
+    LTEXT           "[Km/h]",IDC_STATIC,167,164,22,8
+    LTEXT           "[knots]",IDC_STATIC,238,164,22,8
+END
+
+IDD_PROP_JAMMER_RXTX DIALOG DISCARDABLE  0, 0, 281, 282
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "RX/TX"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "TX",IDC_STATIC,13,17,245,116
+    EDITTEXT        IDC_EDIT_FREQMIN,102,56,40,14,ES_AUTOHSCROLL
+    LTEXT           "Freq Min :",IDC_STATIC,27,58,32,8
+    LTEXT           "[MHz]",IDC_STATIC,148,58,20,8
+    EDITTEXT        IDC_EDIT_FREQMAX,102,32,40,14,ES_AUTOHSCROLL
+    LTEXT           "Freq Max :",IDC_STATIC,27,34,34,8
+    LTEXT           "[MHz]",IDC_STATIC,148,34,20,8
+    GROUPBOX        "RX",IDC_STATIC,13,155,245,98
+    EDITTEXT        IDC_EDIT_SENSITIVITY,102,219,40,14,ES_AUTOHSCROLL
+    LTEXT           "Sensitivity :",IDC_STATIC,27,223,36,8
+    LTEXT           "[dBm]",IDC_STATIC,148,223,19,8
+    EDITTEXT        IDC_EDIT_FREQMIN2,102,195,40,14,ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    LTEXT           "Freq Min :",IDC_STATIC,27,197,32,8
+    LTEXT           "[MHz]",IDC_STATIC,148,197,20,8
+    EDITTEXT        IDC_EDIT_FREQMAX2,102,171,40,14,ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    LTEXT           "Freq Max :",IDC_STATIC,27,173,34,8
+    LTEXT           "[MHz]",IDC_STATIC,148,173,20,8
+END
+
+IDD_PROP_JAMMER_ANTENNA DIALOG DISCARDABLE  0, 0, 278, 269
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Antenna"
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_COMBO_ANTENNATYPE,139,36,48,57,CBS_DROPDOWN | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Type",IDC_STATIC,19,18,226,45
+    LTEXT           "Antenna Type :",IDC_STATIC,55,38,50,8
+    GROUPBOX        "Polarization",IDC_STATIC,19,209,226,45
+    COMBOBOX        IDC_COMBO_POLARIZATION,139,230,64,53,CBS_DROPDOWN | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Type :",IDC_STATIC,55,231,21,8
+    EDITTEXT        IDC_EDIT_SIDELOBESUPRESSION,139,73,40,14,ES_AUTOHSCROLL
+    LTEXT           "Sidelobe Supression :",IDC_STATIC,55,76,69,8
+    LTEXT           "[dB]",IDC_STATIC,187,76,14,8
+    EDITTEXT        IDC_EDIT_ANTENNAGAINTX,140,104,40,14,ES_AUTOHSCROLL
+    LTEXT           "Antenna Gain :",IDC_STATIC,65,106,48,8
+    LTEXT           "[dB]",IDC_STATIC,186,106,14,8
+    EDITTEXT        IDC_EDIT_BEAMWIDTHTX,140,128,40,14,ES_AUTOHSCROLL
+    LTEXT           "Beam Width :",IDC_STATIC,65,130,44,8
+    LTEXT           "[Degrees]",IDC_STATIC,186,130,32,8
+    LTEXT           "Antenna Gain :",IDC_STATIC,65,162,48,8
+    EDITTEXT        IDC_EDIT_ANTENNAGAINRX,140,160,40,14,ES_AUTOHSCROLL
+    LTEXT           "[dB]",IDC_STATIC,186,162,14,8
+    EDITTEXT        IDC_EDIT_BEAMWIDTHRX,140,183,40,14,ES_AUTOHSCROLL
+    LTEXT           "Beam Width :",IDC_STATIC,65,186,44,8
+    LTEXT           "[Degrees]",IDC_STATIC,186,186,32,8
+    GROUPBOX        "RX",IDC_STATIC,19,150,225,56
+    GROUPBOX        "TX",IDC_STATIC,19,92,225,57
+END
+
+IDD_PROP_JAMMER_JAMODE1 DIALOG DISCARDABLE  0, 0, 281, 290
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Jam Mode 1"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT_PEAKPOWER,76,13,40,14,ES_AUTOHSCROLL
+    COMBOBOX        IDC_COMBO_JAMMODE,189,15,71,66,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_MODE,118,40,66,43,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT_CENTERFREQ,76,174,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_BANDWIDTH_BARRAGE,76,196,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_SETONDELAY,203,174,40,14,ES_AUTOHSCROLL | 
+                    WS_GROUP
+    EDITTEXT        IDC_EDIT_BANDWIDTH_TRACKING,204,196,40,14,ES_AUTOHSCROLL
+    COMBOBOX        IDC_COMBO_TYPE,123,224,66,48,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Type :",IDC_STATIC,155,16,21,8
+    LTEXT           "Type :",IDC_STATIC,85,225,21,8
+    LTEXT           "Set On Delay :",IDC_STATIC,152,177,47,8
+    LTEXT           "Mode :",IDC_STATIC,80,42,23,8
+    LTEXT           "Bandwidth :",IDC_STATIC,154,199,38,8
+    LTEXT           "Bandwidth :",IDC_STATIC,14,199,38,8
+    LTEXT           "Center Frequency :",IDC_STATIC,14,177,61,8
+    LTEXT           "[MHz]",IDC_STATIC,126,177,20,8
+    LTEXT           "[MHz]",IDC_STATIC,127,199,20,8
+    LTEXT           "[ns]",IDC_STATIC,248,177,12,8
+    LTEXT           "[MHz]",IDC_STATIC,248,199,20,8
+    LTEXT           "Peak Power :",IDC_STATIC,14,16,44,8
+    LTEXT           "[W]",IDC_STATIC,121,16,12,8
+    CONTROL         "Inverse Gain (IG)",IDC_CHECK_INVERSEGAIN,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,129,82,8
+    CONTROL         "Constant Power",IDC_CHECK_CONSTANTPOWER,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,83,63,8
+    CONTROL         "Constant Gain",IDC_CHECK_CONSTANTGAIN,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,106,58,8
+    EDITTEXT        IDC_EDIT_LOOPGAIN,165,102,26,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_DYNAMICRANGE,165,126,26,14,ES_AUTOHSCROLL
+    LTEXT           "[dB]",IDC_STATIC,199,105,14,8
+    LTEXT           "[dB]",IDC_STATIC,199,128,14,8
+    LTEXT           "Loop Gain :",IDC_STATIC,121,105,35,8
+    LTEXT           "Dynamic Range :",IDC_STATIC,103,128,53,8
+    GROUPBOX        "Power Mode",IDC_STATIC,7,60,268,97
+END
+
+IDD_PROP_JAMMER_JAMODE2 DIALOG DISCARDABLE  0, 0, 282, 290
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Jam Mode 2"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT_PEAKPOWER,75,18,40,14,ES_AUTOHSCROLL
+    COMBOBOX        IDC_COMBO_JAMMODE,192,18,69,66,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_PATTERN,114,188,70,48,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT_REPEATED_PULSEWIDTH,114,235,40,14,
+                    ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_EDIT_REPEATERDELAY,114,258,40,14,ES_AUTOHSCROLL | 
+                    NOT WS_TABSTOP
+    LTEXT           "False Target Pattern :",IDC_STATIC,15,190,82,8
+    LTEXT           "Repeated Pulse Width :",IDC_STATIC,15,238,76,8
+    LTEXT           "Type :",IDC_STATIC,152,21,21,8
+    LTEXT           "Repeater Throughput Delay :",IDC_STATIC,15,261,93,8
+    LTEXT           "[ns]",IDC_STATIC,160,261,12,8
+    LTEXT           "[%]",IDC_STATIC,160,238,10,8
+    LTEXT           "Peak Power :",IDC_STATIC,19,21,44,8
+    LTEXT           "[W]",IDC_STATIC,121,22,12,8
+    CONTROL         "Inverse Gain",IDC_CHECK_INVERSEGAIN,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,126,54,10
+    CONTROL         "Constant Power",IDC_CHECK_CONSTANTPOWER2,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,80,63,8
+    CONTROL         "Constant Gain",IDC_CHECK_CONSTANTGAIN2,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,103,58,8
+    EDITTEXT        IDC_EDIT_LOOPGAIN,165,99,26,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_DYNAMICRANGE2,165,124,26,14,ES_AUTOHSCROLL
+    LTEXT           "[dB]",IDC_STATIC,199,102,14,8
+    LTEXT           "[dB]",IDC_STATIC,199,126,14,8
+    LTEXT           "Loop Gain :",IDC_STATIC,121,102,35,8
+    LTEXT           "Dynamic Range :",IDC_STATIC,103,126,53,8
+    GROUPBOX        "Power Mode",IDC_STATIC,7,54,268,103
+END
+
+IDD_PROP_TARGET_IDENTITY DIALOG DISCARDABLE  0, 0, 285, 273
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Identity"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT_TARGETNAME,73,37,136,14,ES_AUTOHSCROLL
+    COMBOBOX        IDC_COMBO_COLOR,78,60,48,51,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT_DISTANCETORADAR,105,106,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_BEARING,104,129,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_COURSE,104,151,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_VELOCITY,104,175,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_SIGMA,106,226,40,14,ES_AUTOHSCROLL
+    GROUPBOX        "Identity",IDC_STATIC,17,17,244,66
+    LTEXT           "Name :",IDC_STATIC,29,40,24,8
+    GROUPBOX        "Position",IDC_STATIC,17,90,244,106
+    LTEXT           "Distance to Radar :",IDC_STATIC,29,108,62,8
+    LTEXT           "Bearing :",IDC_STATIC,29,132,29,8
+    LTEXT           "Velocity :",IDC_STATIC,30,177,30,8
+    LTEXT           "[km]",IDC_STATIC,161,108,14,8
+    LTEXT           "[Degrees]",IDC_STATIC,159,130,36,9
+    LTEXT           "[m/s]",IDC_STATIC,160,177,17,8
+    LTEXT           "Course :",IDC_STATIC,28,154,27,8
+    LTEXT           "[Degrees]",IDC_STATIC,158,154,36,10
+    GROUPBOX        "Dimension",IDC_STATIC,16,204,245,54
+    LTEXT           "Radar Cross Section :",IDC_STATIC,35,229,70,8
+    LTEXT           "[m^2]",IDC_STATIC,160,229,18,8
+    LTEXT           "Color :",IDC_STATIC,30,62,21,8
+END
+
+IDD_PROP_SYMBOL DIALOG DISCARDABLE  0, 0, 309, 271
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Symbol"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "A",IDC_STATIC_PREVIEW,102,102,124,84,BS_CENTER
+END
+
+IDD_DIALOGOVERVIEW DIALOGEX 281, 227, 390, 174
+STYLE WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_TOOLWINDOW
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Move Startpos",IDC_BUT_MOVE,7,76,55,14
+    PUSHBUTTON      "Add Waypoint",IDC_BUT_WAYPOINT,7,90,55,14
+    PUSHBUTTON      "Del Waypoint",IDC_BUT_DELETEWAYPOINT,7,104,55,14
+    LTEXT           "",IDC_STATIC_TIME,7,7,78,15
+    LTEXT           "",IDC_STATIC_COOR,7,29,77,21
+    LTEXT           "",IDC_STATIC_DISTTORADAR,7,55,77,21
+    CONTROL         "Show all Waypoints",IDC_CHECK_ALLWAYPOINTS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,122,74,10
+END
+
+IDD_DLG_KALIBRERA DIALOG DISCARDABLE  0, 0, 270, 210
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Calibrate Maximum Range"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT_PEAKPOWER,123,20,31,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_ANTENNAGAIN,116,42,23,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_LOSSES,131,64,23,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_PROCESSINGGAIN,131,86,23,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Calculate Maximum Range",IDC_BUTTON_CALCMAXRANGE,81,119,
+                    109,22
+    EDITTEXT        IDC_EDIT_MAXRANGE,149,146,40,14,ES_AUTOHSCROLL | 
+                    ES_READONLY | NOT WS_TABSTOP
+    EDITTEXT        IDC_EDIT_SENSITIVITY,150,166,39,14,ES_AUTOHSCROLL | 
+                    ES_READONLY | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "Close and Save",IDOK,100,189,67,14
+    GROUPBOX        "Calibration",IDC_STATIC,19,7,228,104
+    LTEXT           "Max Range :",IDC_STATIC,60,149,42,8
+    LTEXT           "[km]",IDC_STATIC,200,149,14,8
+    LTEXT           "Losses :",IDC_STATIC,36,66,27,8
+    LTEXT           "Processing Gain :",IDC_STATIC,36,87,56,8
+    LTEXT           "Sensitivity :",IDC_STATIC,60,168,36,8
+    CONTROL         "Spin1",IDC_SPIN_LOSSES,"msctls_updown32",UDS_ARROWKEYS,
+                    159,64,11,14
+    CONTROL         "Spin1",IDC_SPIN_PROCESSINGGAIN,"msctls_updown32",
+                    UDS_ARROWKEYS,159,86,11,14
+    LTEXT           "[dBm]",IDC_STATIC,200,168,19,8
+    LTEXT           "Peak Power :",IDC_STATIC,36,24,44,8
+    LTEXT           "Antenna Gain :",IDC_STATIC,36,45,48,8
+    CONTROL         "Spin2",IDC_SPIN_ANTENNAGAIN,"msctls_updown32",
+                    UDS_ARROWKEYS,144,42,11,14
+    CONTROL         "Spin2",IDC_SPIN_PEAKPOWER,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_ARROWKEYS,159,20,
+                    11,14
+    LTEXT           "[W]",IDC_STATIC,179,24,12,8
+    LTEXT           "[dB]",IDC_STATIC,223,44,14,8
+    LTEXT           "[dB]",IDC_STATIC,179,68,14,8
+    LTEXT           "[ggr]",IDC_STATIC,179,89,15,8
+    LTEXT           "Tx :",IDC_STATIC,98,45,13,8
+    EDITTEXT        IDC_EDIT_ANTENNAGAIN2,177,42,23,14,ES_AUTOHSCROLL
+    CONTROL         "Spin2",IDC_SPIN_ANTENNAGAIN2,"msctls_updown32",
+                    UDS_ARROWKEYS,205,42,11,14
+    LTEXT           "Rx :",IDC_STATIC,159,45,14,8
+END
+
+IDD_DIALOG_CHOISE DIALOG DISCARDABLE  0, 0, 160, 63
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Warning!"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,18,42,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,81,42,50,14
+    CTEXT           "",IDC_STATIC_CHOISE,47,20,92,14
+    ICON            IDI_ICON_WARNING,IDC_STATIC,16,13,21,20
+END
+
+IDD_DIALOG_DIAGRAM DIALOG DISCARDABLE  0, 0, 378, 233
+STYLE WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | 
+    WS_THICKFRAME
+CAPTION "Diagram"
+FONT 8, "MS Sans Serif"
+BEGIN
+END
+
+IDD_DIALOG_RANDOM DIALOG DISCARDABLE  0, 0, 186, 280
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Random False Targets"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,39,259,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,96,259,50,14
+    EDITTEXT        IDC_EDIT_PROPABILITY,81,12,40,14,ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_VELOCITY,81,60,40,14,ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_RADARFREQFORDOPPLER,81,92,40,14,ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_APPLIEDDOPPLER,81,119,40,14,ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_TIMEBETWEEN,81,146,40,14,ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_DISTANCEBETWEEN,81,200,40,14,ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_DUTYCYCLE,81,173,40,14,ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    EDITTEXT        IDC_EDIT_CLOCKRATE,81,227,40,14,ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    LTEXT           "Propability :",IDC_STATIC,13,14,37,8
+    LTEXT           "Velocity :",IDC_STATIC,13,64,30,8
+    LTEXT           "Time between :",IDC_STATIC,13,147,50,8
+    LTEXT           "Distance between ",IDC_STATIC,13,200,62,11
+    LTEXT           "Duty cycle :",IDC_STATIC,13,174,38,8
+    LTEXT           "[%]",IDC_STATIC,127,177,10,8
+    LTEXT           "[m]",IDC_STATIC,127,203,10,8
+    LTEXT           "[us]",IDC_STATIC,127,151,12,8
+    LTEXT           "Applied Doppler:",IDC_STATIC,13,122,53,8
+    LTEXT           "[Hz]",IDC_STATIC,127,124,14,8
+    LTEXT           "[m/s]",IDC_STATIC,127,62,17,8
+    LTEXT           "false targets in radar :",IDC_STATIC,13,209,68,8
+    LTEXT           "(Jammer output)",IDC_STATIC,13,155,51,8
+    LTEXT           "(Jammer output)",IDC_STATIC,13,183,51,8
+    LTEXT           "Clock Rate :",IDC_STATIC,13,229,40,8
+    LTEXT           "[%]",IDC_STATIC,127,14,10,8
+    LTEXT           "at Radar frequency :",IDC_STATIC,13,96,66,8
+    LTEXT           "[MHz]",IDC_STATIC,127,95,20,8
+    EDITTEXT        IDC_EDIT_PROPABILITY2,81,36,40,14,ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    LTEXT           "[ms]",IDC_STATIC,127,39,14,8
+    LTEXT           "Persistence :",IDC_STATIC,13,39,37,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_PROP_RADAR_IDENTITY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 274
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 271
+    END
+
+    IDD_PROP_RADAR_TX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 288
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 282
+    END
+
+    IDD_PROP_RADAR_RXSIGNALPROCESSING, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 290
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 285
+    END
+
+    IDD_PROP_RADAR_ANTENNA, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 308
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 282
+    END
+
+    IDD_PROP_RADAR_INDICATOR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 283
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 276
+    END
+
+    IDD_PROP_JAMMER_IDENTITY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 274
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 263
+    END
+
+    IDD_PROP_JAMMER_RXTX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 274
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 274
+    END
+
+    IDD_PROP_JAMMER_ANTENNA, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 274
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 261
+    END
+
+    IDD_PROP_JAMMER_JAMODE1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 274
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 282
+    END
+
+    IDD_PROP_JAMMER_JAMODE2, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 275
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 282
+    END
+
+    IDD_PROP_TARGET_IDENTITY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 278
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 265
+    END
+
+    IDD_PROP_SYMBOL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 302
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 263
+    END
+
+    IDD_DIALOGOVERVIEW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 383
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 167
+    END
+
+    IDD_DLG_KALIBRERA, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 263
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 203
+    END
+
+    IDD_DIALOG_CHOISE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 153
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 56
+    END
+
+    IDD_DIALOG_DIAGRAM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 371
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 226
+    END
+
+    IDD_DIALOG_RANDOM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 273
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\ASSAR.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#include ""afxprint.rc""       // printing/print preview resources\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_PROP_RADAR_ANTENNA DLGINIT
+BEGIN
+    IDC_COMBO_POLARIZATION, 0x403, 11, 0
+0x6f48, 0x6972, 0x6f7a, 0x746e, 0x6c61, "\000" 
+    IDC_COMBO_POLARIZATION, 0x403, 9, 0
+0x6556, 0x7472, 0x6369, 0x6c61, "\000" 
+    IDC_COMBO_POLARIZATION, 0x403, 14, 0
+0x6c53, 0x6e61, 0x2074, 0x3534, 0x4c20, 0x6665, 0x0074, 
+    IDC_COMBO_POLARIZATION, 0x403, 15, 0
+0x6c53, 0x6e61, 0x2074, 0x3534, 0x5220, 0x6769, 0x7468, "\000" 
+    IDC_COMBO_POLARIZATION, 0x403, 14, 0
+0x6943, 0x6372, 0x6c75, 0x7261, 0x4c20, 0x6665, 0x0074, 
+    IDC_COMBO_POLARIZATION, 0x403, 15, 0
+0x6943, 0x6372, 0x6c75, 0x7261, 0x5220, 0x6769, 0x7468, "\000" 
+    0
+END
+
+IDD_PROP_RADAR_TX DLGINIT
+BEGIN
+    IDC_COMBO_PRITYPE, 0x403, 4, 0
+0x6946, 0x0078, 
+    IDC_COMBO_PRITYPE, 0x403, 8, 0
+0x7453, 0x6761, 0x6567, 0x0072, 
+    IDC_COMBO_PRITYPE, 0x403, 7, 0
+0x694a, 0x7474, 0x7265, "\000" 
+    0
+END
+
+IDD_PROP_RADAR_INDICATOR DLGINIT
+BEGIN
+    IDC_COMBO_INDICATORTYPE, 0x403, 10, 0
+0x7953, 0x746e, 0x6568, 0x6974, 0x0063, 
+    IDC_COMBO_INDICATORTYPE, 0x403, 9, 0
+0x6152, 0x5677, 0x6469, 0x6f65, "\000" 
+    IDC_COMBO_INDICATORTYPE, 0x403, 23, 0
+0x7550, 0x736c, 0x2065, 0x6f43, 0x706d, 0x6572, 0x7373, 0x6465, 0x5620, 
+0x6469, 0x6f65, "\000" 
+    IDC_COMBO_INDICATORTYPE, 0x403, 21, 0
+0x7953, 0x746e, 0x6568, 0x6974, 0x2063, 0x2026, 0x6152, 0x5677, 0x6469, 
+0x6f65, "\000" 
+    IDC_COMBO_INDICATORTYPE, 0x403, 35, 0
+0x7953, 0x746e, 0x6568, 0x6974, 0x2063, 0x2026, 0x7550, 0x736c, 0x2065, 
+0x6f43, 0x706d, 0x6572, 0x7373, 0x6465, 0x5620, 0x6469, 0x6f65, "\000" 
+    0
+END
+
+IDD_PROP_JAMMER_ANTENNA DLGINIT
+BEGIN
+    IDC_COMBO_ANTENNATYPE, 0x403, 5, 0
+0x6953, 0x636e, "\000" 
+    IDC_COMBO_POLARIZATION, 0x403, 11, 0
+0x6f48, 0x6972, 0x6f7a, 0x746e, 0x6c61, "\000" 
+    IDC_COMBO_POLARIZATION, 0x403, 9, 0
+0x6556, 0x7472, 0x6369, 0x6c61, "\000" 
+    IDC_COMBO_POLARIZATION, 0x403, 14, 0
+0x6c53, 0x6e61, 0x2074, 0x3534, 0x4c20, 0x6665, 0x0074, 
+    IDC_COMBO_POLARIZATION, 0x403, 15, 0
+0x6c53, 0x6e61, 0x2074, 0x3534, 0x5220, 0x6769, 0x7468, "\000" 
+    IDC_COMBO_POLARIZATION, 0x403, 14, 0
+0x6943, 0x6372, 0x6c75, 0x7261, 0x4c20, 0x6665, 0x0074, 
+    IDC_COMBO_POLARIZATION, 0x403, 15, 0
+0x6943, 0x6372, 0x6c75, 0x7261, 0x5220, 0x6769, 0x7468, "\000" 
+    0
+END
+
+IDD_PROP_JAMMER_JAMODE2 DLGINIT
+BEGIN
+    IDC_COMBO_JAMMODE, 0x403, 6, 0
+0x6f4e, 0x7369, 0x0065, 
+    IDC_COMBO_JAMMODE, 0x403, 14, 0
+0x5244, 0x4d46, 0x5220, 0x7065, 0x6165, 0x6574, 0x0072, 
+    IDC_COMBO_JAMMODE, 0x403, 13, 0
+0x4d46, 0x204c, 0x6552, 0x6570, 0x7461, 0x7265, "\000" 
+    IDC_COMBO_JAMMODE, 0x403, 12, 0
+0x6f43, 0x6576, 0x2072, 0x7550, 0x736c, 0x0065, 
+    IDC_COMBO_PATTERN, 0x403, 13, 0
+0x7953, 0x636e, 0x7268, 0x6e6f, 0x7a69, 0x6465, "\000" 
+    IDC_COMBO_PATTERN, 0x403, 15, 0
+0x6e55, 0x7973, 0x636e, 0x7268, 0x6e6f, 0x7a69, 0x6465, "\000" 
+    IDC_COMBO_PATTERN, 0x403, 7, 0
+0x6152, 0x646e, 0x6d6f, "\000" 
+    0
+END
+
+IDD_PROP_JAMMER_JAMODE1 DLGINIT
+BEGIN
+    IDC_COMBO_JAMMODE, 0x403, 6, 0
+0x6f4e, 0x7369, 0x0065, 
+    IDC_COMBO_JAMMODE, 0x403, 14, 0
+0x5244, 0x4d46, 0x5220, 0x7065, 0x6165, 0x6574, 0x0072, 
+    IDC_COMBO_JAMMODE, 0x403, 13, 0
+0x4d46, 0x204c, 0x6552, 0x6570, 0x7461, 0x7265, "\000" 
+    IDC_COMBO_JAMMODE, 0x403, 12, 0
+0x6f43, 0x6576, 0x2072, 0x7550, 0x736c, 0x0065, 
+    IDC_COMBO_MODE, 0x403, 14, 0
+0x6946, 0x2078, 0x7246, 0x7165, 0x6575, 0x636e, 0x0079, 
+    IDC_COMBO_MODE, 0x403, 15, 0
+0x7254, 0x6361, 0x696b, 0x676e, 0x2820, 0x4f53, 0x2952, "\000" 
+    IDC_COMBO_TYPE, 0x403, 10, 0
+0x6f43, 0x746e, 0x6e69, 0x756f, 0x0073, 
+    IDC_COMBO_TYPE, 0x403, 7, 0
+0x7550, 0x736c, 0x6465, "\000" 
+    0
+END
+
+IDD_PROP_JAMMER_IDENTITY DLGINIT
+BEGIN
+    IDC_COMBO_COLOR, 0x403, 6, 0
+0x6857, 0x7469, 0x0065, 
+    IDC_COMBO_COLOR, 0x403, 5, 0
+0x6c42, 0x6575, "\000" 
+    IDC_COMBO_COLOR, 0x403, 6, 0
+0x7247, 0x6565, 0x006e, 
+    IDC_COMBO_COLOR, 0x403, 7, 0
+0x6559, 0x6c6c, 0x776f, "\000" 
+    0
+END
+
+IDD_PROP_TARGET_IDENTITY DLGINIT
+BEGIN
+    IDC_COMBO_COLOR, 0x403, 6, 0
+0x6857, 0x7469, 0x0065, 
+    IDC_COMBO_COLOR, 0x403, 5, 0
+0x6c42, 0x6575, "\000" 
+    IDC_COMBO_COLOR, 0x403, 6, 0
+0x7247, 0x6565, 0x006e, 
+    IDC_COMBO_COLOR, 0x403, 7, 0
+0x6559, 0x6c6c, 0x776f, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_PROPSHT_CAPTION     "Property Sheet"
+    IDS_PROPSHT_CAPTION1    "Property Sheet"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_PROPSHT_CAPTION2    "Property Sheet"
+END
+
+#endif    // Swedish resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\ASSAR.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#include "afxprint.rc"       // printing/print preview resources
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

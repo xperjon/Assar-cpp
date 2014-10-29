@@ -1,0 +1,366 @@
+# Microsoft Developer Studio Generated Dependency File, included by ASSAR.mak
+
+.\ASSAR.cpp : \
+	".\ASSAR.h"\
+	".\Cell.h"\
+	".\CellLista.h"\
+	".\DialogDiagram.h"\
+	".\MainFrm.h"\
+	".\OpenGL.h"\
+	".\ProgressBar.h"\
+	".\radarplotDoc.h"\
+	".\radarplotView.h"\
+	".\Splash.h"\
+	".\StdAfx.h"\
+	".\Utrustning.h"\
+	".\UtrustningLista.h"\
+	".\UtrustningsKlasser.h"\
+	
+
+.\ASSAR.rc : \
+	".\iconstop.ico"\
+	".\res\ASSAR.ico"\
+	".\res\ASSAR.rc2"\
+	".\res\ASSARDOC.ico"\
+	".\res\bitmap1.bmp"\
+	".\res\bitmap2.bmp"\
+	".\res\bitmap3.bmp"\
+	".\res\bitmap7.bmp"\
+	".\res\Exempel.bmp"\
+	".\res\fmvlogga.bmp"\
+	".\res\fmvloggaliten.bmp"\
+	".\res\ico00001.ico"\
+	".\res\icon1.ico"\
+	".\res\icon1_j.ico"\
+	".\res\icon3_j.ico"\
+	".\res\iconwarn.ico"\
+	".\res\JAS39.bmp"\
+	".\res\jonne&emma(liten).bmp"\
+	".\res\MONA.BMP"\
+	".\res\RadarPPI.bmp"\
+	".\res\Splash.bmp"\
+	".\res\test.bmp"\
+	".\res\Toolbar.bmp"\
+	".\res\visby2profil.bmp"\
+	".\Splsh16.bmp"\
+	
+
+.\AVIGenerator.cpp : \
+	".\AVIGenerator.h"\
+	".\ProgressBar.h"\
+	".\StdAfx.h"\
+	
+
+.\Cell.cpp : \
+	".\ASSAR.h"\
+	".\Cell.h"\
+	".\ProgressBar.h"\
+	".\StdAfx.h"\
+	
+
+.\CellLista.cpp : \
+	".\Cell.h"\
+	".\CellLista.h"\
+	".\ProgressBar.h"\
+	".\StdAfx.h"\
+	
+
+.\ColorSlider.cpp : \
+	".\ASSAR.h"\
+	".\ColorSlider.h"\
+	".\ProgressBar.h"\
+	".\StdAfx.h"\
+	
+
+.\DialogChoise.cpp : \
+	".\ASSAR.h"\
+	".\DialogChoise.h"\
+	".\ProgressBar.h"\
+	".\StdAfx.h"\
+	
+
+.\DialogDiagram.cpp : \
+	".\ASSAR.h"\
+	".\Cell.h"\
+	".\CellLista.h"\
+	".\DialogDiagram.h"\
+	".\OpenGL.h"\
+	".\ProgressBar.h"\
+	".\RadarCalculate.h"\
+	".\radarplotDoc.h"\
+	".\radarplotView.h"\
+	".\StdAfx.h"\
+	".\Utrustning.h"\
+	".\UtrustningLista.h"\
+	".\UtrustningsKlasser.h"\
+	
+
+.\DialogKalibreraRadar.cpp : \
+	".\ASSAR.h"\
+	".\Cell.h"\
+	".\CellLista.h"\
+	".\DialogKalibreraRadar.h"\
+	".\ProgressBar.h"\
+	".\RadarCalculate.h"\
+	".\StdAfx.h"\
+	".\Utrustning.h"\
+	".\UtrustningsKlasser.h"\
+	
+
+.\DlgOverView.cpp : \
+	".\ASSAR.h"\
+	".\Cell.h"\
+	".\CellLista.h"\
+	".\DialogDiagram.h"\
+	".\DlgOverView.h"\
+	".\OpenGL.h"\
+	".\ProgressBar.h"\
+	".\RadarCalculate.h"\
+	".\radarplotDoc.h"\
+	".\radarplotView.h"\
+	".\StdAfx.h"\
+	".\Utrustning.h"\
+	".\UtrustningLista.h"\
+	".\UtrustningsKlasser.h"\
+	".\YellowEdit.h"\
+	
+
+.\DlgOverViewOpenGL.cpp : \
+	".\ASSAR.h"\
+	".\Cell.h"\
+	".\CellLista.h"\
+	".\DialogDiagram.h"\
+	".\DlgOverViewOpenGL.h"\
+	".\OpenGL.h"\
+	".\ProgressBar.h"\
+	".\RadarCalculate.h"\
+	".\radarplotDoc.h"\
+	".\radarplotView.h"\
+	".\StdAfx.h"\
+	".\Utrustning.h"\
+	".\UtrustningLista.h"\
+	".\UtrustningsKlasser.h"\
+	
+
+.\dlgradarppi.cpp : \
+	".\ASSAR.h"\
+	".\Cell.h"\
+	".\CellLista.h"\
+	".\ColorSlider.h"\
+	".\DialogChoise.h"\
+	".\DialogDiagram.h"\
+	".\dlgradarppi.h"\
+	".\OpenGL.h"\
+	".\OutlineFont.h"\
+	".\ProgressBar.h"\
+	".\RadarCalculate.h"\
+	".\radarplotDoc.h"\
+	".\radarplotView.h"\
+	".\StdAfx.h"\
+	".\Utrustning.h"\
+	".\UtrustningLista.h"\
+	".\UtrustningsKlasser.h"\
+	".\YellowEdit.h"\
+	
+
+.\MainFrm.cpp : \
+	".\ASSAR.h"\
+	".\AVIGenerator.h"\
+	".\Cell.h"\
+	".\CellLista.h"\
+	".\ColorSlider.h"\
+	".\DialogChoise.h"\
+	".\DialogDiagram.h"\
+	".\DlgOverViewOpenGL.h"\
+	".\dlgradarppi.h"\
+	".\MainFrm.h"\
+	".\OpenGL.h"\
+	".\OutlineFont.h"\
+	".\ProgressBar.h"\
+	".\radarplotDoc.h"\
+	".\radarplotView.h"\
+	".\Splash.h"\
+	".\StdAfx.h"\
+	".\Utrustning.h"\
+	".\UtrustningLista.h"\
+	".\UtrustningsKlasser.h"\
+	".\YellowEdit.h"\
+	
+
+.\OpenGL.cpp : \
+	".\ASSAR.h"\
+	".\Cell.h"\
+	".\CellLista.h"\
+	".\DialogDiagram.h"\
+	".\MainFrm.h"\
+	".\OpenGL.h"\
+	".\RadarCalculate.h"\
+	".\radarplotDoc.h"\
+	".\radarplotView.h"\
+	".\Utrustning.h"\
+	".\UtrustningLista.h"\
+	".\UtrustningsKlasser.h"\
+	
+
+.\ProgressBar.cpp : \
+	".\ProgressBar.h"\
+	".\StdAfx.h"\
+	
+
+.\PropPageJammer.cpp : \
+	".\Cell.h"\
+	".\CellLista.h"\
+	".\ProgressBar.h"\
+	".\PropPageJammer.h"\
+	".\RadarCalculate.h"\
+	".\StdAfx.h"\
+	".\Utrustning.h"\
+	".\UtrustningsKlasser.h"\
+	
+
+.\PropPageRadar.cpp : \
+	".\Cell.h"\
+	".\CellLista.h"\
+	".\ProgressBar.h"\
+	".\PropPageRadar.h"\
+	".\PropSheetUtrustning.h"\
+	".\RadarCalculate.h"\
+	".\StdAfx.h"\
+	".\Utrustning.h"\
+	".\UtrustningsKlasser.h"\
+	
+
+.\PropPageTarget.cpp : \
+	".\ProgressBar.h"\
+	".\PropPageTarget.h"\
+	".\StdAfx.h"\
+	".\Utrustning.h"\
+	
+
+.\PropSheetUtrustning.cpp : \
+	".\Cell.h"\
+	".\CellLista.h"\
+	".\ProgressBar.h"\
+	".\PropPageRadar.h"\
+	".\PropSheetUtrustning.h"\
+	".\StdAfx.h"\
+	".\Utrustning.h"\
+	".\UtrustningsKlasser.h"\
+	
+
+.\PropSheetUtrustning1.cpp : \
+	".\ProgressBar.h"\
+	".\PropPageJammer.h"\
+	".\PropSheetUtrustning1.h"\
+	".\StdAfx.h"\
+	".\Utrustning.h"\
+	
+
+.\PropSheetUtrustning2.cpp : \
+	".\ProgressBar.h"\
+	".\PropPageTarget.h"\
+	".\PropSheetUtrustning2.h"\
+	".\StdAfx.h"\
+	".\Utrustning.h"\
+	
+
+.\RadarCalculate.cpp : \
+	".\ASSAR.h"\
+	".\ProgressBar.h"\
+	".\RadarCalculate.h"\
+	".\StdAfx.h"\
+	
+
+.\radarplotDoc.cpp : \
+	".\ASSAR.h"\
+	".\ProgressBar.h"\
+	".\radarplotDoc.h"\
+	".\StdAfx.h"\
+	
+
+.\radarplotView.cpp : \
+	".\ASSAR.h"\
+	".\Cell.h"\
+	".\CellLista.h"\
+	".\ColorSlider.h"\
+	".\DialogChoise.h"\
+	".\DialogDiagram.h"\
+	".\DialogKalibreraRadar.h"\
+	".\DlgOverView.h"\
+	".\DlgOverViewOpenGL.h"\
+	".\dlgradarppi.h"\
+	".\OpenGL.h"\
+	".\OutlineFont.h"\
+	".\ProgressBar.h"\
+	".\PropPageJammer.h"\
+	".\PropPageRadar.h"\
+	".\PropPageTarget.h"\
+	".\PropSheetUtrustning.h"\
+	".\PropSheetUtrustning1.h"\
+	".\PropSheetUtrustning2.h"\
+	".\RadarCalculate.h"\
+	".\radarplotDoc.h"\
+	".\radarplotView.h"\
+	".\RadarPPI.h"\
+	".\StdAfx.h"\
+	".\Utrustning.h"\
+	".\UtrustningLista.h"\
+	".\UtrustningsKlasser.h"\
+	".\YellowEdit.h"\
+	
+
+.\RadarPPI.cpp : \
+	".\ASSAR.h"\
+	".\Cell.h"\
+	".\CellLista.h"\
+	".\DialogDiagram.h"\
+	".\OpenGL.h"\
+	".\ProgressBar.h"\
+	".\RadarCalculate.h"\
+	".\radarplotDoc.h"\
+	".\radarplotView.h"\
+	".\RadarPPI.h"\
+	".\StdAfx.h"\
+	".\Utrustning.h"\
+	".\UtrustningLista.h"\
+	".\UtrustningsKlasser.h"\
+	
+
+.\Splash.cpp : \
+	".\ProgressBar.h"\
+	".\Splash.h"\
+	".\StdAfx.h"\
+	
+
+.\StdAfx.cpp : \
+	".\ProgressBar.h"\
+	".\StdAfx.h"\
+	
+
+.\Utrustning.cpp : \
+	".\ProgressBar.h"\
+	".\StdAfx.h"\
+	".\Utrustning.h"\
+	
+
+.\UtrustningLista.cpp : \
+	".\ProgressBar.h"\
+	".\StdAfx.h"\
+	".\Utrustning.h"\
+	".\UtrustningLista.h"\
+	
+
+.\UtrustningsKlasser.cpp : \
+	".\Cell.h"\
+	".\CellLista.h"\
+	".\RadarCalculate.h"\
+	".\Utrustning.h"\
+	".\UtrustningsKlasser.h"\
+	
+
+.\YellowEdit.cpp : \
+	".\ASSAR.h"\
+	".\ProgressBar.h"\
+	".\StdAfx.h"\
+	".\YellowEdit.h"\
+	

@@ -1,0 +1,251 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>ASSAR</ProjectName>
+    <SccProjectName />
+    <SccLocalPath />
+    <Keyword>MFCProj</Keyword>
+    <ProjectGuid>{B3E7B6E7-58F5-45F1-9081-0597B039A44F}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>.\Release\</OutDir>
+    <IntDir>.\Release\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>.\Debug\</OutDir>
+    <IntDir>.\Debug\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Release\</AssemblerListingLocation>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderOutputFile>.\Release\ASSAR.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader />
+      <ObjectFileName>.\Release\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Release\</ProgramDataBaseFileName>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TypeLibraryName>.\Release\ASSAR.tlb</TypeLibraryName>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Release\ASSAR.bsc</OutputFile>
+    </Bscmake>
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>.\Release\ASSAR.exe</OutputFile>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;vfw32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <Optimization>Disabled</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <MinimalRebuild>true</MinimalRebuild>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Debug\</AssemblerListingLocation>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderOutputFile>.\Debug\ASSAR.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader />
+      <ObjectFileName>.\Debug\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Debug\</ProgramDataBaseFileName>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TypeLibraryName>.\Debug\ASSAR.tlb</TypeLibraryName>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Debug\ASSAR.bsc</OutputFile>
+    </Bscmake>
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>.\Debug\ASSAR.exe</OutputFile>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;vfw32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="ASSAR.cpp" />
+    <ClCompile Include="Cell.cpp" />
+    <ClCompile Include="CellLista.cpp" />
+    <ClCompile Include="ColorSlider.cpp" />
+    <ClCompile Include="DataFile.cpp" />
+    <ClCompile Include="DialogChoise.cpp" />
+    <ClCompile Include="DialogKalibreraRadar.cpp" />
+    <ClCompile Include="DlgOverViewOpenGL.cpp" />
+    <ClCompile Include="dlgradarppi.cpp" />
+    <ClCompile Include="DlgRandomFalseTargets.cpp" />
+    <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="OpenGL.cpp" />
+    <ClCompile Include="PropPageJammer.cpp" />
+    <ClCompile Include="PropPageRadar.cpp" />
+    <ClCompile Include="PropPageTarget.cpp" />
+    <ClCompile Include="PropSheetUtrustning.cpp" />
+    <ClCompile Include="PropSheetUtrustning1.cpp" />
+    <ClCompile Include="PropSheetUtrustning2.cpp" />
+    <ClCompile Include="RadarCalculate.cpp" />
+    <ClCompile Include="radarplotDoc.cpp" />
+    <ClCompile Include="radarplotView.cpp" />
+    <ClCompile Include="RadarPPI.cpp" />
+    <ClCompile Include="Splash.cpp" />
+    <ClCompile Include="StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Utrustning.cpp" />
+    <ClCompile Include="UtrustningLista.cpp" />
+    <ClCompile Include="UtrustningsKlasser.cpp" />
+    <ClCompile Include="YellowEdit.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ASSAR.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\iconer\icon3_j.ico" />
+    <Image Include="iconstop.ico" />
+    <Image Include="res\ASSAR.ico" />
+    <Image Include="res\ASSARDOC.ico" />
+    <Image Include="res\bitmap1.bmp" />
+    <Image Include="res\bitmap2.bmp" />
+    <Image Include="res\bitmap3.bmp" />
+    <Image Include="res\bitmap7.bmp" />
+    <Image Include="res\Exempel.bmp" />
+    <Image Include="res\fmvlogga.bmp" />
+    <Image Include="res\fmvloggaliten.bmp" />
+    <Image Include="res\ico00001.ico" />
+    <Image Include="res\ico00002.ico" />
+    <Image Include="res\icon1.ico" />
+    <Image Include="res\icon1_j.ico" />
+    <Image Include="res\icon3_j.ico" />
+    <Image Include="res\iconstop.ico" />
+    <Image Include="res\iconwarn.ico" />
+    <Image Include="res\JAS39.bmp" />
+    <Image Include="res\JAS392.bmp" />
+    <Image Include="res\JAS39_4.bmp" />
+    <Image Include="res\jonne&amp;emma(liten).bmp" />
+    <Image Include="res\L-39.bmp" />
+    <Image Include="res\L-39200x160.bmp" />
+    <Image Include="res\l39.bmp" />
+    <Image Include="res\MONA.BMP" />
+    <Image Include="res\radarplot.ico" />
+    <Image Include="res\radarplotDoc.ico" />
+    <Image Include="res\RadarPPI.bmp" />
+    <Image Include="res\Splash.bmp" />
+    <Image Include="res\test.bmp" />
+    <Image Include="res\Toolbar.bmp" />
+    <Image Include="res\toolbar1.bmp" />
+    <Image Include="res\visby2profil.bmp" />
+    <Image Include="Splsh16.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="res\radarplot.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ASSAR.h" />
+    <ClInclude Include="Cell.h" />
+    <ClInclude Include="CellLista.h" />
+    <ClInclude Include="ColorSlider.h" />
+    <ClInclude Include="DataFile.h" />
+    <ClInclude Include="DialogChoise.h" />
+    <ClInclude Include="DialogKalibreraRadar.h" />
+    <ClInclude Include="DlgOverViewOpenGL.h" />
+    <ClInclude Include="dlgradarppi.h" />
+    <ClInclude Include="DlgRandomFalseTargets.h" />
+    <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="OpenGL.h" />
+    <ClInclude Include="PropPageJammer.h" />
+    <ClInclude Include="PropPageRadar.h" />
+    <ClInclude Include="PropPageTarget.h" />
+    <ClInclude Include="PropSheetUtrustning.h" />
+    <ClInclude Include="PropSheetUtrustning1.h" />
+    <ClInclude Include="PropSheetUtrustning2.h" />
+    <ClInclude Include="RadarCalculate.h" />
+    <ClInclude Include="radarplotDoc.h" />
+    <ClInclude Include="radarplotView.h" />
+    <ClInclude Include="RadarPPI.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="Splash.h" />
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="Utrustning.h" />
+    <ClInclude Include="UtrustningLista.h" />
+    <ClInclude Include="UtrustningsKlasser.h" />
+    <ClInclude Include="YellowEdit.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
