@@ -137,10 +137,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	(1280  == (DWORD) GetDeviceCaps(hdc, HORZRES)) &&
 	(1024 == (DWORD) GetDeviceCaps(hdc, VERTRES));
 
-	if(!Res1280x1024)
-	{		
-		AfxMessageBox(_T("It is recommended that you switch to [1280x1024] screen resolution!"));
-	}
+	//if(!Res1280x1024)
+	//{		
+	//	AfxMessageBox(_T("It is recommended that you switch to [1280x1024] screen resolution!"));
+	//}
 
 	// CG: The following line was added by the Splash Screen component.
 	CSplashWnd::ShowSplashScreen(this);

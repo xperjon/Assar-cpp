@@ -158,10 +158,13 @@ BOOL CDlgOverViewOpenGL::OnInitDialog()
 	SetWindowText(m_strCurrentObject);//m_strCurrentObject är alltid "OverView"
 
 	CRect rect;
+	//Inte nödvändigt eftersom vi ändrar i OnSize
+	//this->GetClientRect(&rect);
+	//rect.left = rect.right * 0.5;
 	m_pDisplay->Create( NULL,   //CWnd default
 						_T("OverView"),   //has no name
 						//WS_CHILD|WS_CLIPSIBLINGS|WS_CLIPCHILDREN|WS_VISIBLE,
-						WS_CHILD|WS_VISIBLE,
+						WS_CHILD | WS_VISIBLE,
 						rect,
 						this,   //this is the parent
 						157);     //this should really be a different number... check resource.h
@@ -227,8 +230,10 @@ void CDlgOverViewOpenGL::OnSize(UINT nType, int cx, int cy)
 	{
 		CRect rect;
 		this->GetClientRect(&rect);
-		rect.left+=170;
-		rect.right-=170;
+		rect.left = rect.right * 0.2;
+		rect.right = rect.right * 0.8;
+		//rect.left+=170;
+		//rect.right-=170;
 		m_pDisplay->SetWindowPos(&wndTop,rect.left,rect.top,rect.right,rect.bottom,SWP_SHOWWINDOW);
 
 	}
