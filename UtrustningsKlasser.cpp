@@ -915,19 +915,12 @@ CRadarStation::CRadarStation() : CUtrustning()
 
 
 CRadarStation::~CRadarStation()
-
 {
 
-
-
 	TRACE("~CRadarStation\n");
-
 //	delete[] m_fAntennTabel;
-
 //	m_CellLista.TaBortAlla();
-
 	//m_CellLista.~CCellLista();
-
 }
 
 

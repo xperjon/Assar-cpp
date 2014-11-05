@@ -80,8 +80,6 @@ protected:
 
 	virtual ~CUtrustningLista();
 
-	static CUtrustningLista* _instance;
-
 public:
 
 	void LaggTill(CUtrustning* pUtrustning);	// LäggTillUtrustning

@@ -31,118 +31,55 @@ static char THIS_FILE[]=__FILE__;
 #endif
 
 
-
 //////////////////////////////////////////////////////////////////////
-
 // Construction/Destruction
-
 //////////////////////////////////////////////////////////////////////
-
-
-
-
 
 CCellLista::CNod::CNod()
-
 {
-
 	m_pPrev = NULL;
-
 	m_pNext = NULL;
-
 	m_pCell = NULL;
-
 }
-
-
-
 
 
 CCellLista::CNod::~CNod()
-
 {
-
 	TRACE("~CNODCell\n");
-
-
-
 	m_pPrev = NULL;
-
 	m_pNext = NULL;
 
-
-
 	if (m_pCell != NULL)
-
 		delete m_pCell;
-
 	m_pCell = NULL;
-
 }
-
-
-
-
-
 
 
 // --- CellLista --- //
-
-
-
 CCellLista::CCellLista()
-
 {
-
 	TRACE("CCellListaNY\n");
-
 	m_pStartPos = NULL;
-
 	m_pInternPekare = NULL;
-
 	m_nAntalNoder = 0;
-
 }
 
 
-
-
-
 CCellLista::~CCellLista()
-
 {
-
 	TRACE("~CCellLista\n");
 
-
-
 	CNod *pTempPos1, *pTempPos2;
-
-
-
-
 	if(!IsEmpty()) 
-
 	{
-
 		pTempPos1 = End();
-
 		while(pTempPos1 != NULL) 
-
 		{
-
 			pTempPos2 = pTempPos1;
-
 			pTempPos1 = pTempPos1->m_pPrev;
-
 			delete pTempPos2;
-
 		}
-
 	}
-
-
-
 }
 
 
@@ -150,53 +87,31 @@ CCellLista::~CCellLista()
 
 
 // Lägger till ett element sist i listan
-
 void CCellLista::LaggTill(CCell *pCell)
-
 {
-
 	CNod *pTempPos;
-
-
 	TRACE("~LaggTillCELL\n");
 
-
-
 	if(!IsEmpty())
-
 	{
-
 		if(!AlreadyJammed(pCell))
 		{
 			pTempPos = End();
-
 			pTempPos->m_pNext = new CCellLista::CNod;
-
 			pTempPos->m_pNext->m_pPrev = pTempPos;
-
 			pTempPos->m_pNext->m_pCell = pCell;
-
-		//	pTempPos->m_pNext->m_pNext = m_pStartPos;
-
 			m_nAntalNoder++;
+		} else {
+			delete pCell;
 		}
-
 	} 
-
 	else
-
 	{
-
 		pTempPos = new CNod;
-
 		pTempPos->m_pCell = pCell;
-
 		m_pStartPos = pTempPos;
-
 		m_nAntalNoder++;
-
 	}
-
 }
 
 
@@ -226,130 +141,71 @@ bool CCellLista::AlreadyJammed(CCell *pCell)
 
 
 // Tar bort utrustningen som inparametern pekar på ur listan...om den fanns där
-
 void CCellLista::TaBort(CCell *pCell)
-
 {
-
 	TRACE("~TaBort\n");
-
 	CNod *pTempPos;
-
 	pTempPos = m_pStartPos;
-
 	pTempPos = Find(pCell);
-
 	if(pTempPos != NULL)
-
 	{
-
 		if(m_pStartPos == pTempPos) //bara ett element i listan
-
 			m_pStartPos = pTempPos->m_pNext;
-
 		if(pTempPos->m_pPrev != NULL)
-
 			pTempPos->m_pPrev->m_pNext = pTempPos->m_pNext;
-
 		if(pTempPos->m_pNext != NULL)
-
 			pTempPos->m_pNext->m_pPrev = pTempPos->m_pPrev;
-
 		delete pTempPos;
-
 		m_nAntalNoder--;
-
 	}
-
 }
-
-
 
 void CCellLista::TaBortAlla()
-
 {
-
 	while(!IsEmpty()) 
-
 		TaBort(m_pStartPos->m_pCell);
-
 }
-
-
-
 
 
 int CCellLista::LifeTime(CCell *pCell)
-
 {
-
 	if(pCell->m_fLifeTime>0.0f)
-
 		pCell->m_fLifeTime--;
 
-
-
 	if(pCell->m_fLifeTime<0.0f || pCell->m_fLifeTime==0.0f)
-
 	{
-
 		pCell->m_fLifeTime = -666;
 	//	TaBort(pCell);
-
 		return 1;
-
 	}
-
-
-
 	return 0;
-
 }
 
 
 
 CCell* CCellLista::ReturneraForsta()
-
 {
-
 	if(IsEmpty()) {
-
 		m_pInternPekare = NULL;
-
 		return NULL;
-
 	}
-
-
 
 	m_pInternPekare = m_pStartPos;
-
 	return(m_pStartPos->m_pCell);
-
 }
 
-
 CCell* CCellLista::ReturneraNasta()
-
 {
-
 	if(IsEmpty() || (m_pInternPekare == NULL)) {
-
 		m_pInternPekare = NULL;
-
 		return NULL;
-
 	}
 
-
 	m_pInternPekare = m_pInternPekare->m_pNext;
-
 	if(m_pInternPekare == NULL)
-
 		return NULL;
 
 	return(m_pInternPekare->m_pCell);
-
 }
 
 
@@ -367,7 +223,6 @@ void CCellLista::CleanList()
 		if(pTempPos!=NULL)
 			TaBort(pTempPos->m_pCell);
 	}		
-
 }
 
 bool CCellLista::ListNotCleaned()
@@ -408,29 +263,16 @@ CCellLista::CNod* CCellLista::getNotCleanedCell()
 
 
 // Returnerar en pekare på sista elementet i listan. Om listan är tom returneras NULL
-
 CCellLista::CNod* CCellLista::End()	
-
 {
-
 	CNod *pTempPos;
 
-
-
 	pTempPos = m_pStartPos;
-
 	if(!IsEmpty()) {
-
-
-
 		while(pTempPos->m_pNext != NULL) 
-
 			pTempPos = pTempPos->m_pNext;
-
 	}
-
 	return pTempPos;
-
 }
 
 
@@ -440,14 +282,10 @@ CCellLista::CNod* CCellLista::End()
 // Returnerar TRUE om listan är tom, annars FALSE
 
 bool CCellLista::IsEmpty()
-
 {
 	if(m_pStartPos == NULL)
-
 		return TRUE;
-
 	else
-
 		return FALSE;
 }
 
@@ -460,39 +298,21 @@ bool CCellLista::IsEmpty()
 // om listan tom eller om arguementet inte finns i listan returneras NULL
 
 CCellLista::CNod* CCellLista::Find(CCell *pCell)
-
 {
-
 	CNod *pTempPos;
 
-
-
 	pTempPos = m_pStartPos;
-
 	if(!IsEmpty()) {
-
 		while(pTempPos->m_pCell != pCell)
-
 			pTempPos = pTempPos->m_pNext;
-
 			if(pTempPos == NULL)
-
 				return NULL;
-
 	} 
-
 	else {
-
 		return NULL;
-
 	}
 
-
-
 	return pTempPos;
-
-
-
 }
 
 
@@ -546,52 +366,6 @@ CCellLista::CNod* CCellLista::FindCellCloseToBearingAndDist(float ber,float dist
 
 }
 
-
-void CCellLista::operator=(CCellLista &list)
-
-{
-
-
-
-	m_nAntalNoder					=	list.m_nAntalNoder;
-
-/*
-
-	CNod *pTempPos;
-
-	CNod *pTempPos2;
-
-	pTempPos = m_pStartPos;
-
-	pTempPos2 = list.CNod::CNod;
-
-	for(int i=0;i<m_nAntalNoder;i++)
-
-	{
-
-		pTempPos->m_pPrev					=	pTempPos2->m_pPrev;	
-
-		pTempPos->m_pNext					=	pTempPos2->m_pNext;
-
-		pTempPos->m_pCell					=	pTempPos2->m_pCell;
-
-		if(pTempPos->m_pNext!=NULL)
-
-			pTempPos = pTempPos->m_pNext;
-
-		if(pTempPos2->m_pNext!=NULL)
-
-			pTempPos2 = pTempPos2->m_pNext;
-
-	}
-
-*/	
-
-	m_pStartPos						=	list.m_pStartPos;
-
-	m_pInternPekare					=	list.m_pInternPekare;
-
-}
 
 
 

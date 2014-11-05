@@ -2083,10 +2083,8 @@ void CRadarplotView::OnOpenradar()
 		//	m_pDlgOVOpenGL->Invalidate(true);
 		Invalidate(true);
 
+		//TODO: räkna om radarparametrar
 	}
-
-
-
 }
 
 
@@ -3409,7 +3407,6 @@ void CRadarplotView::ShowStatus()
 
 void CRadarplotView::OnButtonStop()
 {
-
 	if (!m_bRun)
 		return;
 
@@ -3420,15 +3417,12 @@ void CRadarplotView::OnButtonStop()
 	pTempPos = pLista->m_pStartPos;
 
 	for (int i = 0; i < pLista->m_nAntalNoder; i++)
-
 	{
 
 		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
-
 		{
 
 			pUtr = pTempPos->m_pUtrustning;
-
 			break;
 
 		}/*
@@ -3446,22 +3440,15 @@ void CRadarplotView::OnButtonStop()
 	}
 
 	pUtr->m_strStatus = "OFF";
-
 	m_pDlgScenOpenGL->Stop();
-
 	//	m_pDlgOVOpenGL->Stop();
-
 	m_bRun = false;
-
 	KillTimer(4);
-
 	m_pDlgScenOpenGL->m_pRadar->m_CellLista.TaBortAlla();
-
 	m_pDlgScenOpenGL->Invalidate();
 
 	m_strSimulationStatus.Format(_T("Ready"));
 	ShowStatus();
-
 	Invalidate();
 }
 

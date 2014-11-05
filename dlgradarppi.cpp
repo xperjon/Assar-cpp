@@ -855,43 +855,27 @@ int CDlgRadarPPI::InitTarget()
 }
 
 int CDlgRadarPPI::InitRadar()
-
 {
-
-
+	
+	//141105 Kommenterat bort processing gain och bmf beräkningar, då dessa görs i view
 
 	//nytt030109
-
-	if(m_pRadar->m_bCoherentIntegration==true)
-
-	{
-
-		m_pRadar->m_nProcessingGain=(m_pRadar->m_fWidthMainlobeRx/(m_pRadar->m_nAntennaScanPeriod*6.0f*m_pRadar->m_fPRI));
-
-	}
-
-	else
-
-		m_pRadar->m_nProcessingGain=sqrt((m_pRadar->m_fWidthMainlobeRx/(m_pRadar->m_nAntennaScanPeriod*6.0f*m_pRadar->m_fPRI)));
-
-
+	//if(m_pRadar->m_bCoherentIntegration==true)
+	//{
+	//	m_pRadar->m_nProcessingGain=(m_pRadar->m_fWidthMainlobeRx/(m_pRadar->m_nAntennaScanPeriod*6.0f*m_pRadar->m_fPRI));
+	//}
+	//else
+	//	m_pRadar->m_nProcessingGain=sqrt((m_pRadar->m_fWidthMainlobeRx/(m_pRadar->m_nAntennaScanPeriod*6.0f*m_pRadar->m_fPRI)));
 
 	//Obs Lambda har redan räknats ut!!!!!!! i View 030407
-
 	//Beräkna lambda för radarn utifrån inmatat fmin och fmax
-
 	//berakna_lambda_radar();
 
-
-
 	//Sätt Bmf
-
-	SetBmfRadar();
-
+	//SetBmfRadar();
 
 
 	//Obs Rmax har redan räknats ut!!!!!!! i View 030407
-
 	//Beräkna och sätt Rmax radar
 
 	//float a=m_pRadar->m_fSigmaRef;
@@ -1239,26 +1223,10 @@ void CDlgRadarPPI::InitKlotterkarta(CRadarJammer* m_pJammer)
 }
 
 
-
-void CDlgRadarPPI::SetBmfRadar()
-
-{
-
-	m_pRadar->m_fIFBandWidth=(1.0f/(m_pRadar->m_fPulseWidth))/(float)pow(10.0f,6.0f);
-
-}
-
-
-
 float CDlgRadarPPI::CalculateMaxRange(float malyta)
-
 {
-
-																																						//ändrat 030203 av Anders, nu är det korrekt!		
 	float Rmax=(float)pow((((float)m_pRadar->m_fGainMainlobe*m_pRadar->m_fGainMainlobeRx*(float)pow(m_pRadar->m_flambda,2.0f)*malyta*m_pRadar->m_nProcessingGain*m_pRadar->m_fPeakPower)/(64.0f*(float)pow(M_PI,3.0f)*m_pRadar->m_fSensitivity)),0.25f);
-
 	return Rmax;
-
 }
 
 
@@ -1877,25 +1845,14 @@ void CDlgRadarPPI::CalculateSNR()
 
 
 void CDlgRadarPPI::CalcutalePowerJam(float search_angle,CRadarJammer* m_pJammer)
-
 {			
-
-	
-
 	float RadarAntennaGainTX = m_pRadar->ReturnAntennaGain(1,(float)search_angle);
-
 	float RadarAntennaGainRX = m_pRadar->ReturnAntennaGain(2,(float)search_angle);
-
 	float JammerAntennaGainTX = m_pJammer->ReturnAntennaGain(1,(180+m_pJammer->m_fBaring)-m_pJammer->m_fCourse);
-
 	float LambdaSquare = (float)pow(m_pRadar->m_flambda, 2.0f);
-
 	float FourPISquare = (float)pow((4.0f*M_PI),2.0f);
-
 	float JamRadarDistSquare = (float)pow(m_pJammer->m_fDistanceToRadar,2.0f);
-
 	float IGPowerCompensation=1;
-
 	switch(m_pJammer->m_enumRepeaterPowerMode)
 	{
 	case CRadarJammer::CONSTANTPOWER:

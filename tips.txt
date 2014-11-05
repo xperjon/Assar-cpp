@@ -1,0 +1,5 @@
+Tips & Trixs:
+
+Ctrl + comma -> smart search
+Alt + up arrow/down arrow -> move line
+Ctrl + l -> cut line

@@ -72,8 +72,6 @@ public:
 
 	virtual ~CCellLista();
 
-	void operator=(CCellLista &list);
-
 	void LaggTill(CCell* pCell);	// LäggTillUtrustning
 
 	void TaBort(CCell *pCell);		// TaBortUtrustning

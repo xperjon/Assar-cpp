@@ -181,21 +181,15 @@ void CUtrustning::operator=(CUtrustning &utr)
 
 
 CUtrustning::~CUtrustning()
-
 {
 
 	TRACE("~CUtrustning\n");
-
 }
 
 
-
 void CUtrustning::Serialize(CArchive &ar)
-
 {
-
 	if(ar.IsStoring())
-
 	{
 
 //		ar <<	m_fPRI;	

@@ -32,7 +32,7 @@ public:
 
 	CUtrustning();
 
-	~CUtrustning();
+	virtual ~CUtrustning();
 
 //	CUtrustning(CUtrustning& utr);
 

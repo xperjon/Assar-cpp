@@ -164,8 +164,6 @@ private:
 
 	void		CalculateCriticalBorder();
 
-	void		SetBmfRadar();
-
 	int			InitNoise();
 
 	void		CheckFreqBand();
