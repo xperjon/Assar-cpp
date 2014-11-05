@@ -327,9 +327,9 @@ void CDlgOverViewOpenGL::PrintInfo()
 
 				CString str;
 
-			//	str.Format("SimTime:\n%d min %2.1f sec",min,sec);
+				//str.Format(_T("SimTime:\n%d min %2.1f sec",min,sec));
 
-			//	SetDlgItemText(IDC_STATIC_TIME,str);
+				//SetDlgItemText(IDC_STATIC_TIME,str);
 
 			}
 

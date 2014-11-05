@@ -2168,11 +2168,6 @@ void CDlgRadarPPI::loop(float angle)
 							CCell*		tmpCellUpRange;  //Cell på avstånd 0 till Störarens avstånd
 							tmpCellUpRange = new CCell();
 							
-							
-							CCell*		tmpCellDownRange; //Cell på Störarens avstånd till radar maxavstånd
-							tmpCellDownRange = new CCell();
-
-
 							//JEP060310
 							tmpCellUpRange->m_fDist =(150000000.0f*m_pRadar->m_fPulseWidth);
 							tmpCellUpRange->m_fBaring = vinkel;
@@ -2190,6 +2185,8 @@ void CDlgRadarPPI::loop(float angle)
 
 							if((m_pJammer->m_fDistanceToRadar+m_pJammer->m_fSorSetOnDelay*150000000.0f)<m_pRadar->m_fMaxRange)
 							{
+								CCell*		tmpCellDownRange; //Cell på Störarens avstånd till radar maxavstånd
+								tmpCellDownRange = new CCell();
 								tmpCellDownRange->m_fDist = m_pJammer->m_fDistanceToRadar+m_pJammer->m_fSorSetOnDelay*150000000.0f;//Jammer->m_fDistanceToRadar;
 								tmpCellDownRange->m_fBaring = vinkel;
 								tmpCellDownRange->m_enumTyp = NOISE;
@@ -2201,7 +2198,6 @@ void CDlgRadarPPI::loop(float angle)
 				
 					}
 						//Rita bakom störaren samt effektreducer
-
 				}
 
 				
