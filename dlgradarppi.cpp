@@ -65,7 +65,7 @@ CDlgRadarPPI::CDlgRadarPPI(CWnd* pParent /*=NULL*/)
 	m_strJam4 = _T("");
 	m_strJam5 = _T("");
 	m_strJam6 = _T("");
-	m_strTimeLine = _T("");
+	//  m_strTimeLine = _T("");
 	m_strRad1 = _T("");
 	m_strRad2 = _T("");
 	m_strRad3 = _T("");
@@ -76,11 +76,11 @@ CDlgRadarPPI::CDlgRadarPPI(CWnd* pParent /*=NULL*/)
 	m_strRad8 = _T("");
 	//}}AFX_DATA_INIT
 
-//	CMDIFrameWnd *pFrame = (CMDIFrameWnd*)AfxGetApp()->m_pMainWnd;
+	//	CMDIFrameWnd *pFrame = (CMDIFrameWnd*)AfxGetApp()->m_pMainWnd;
 
-//	CMDIChildWnd *pChild = (CMDIChildWnd*) pFrame->GetActiveFrame();
+	//	CMDIChildWnd *pChild = (CMDIChildWnd*) pFrame->GetActiveFrame();
 
-//	m_pView = (CRadarplotView*) pChild->GetActiveView();
+	//	m_pView = (CRadarplotView*) pChild->GetActiveView();
 
 	m_strOpenGLType = "Scenario";
 
@@ -228,7 +228,7 @@ void CDlgRadarPPI::StartSim()
 
 //	m_ppJammer[m]->m_fVectorToGraphTime			 = (float*)malloc(20);
 
-	m_ColorSlider.SetRange(1,m_fKillTime);
+	//m_ColorSlider.SetRange(1,m_fKillTime);
 
 
 	m_fAngleMove = (360.0f/(m_pRadar->m_fSvepHastighet*10))*m_fGgrRealTime;
@@ -277,8 +277,8 @@ void CDlgRadarPPI::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_JAM3, m_CtrlJam3);
 	DDX_Control(pDX, IDC_EDIT_JAM2, m_CtrlJam2);
 	DDX_Control(pDX, IDC_EDIT_JAM1, m_CtrlJam1);
-	DDX_Control(pDX, IDC_TIMELINE, m_ColorSlider);
-	DDX_Slider(pDX, IDC_TIMELINE, m_valueTimeLine);
+	//DDX_Control(pDX, IDC_TIMELINE, m_ColorSlider);
+	//DDX_Slider(pDX, IDC_TIMELINE, m_valueTimeLine);
 	DDX_Text(pDX, IDC_EDIT_JAM1, m_strJam1);
 	DDX_Text(pDX, IDC_EDIT_JAM2, m_strJam2);
 	DDX_Text(pDX, IDC_EDIT_JAM3, m_strJam3);
@@ -2976,9 +2976,7 @@ void CDlgRadarPPI::Stop()
 }
 
 void CDlgRadarPPI::HideMenu()
-
 {
-
 //Dölj knappar m.m
 
 	GetDlgItem(IDC_BUTTON_JAMMODE1)->ShowWindow(SW_HIDE);	
@@ -3047,7 +3045,7 @@ void CDlgRadarPPI::HideMenu()
 
 //TimdeLine
 
-	GetDlgItem(IDC_TIMELINE)->ShowWindow(SW_HIDE);
+	//GetDlgItem(IDC_TIMELINE)->ShowWindow(SW_HIDE);
 
 	
 
@@ -3136,7 +3134,7 @@ void CDlgRadarPPI::ShowMenu()
 
 //TimeLine
 
-	GetDlgItem(IDC_TIMELINE)->ShowWindow(true);
+	//GetDlgItem(IDC_TIMELINE)->ShowWindow(true);
 
 
 
@@ -3146,495 +3144,53 @@ void CDlgRadarPPI::ShowMenu()
 
 }
 
+void CDlgRadarPPI::MoveEditBoxRight(CWnd*  pWnd)
+{
+	CRect dlgRect, boxRect;
+	GetClientRect(&dlgRect);
 
+	pWnd->GetWindowRect(&boxRect); //get window rect of control relative to screen
+	POINT pt = { boxRect.left, boxRect.top }; //new point object using rect x, y
+	ScreenToClient(&pt); //convert screen co-ords to client based points
+	pWnd->MoveWindow(dlgRect.right - boxRect.Width(), pt.y, boxRect.Width(), boxRect.Height(), TRUE);
+}
 
 void CDlgRadarPPI::MoveMenu()
-
 {
-
-	CRect test,rect,rectsize;
-
-	GetClientRect(test);
-
-	ClientToScreen(test);
-
-//Static rutor storlek 111*29, Align Text Centered, Multiline, Static Edge
-
-
-
-
-
-//************************Static rutor Radar***************************
-
+	MoveEditBoxRight(&m_CtrlRad1);
+	MoveEditBoxRight(&m_CtrlRad2);
+	MoveEditBoxRight(&m_CtrlRad3);
+	MoveEditBoxRight(&m_CtrlRad4);
+	MoveEditBoxRight(&m_CtrlRad5);
+	MoveEditBoxRight(&m_CtrlRad6);
+	MoveEditBoxRight(&m_CtrlRad7);
+	MoveEditBoxRight(&m_CtrlRad8);
 	
-	m_CtrlRad1.GetWindowRect(rect);
-
-	m_CtrlRad1.GetRect(rectsize);
-
-	//ScreenToClient(rect);
-
-	//ScreenToClient(rectsize);
-
-	static long width = 192;
-
-//	rect.right=test.right;
-
-	rect.left=test.right-width;
-
-	rect.top=test.bottom-(24.5*rectsize.bottom);
-
-	rect.bottom=test.top+(1.2f*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlRad1.MoveWindow(rect.left,rect.top,width,rect.bottom,true);
-
-/*
-
-	    // Declare a CRect to get the co-ordinates
-    CRect l_formRect;
-
-    GetClientRect(&l_formRect);
-
-    // get pointer to the control to be resized dynamically
-    //CTreeCtrl* pTreeCtrl;
-    //pTreeCtrl = (CTreeCtrl *)GetDlgItem(IDC_TREEFOLDER);
-
-    //Calculate the new width of the control to be resized
-    long newWidthTree = l_formRect.Width()/3;
-
-    if(newWidthTree > 250)
-       newWidthTree = 250;
-
-    long newWidthTab = l_formRect.Width() - newWidthTree ;
-    long newHeightTree = l_formRect.Height();
-
-    // Now resize the control dynamically by calling MoveWindow
-    m_CtrlRad1.MoveWindow(l_formRect.TopLeft().x+5, l_formRect.TopLeft().y+25, (long)newWidthTree,     (long)newHeightTree-25, TRUE);
-
-
-    // repaint control
-    m_CtrlRad1.RedrawWindow(); 
-
-*/
-	m_CtrlRad2.GetWindowRect(rect);
-
-	m_CtrlRad2.GetRect(rectsize);
-
-//	rect.right=test.right;
-
-	rect.left=test.right-width;
-
-	rect.top=test.bottom-(23.3*rectsize.bottom);
-
-	rect.bottom=test.top+(1.2f*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlRad2.MoveWindow(rect.left,rect.top,width,rect.bottom,true);
-
-
-
-	m_CtrlRad3.GetWindowRect(rect);
-
-	m_CtrlRad3.GetRect(rectsize);
-
-//	rect.right=test.right;
-
-	rect.left=test.right-width;
-
-	rect.top=test.bottom-(22.1*rectsize.bottom);
-
-	rect.bottom=test.top+(1.2f*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlRad3.MoveWindow(rect.left,rect.top,width,rect.bottom,true);
-
-
-
-	m_CtrlRad4.GetWindowRect(rect);
-
-	m_CtrlRad4.GetRect(rectsize);
-
-//	rect.right=test.right;
-
-	rect.left=test.right-width;
-
-	rect.top=test.bottom-(20.9*rectsize.bottom);
-
-	rect.bottom=test.top+(1.2f*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlRad4.MoveWindow(rect.left,rect.top,width,rect.bottom,true);
-
-
-
-	m_CtrlRad5.GetWindowRect(rect);
-
-	m_CtrlRad5.GetRect(rectsize);
-
-//	rect.right=test.right;
-
-	rect.left=test.right-width;
-
-	rect.top=test.bottom-(19.7*rectsize.bottom);
-
-	rect.bottom=test.top+(1.2f*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlRad5.MoveWindow(rect.left,rect.top,width,rect.bottom,true);
-
-
-
-	m_CtrlRad6.GetWindowRect(rect);
-
-	m_CtrlRad6.GetRect(rectsize);
-
-//	rect.right=test.right;
-
-	rect.left=test.right-width;
-
-	rect.top=test.bottom-(18.5*rectsize.bottom);
-
-	rect.bottom=test.top+(1.2f*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlRad6.MoveWindow(rect.left,rect.top,width,rect.bottom,true);
-
-
-
-	m_CtrlRad7.GetWindowRect(rect);
-
-	m_CtrlRad7.GetRect(rectsize);
-
-//	rect.right=test.right;
-
-	rect.left=test.right-width;
-
-	rect.top=test.bottom-(17.3*rectsize.bottom);
-
-	rect.bottom=test.top+(1.2f*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlRad7.MoveWindow(rect.left,rect.top,width,rect.bottom,true);
-
-
-
-	m_CtrlRad8.GetWindowRect(rect);
-
-	m_CtrlRad8.GetRect(rectsize);
-
-//	rect.right=test.right;
-
-	rect.left=test.right-width;
-
-	rect.top=test.bottom-(16.1*rectsize.bottom);
-
-	rect.bottom=test.top+(1.2f*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlRad8.MoveWindow(rect.left,rect.top,width,rect.bottom,true);
-
-
-
-//************************Static rutor Jammer***************************
-
-
-
-
-
-	m_CtrlJam1.GetWindowRect(rect);
-
-	m_CtrlJam1.GetRect(rectsize);
-
-	rect.left=test.left;
-
-	rect.right=test.left-width;
-
-	rect.top=test.bottom-(24.5*rectsize.bottom);
-
-	rect.bottom=test.top+(1.2f*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlJam1.MoveWindow(rect.left,rect.top,width,rect.bottom,true);
-
-
-
-	m_CtrlJam2.GetWindowRect(rect);
-
-	m_CtrlJam2.GetRect(rectsize);
-
-	rect.left=test.left;
-
-	rect.right=test.left-width;
-
-	rect.top=test.bottom-(23.3*rectsize.bottom);
-
-	rect.bottom=test.top+(1.2f*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlJam2.MoveWindow(rect.left,rect.top,width,rect.bottom,true);
-
-
-
-	m_CtrlJam3.GetWindowRect(rect);
-
-	m_CtrlJam3.GetRect(rectsize);
-
-	rect.left=test.left;
-
-	rect.right=test.left-width;
-
-	rect.top=test.bottom-(22.1*rectsize.bottom);
-
-	rect.bottom=test.top+(1.2f*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlJam3.MoveWindow(rect.left,rect.top,width,rect.bottom,true);
-
-
-
-	m_CtrlJam4.GetWindowRect(rect);
-
-	m_CtrlJam4.GetRect(rectsize);
-
-	rect.left=test.left;
-
-	rect.right=test.left-width;
-
-	rect.top=test.bottom-(20.9*rectsize.bottom);
-
-	rect.bottom=test.top+(1.2f*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlJam4.MoveWindow(rect.left,rect.top,width,rect.bottom,true);
-
-
-
-	m_CtrlJam5.GetWindowRect(rect);
-
-	m_CtrlJam5.GetRect(rectsize);
-
-	rect.left=test.left;
-
-	rect.right=test.left-width;
-
-	rect.top=test.bottom-(19.7*rectsize.bottom);
-
-	rect.bottom=test.top+(1.2f*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlJam5.MoveWindow(rect.left,rect.top,width,rect.bottom,true);
-
-
-
-	m_CtrlJam6.GetWindowRect(rect);
-
-	m_CtrlJam6.GetRect(rectsize);
-
-	rect.left=test.left;
-
-	rect.right=test.left-width;
-
-	rect.top=test.bottom-(18.5*rectsize.bottom);
-
-	rect.bottom=test.top+(1.2f*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlJam6.MoveWindow(rect.left,rect.top,width,rect.bottom,true);
-
-
-
-
 
 //***********************knappar Radar******************
 
+	MoveEditBoxRight(&m_CtrlButRawVieo);
+	MoveEditBoxRight(&m_CtrlButSyntetic);
+	MoveEditBoxRight(&m_CtrlButShowDisk);
+	MoveEditBoxRight(&m_CtrlButDegrees);
 
 
-	m_CtrlButRawVieo.GetWindowRect(rect);
-
-	m_CtrlButRawVieo.GetClientRect(rectsize);
-
-	rect.left=test.right-rectsize.right;
-
-//	rect.right=test.right;
-
-	rect.top=test.bottom-(16.5*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlButRawVieo.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
-
-
-
-	m_CtrlButSyntetic.GetWindowRect(rect);
-
-	m_CtrlButSyntetic.GetClientRect(rectsize);
-
-	rect.left=test.right-rectsize.right;
-
-//	rect.right=test.right;
-
-	rect.top=test.bottom-(15.5*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlButSyntetic.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
-
-
-
-	m_CtrlButShowDisk.GetWindowRect(rect);
-
-	m_CtrlButShowDisk.GetClientRect(rectsize);
-
-	rect.left=test.right-rectsize.right;
-
-//	rect.right=test.right;
-
-	rect.top=test.bottom-(14.5*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlButShowDisk.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
-
-
-
-	m_CtrlButDegrees.GetWindowRect(rect);
-
-	m_CtrlButDegrees.GetClientRect(rectsize);
-
-	rect.left=test.right-rectsize.right;
-
-//	rect.right=test.right;
-
-	rect.top=test.bottom-(13.5*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlButDegrees.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
-
-
+	CRect test, rect, rectsize;
+	GetClientRect(&test);
 
 	m_CtrlButRestore.GetWindowRect(rect);
-
 	m_CtrlButRestore.GetClientRect(rectsize);
-
 	rect.left=test.left;//test.right-rectsize.right;
-
 //	rect.right=test.right;
-
 	rect.top=test.bottom-(1.5*rectsize.bottom);
-
 	ScreenToClient(rect);
-
 	m_CtrlButRestore.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
-
-
 
 
 
 //*******************knappar Jammer***********************
 
-
-
-	m_CtrlButJamMode1.GetWindowRect(rect);
-
-	m_CtrlButJamMode1.GetClientRect(rectsize);
-
-	rect.left=test.left;
-
-//	rect.right=test.right;
-
-	rect.top=test.bottom-(16.5*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlButJamMode1.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
-
-
-
-	m_CtrlButJamMode2.GetWindowRect(rect);
-
-	m_CtrlButJamMode2.GetClientRect(rectsize);
-
-	rect.left=test.left;
-
-//	rect.right=test.right;
-
-	rect.top=test.bottom-(15.5*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlButJamMode2.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
-
-
-
-	m_CtrlButJamMode3.GetWindowRect(rect);
-
-	m_CtrlButJamMode3.GetClientRect(rectsize);
-
-	rect.left=test.left;
-
-//	rect.right=test.right;
-
-	rect.top=test.bottom-(14.5*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlButJamMode3.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
-
-
-
-	m_CtrlButJamMode4.GetWindowRect(rect);
-
-	m_CtrlButJamMode4.GetClientRect(rectsize);
-
-	rect.left=test.left;
-
-//	rect.right=test.right;
-
-	rect.top=test.bottom-(13.5*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlButJamMode4.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
-
-
-
-	m_CtrlButOff.GetWindowRect(rect);
-
-	m_CtrlButOff.GetClientRect(rectsize);
-
-	rect.left=test.left;
-
-//	rect.right=test.right;
-
-	rect.top=test.bottom-(12.5*rectsize.bottom);
-
-	ScreenToClient(rect);
-
-	m_CtrlButOff.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
-
-	
-
-
-
 //*******************Spelkontroll***********************
-
-
-
 
 
 // Static frame: Sunken, color Black
@@ -3661,97 +3217,56 @@ void CDlgRadarPPI::MoveMenu()
 
 */
 
-	m_CtrlTimeLineEdit.GetWindowRect(rect);
-
-	m_CtrlTimeLineEdit.GetClientRect(rectsize);
-
-	rect.top=test.bottom-(4.75f*rectsize.bottom);
-
-	rect.left=(test.right/2)-(rectsize.right/2);
-
-	//rect.right=test.left-rectsize.left;
-
-	ScreenToClient(rect);
-
-	m_CtrlTimeLineEdit.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
-
-
-
-
-
-	m_ColorSlider.GetWindowRect(rect);
-
-	m_ColorSlider.GetClientRect(rectsize);
-
-	rect.top=test.bottom-(4.8f*rectsize.bottom);
-
-	rect.left=(test.right/2)-(rectsize.right/2);
-
-	//rect.right=test.left-rectsize.left;
-
-	ScreenToClient(rect);
-
-	m_ColorSlider.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
-
-
-
-
-
 	m_CtrlButPaus.GetWindowRect(rect);
-
 	m_CtrlButPaus.GetClientRect(rectsize);
-
-	rect.left=(test.right/2)-(rectsize.left);
-
-	rect.top=test.bottom-(1.55f*rectsize.bottom);
-
+	rect.left = (test.right / 2) - (rectsize.left);
+	rect.top = test.bottom - rectsize.bottom;
 	ScreenToClient(rect);
-
-	m_CtrlButPaus.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
-
-
+	m_CtrlButPaus.MoveWindow(rect.left, rect.top, rectsize.right, rectsize.bottom, true);
 
 	m_CtrlButPlay.GetWindowRect(rect);
-
 	m_CtrlButPlay.GetClientRect(rectsize);
-
-	rect.left=(test.right/2)-(rectsize.right);
-
-	rect.top=test.bottom-(1.55f*rectsize.bottom);
-
+	rect.left = (test.right / 2) - (rectsize.right);
+	rect.top = test.bottom - rectsize.bottom;
 	ScreenToClient(rect);
-
-	m_CtrlButPlay.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
+	m_CtrlButPlay.MoveWindow(rect.left, rect.top, rectsize.right, rectsize.bottom, true);
 
 	//JEP060316 Old rew and ffw buttons
 
 	m_CtrlButREW.GetWindowRect(rect);
-
 	m_CtrlButREW.GetClientRect(rectsize);
-
-	rect.left=(test.right/2)-(2*rectsize.right);
-
-	rect.top=test.bottom-(1.95*rectsize.bottom);
-
+	rect.left = (test.right / 2) - (2 * rectsize.right);
+	rect.top = test.bottom - rectsize.bottom;
 	ScreenToClient(rect);
-
-	m_CtrlButREW.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
-
+	m_CtrlButREW.MoveWindow(rect.left, rect.top, rectsize.right, rectsize.bottom, true);
 
 
 	m_CtrlButFFW.GetWindowRect(rect);
-
 	m_CtrlButFFW.GetClientRect(rectsize);
-
-	rect.left=(test.right/2)+(rectsize.right);
-
-	rect.top=test.bottom-(1.95*rectsize.bottom);
-
+	rect.left = (test.right / 2) + (rectsize.right);
+	rect.top = test.bottom - rectsize.bottom;
 	ScreenToClient(rect);
+	m_CtrlButFFW.MoveWindow(rect.left, rect.top, rectsize.right, rectsize.bottom, true);
+	
 
-	m_CtrlButFFW.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
+	CRect newRectSize;
+	m_CtrlTimeLineEdit.GetWindowRect(rect);
+	m_CtrlTimeLineEdit.GetClientRect(newRectSize);
+	ClientToScreen(rectsize);
+		
+	rect.top=test.bottom - newRectSize.bottom - rectsize.bottom;
+	rect.left=(test.right/2)-(newRectSize.right/2);
+	ScreenToClient(rect);
+	m_CtrlTimeLineEdit.MoveWindow(rect.left,rect.top,newRectSize.right,newRectSize.bottom,true);
 
 
+//	m_ColorSlider.GetWindowRect(rect);
+//	m_ColorSlider.GetClientRect(rectsize);
+////	rect.top=test.bottom-rectsize.bottom;
+//	rect.left=(test.right/2)-(rectsize.right/2);
+//	ScreenToClient(rect);
+//	m_ColorSlider.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
+//
 }
 
 void CDlgRadarPPI::OnClose() 
@@ -4040,7 +3555,6 @@ void CDlgRadarPPI::UpdateView()
 
 
 void CDlgRadarPPI::OnButtonJammode1() 
-
 {
 
 //	if(m_ppJammer[0]->m_bBrusStorning==false && m_ppJammer[0]->m_bRepeterStorning==true)

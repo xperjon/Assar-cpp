@@ -94,7 +94,7 @@ public:
 	void		ShowMenu();
 
 	void		MoveMenu();
-
+	void		MoveEditBoxRight(CWnd*  pWnd);
 	COpenGL		*m_pDisplay;
 
 

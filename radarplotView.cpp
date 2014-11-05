@@ -2045,7 +2045,7 @@ void CRadarplotView::OnOpenradar()
 	char szDrive[20], szFolder[4096],
 		szFileName[MAX_PATH], szFileExt[10];
 
-	_splitpath(szFileNameOfFile, szDrive, szFolder, szFileName, szFileExt);
+	_splitpath_s(szFileNameOfFile, szDrive, szFolder, szFileName, szFileExt);
 
 	CString strFilePath = "";
 	strFilePath += szDrive;
@@ -2110,7 +2110,7 @@ void CRadarplotView::OnSaveradar()
 	char szDrive[20], szFolder[4096],
 		szFileName[MAX_PATH], szFileExt[10];
 
-	_splitpath(szFileNameOfFile, szDrive, szFolder, szFileName, szFileExt);
+	_splitpath_s(szFileNameOfFile, szDrive, szFolder, szFileName, szFileExt);
 
 	CString strFilePath = "";
 	strFilePath += szDrive;
@@ -3216,7 +3216,7 @@ void CRadarplotView::OnSavejammer()
 	char szDrive[20], szFolder[4096],
 		szFileName[MAX_PATH], szFileExt[10];
 
-	_splitpath(szFileNameOfFile, szDrive, szFolder, szFileName, szFileExt);
+	_splitpath_s(szFileNameOfFile, szDrive, szFolder, szFileName, szFileExt);
 
 	CString strFilePath = "";
 	strFilePath += szDrive;
@@ -3269,7 +3269,7 @@ void CRadarplotView::OnOpenjammer()
 	char szDrive[20], szFolder[4096],
 		szFileName[MAX_PATH], szFileExt[10];
 
-	_splitpath(szFileNameOfFile, szDrive, szFolder, szFileName, szFileExt);
+	_splitpath_s(szFileNameOfFile, szDrive, szFolder, szFileName, szFileExt);
 
 	CString strFilePath = "";
 	strFilePath += szDrive;
@@ -4400,6 +4400,7 @@ void CRadarplotView::OnSize(UINT nType, int cx, int cy)
 		{
 			m_pDlgScenOpenGL = new CDlgRadarPPI;
 			m_pDlgScenOpenGL->Create(CDlgRadarPPI::IDD, pWnd);
+			//m_pDlgScenOpenGL->ShowWindow(TRUE);
 
 		}
 		m_pDlgScenOpenGL->SetWindowPos(&CWnd::wndBottom, rect.right / 2.37f, rect.bottom / 10.8f, rect.right / 1.71, rect.bottom / 1.82, SWP_HIDEWINDOW);
