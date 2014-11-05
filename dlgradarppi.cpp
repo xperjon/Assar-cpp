@@ -144,8 +144,10 @@ void CDlgRadarPPI::Init(CUtrustning* pRadar,CUtrustning* pJammer,int antalTarget
 //	m_ppJammer			= (CRadarJammer**)malloc(m_nAntalJammer);
 
 	//m_ppTarget			= (CRadarTarget**)malloc(m_nAntal);
-
-	m_ppTarget			= new CRadarTarget*[m_nAntal];
+	if (m_nAntal != 0)
+	{
+		m_ppTarget = new CRadarTarget*[m_nAntal];
+	}
 
 //	m_nKillTime			= (int*)malloc(m_nAntalJammer);
 
