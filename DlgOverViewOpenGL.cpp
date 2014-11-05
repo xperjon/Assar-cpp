@@ -262,84 +262,42 @@ void CDlgOverViewOpenGL::ClearInfo()
 }
 
 void CDlgOverViewOpenGL::PrintInfo()
-
 {
-
 		float avs,X,Y;
-
 		avs=m_pDisplay->avs;
-
 		X=m_pDisplay->X;
-
 		Y=m_pDisplay->Y;
-
 		CString coor,dist;
-
 		dist.Format(_T("Distance To Radar:\n%3.1f [km]"),avs/1000.0f);
-
 		coor.Format(_T("Coordinates:\n X: %3.1f [km] Y: %3.1f [km]"),X/1000.0f,Y/1000.0f);
-
 		SetDlgItemText(IDC_STATIC_COOR,coor);
-
 		SetDlgItemText(IDC_STATIC_DISTTORADAR,dist);
 
-
-
-		CUtrustningLista::CNod *pTempPos;
+		/*CUtrustningLista::CNod *pTempPos;
 		CUtrustningLista* pLista = CUtrustningLista::getInstance();
 		pTempPos = pLista->m_pStartPos;
-
 		for(int i=0;i<pLista->m_nAntalNoder;i++) 
-
 		{
-
 			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
-
 			{
-
-
-
 				static float time = 0.0f;
-
 				if(((CRadarStation*)pTempPos->m_pUtrustning)->m_bRun)
-
 				{
-
-					
-
 					time += ((CRadarStation*)pTempPos->m_pUtrustning)->m_fGgrRealTime/100.0f;
-
-
-
 				}
-
 				else
-
 				{
-
 					time = 0.0f;
-
 				}
-
 				int min = (int)time/60;
-
 				float sec = time-min*60.0;
-
 				CString str;
-
-				//str.Format(_T("SimTime:\n%d min %2.1f sec",min,sec));
-
-				//SetDlgItemText(IDC_STATIC_TIME,str);
-
+				str.Format(_T("SimTime:\n%d min %2.1f sec",min,sec));
+				SetDlgItemText(IDC_STATIC_TIME,str);
 			}
 
-
-
 			pTempPos = pTempPos->m_pNext;
-
-		}
-		
-
+		}*/
 }
 
 
@@ -512,7 +470,8 @@ void CDlgOverViewOpenGL::OnCheckAllwaypoints()
 
 	}
 
-
+	if (m_pDisplay != NULL)
+		m_pDisplay->InvalidateRect(NULL, FALSE);
 	UpdateData(true);
 
 }
