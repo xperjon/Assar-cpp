@@ -3,3 +3,13 @@ Tips & Trixs:
 Ctrl + comma -> smart search
 Alt + up arrow/down arrow -> move line
 Ctrl + l -> cut line
+
+
+
+TODO:
+antenndiagram
+gainrx tx
+se över waypoints hoppar mellan olika positioner, mål byter håll när man stoppar sim
+justera färgskalan så att mål ses vid räckviddsgränsen
+start, brusstörning, stop, start -> då är brusstörning på beräkningsmässigt men inte i gui. 
+Fortsätt med AntennaChart

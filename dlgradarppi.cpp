@@ -1649,11 +1649,9 @@ void CDlgRadarPPI::CalculateNoiseEffectMainLobe()
 }
 
 void CDlgRadarPPI::CalculateSignalJammer()
-
 {
-
-	m_pJammer->m_fSignal=(m_pRadar->m_fPeakPower*m_pRadar->m_nProcessingGain*(float)pow(m_pRadar->m_fGainMainlobe,2.0f)*m_pJammer->m_fSigma*(float)pow(m_pRadar->m_flambda, 2.0f))/((float)pow((4.0f*M_PI),3.0f)*(float)pow(m_pJammer->m_fDistanceToRadar,4.0f));
-
+	//gainrx * gain tx
+	m_pJammer->m_fSignal=(m_pRadar->m_fPeakPower*m_pRadar->m_nProcessingGain*m_pRadar->m_fGainMainlobe*m_pRadar->m_fGainBacklobeRx*m_pJammer->m_fSigma*(float)pow(m_pRadar->m_flambda, 2.0f))/((float)pow((4.0f*M_PI),3.0f)*(float)pow(m_pJammer->m_fDistanceToRadar,4.0f));
 }
 
 

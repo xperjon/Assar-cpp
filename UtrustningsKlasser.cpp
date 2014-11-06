@@ -1160,12 +1160,10 @@ void CRadarStation::operator=(CUtrustning &utr)
 
 
 float CRadarStation::ReturnAntennaGain(bool TXorRX, float alfa)
-
 {
 
 	//OBS gör om alfa från exakt vinkel till index i AntennTabel
 	if(m_bAntennDiagramFromFile)
-	
 	{
 		if(alfa<0)
 		alfa=-alfa;

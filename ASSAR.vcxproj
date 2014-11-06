@@ -142,6 +142,7 @@
     <ClCompile Include="DataFile.cpp" />
     <ClCompile Include="DialogChoise.cpp" />
     <ClCompile Include="DialogKalibreraRadar.cpp" />
+    <ClCompile Include="DlgAntennaChart.cpp" />
     <ClCompile Include="DlgOverViewOpenGL.cpp" />
     <ClCompile Include="dlgradarppi.cpp" />
     <ClCompile Include="DlgRandomFalseTargets.cpp" />
@@ -216,10 +217,12 @@
     <ClInclude Include="ASSAR.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="CellLista.h" />
+    <ClInclude Include="clPlot.h" />
     <ClInclude Include="ColorSlider.h" />
     <ClInclude Include="DataFile.h" />
     <ClInclude Include="DialogChoise.h" />
     <ClInclude Include="DialogKalibreraRadar.h" />
+    <ClInclude Include="DlgAntennaChart.h" />
     <ClInclude Include="DlgOverViewOpenGL.h" />
     <ClInclude Include="dlgradarppi.h" />
     <ClInclude Include="DlgRandomFalseTargets.h" />
@@ -245,6 +248,12 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="tips.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Documents\Visual Studio 2013\Projects\realtime_plot\Project\clPlot\plot\plot.vcxproj">
+      <Project>{2072b665-8b79-45fc-a3dd-5a9d26ee7aeb}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

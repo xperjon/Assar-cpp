@@ -11,6 +11,7 @@
 #include "DlgRadarPPI.h"
 #include "RadarCalculate.h"
 #include "DialogKalibreraRadar.h"
+#include "DlgAntennaChart.h"
 #include "PropSheetUtrustning.h"
 #include "PropSheetUtrustning1.h"
 #include "PropSheetUtrustning2.h"
@@ -87,6 +88,7 @@ BEGIN_MESSAGE_MAP(CRadarplotView, CView)
 	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
+	ON_COMMAND(ID_ANTENNACHART, &CRadarplotView::OnAntennachart)
 END_MESSAGE_MAP()
 
 
@@ -4401,3 +4403,20 @@ void CRadarplotView::OnSize(UINT nType, int cx, int cy)
 
 }
 
+
+
+void CRadarplotView::OnAntennachart()
+{
+	CDlgAntennaChart DlgAntChart;
+	//DlgAntChart.Init(pRadar);
+
+	int result = DlgAntChart.DoModal();
+	if (result == IDOK)
+	{
+		Invalidate(true);
+	}
+	if (result == IDCANCEL)
+	{
+
+	}
+}

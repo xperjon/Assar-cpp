@@ -99,6 +99,9 @@
     <ClCompile Include="YellowEdit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DlgAntennaChart.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ASSAR.rc">
@@ -300,9 +303,16 @@
     <ClInclude Include="YellowEdit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DlgAntennaChart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="clPlot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="tips.txt" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="res\radarplot.rc2">

@@ -1,5 +1,5 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
+// Microsoft Visual C++ generated include file.
 // Used by ASSAR.rc
 //
 #define IDD_ABOUTBOX                    100
@@ -68,6 +68,7 @@
 #define IDB_BITMAP_L39                  210
 #define IDB_BITMAP_L_39                 211
 #define IDB_BITMAP_L39299X160           212
+#define IDD_DIALOG_CHART                222
 #define IDC_LOKALTIME_STATIC            1005
 #define IDC_EDIT_NAME                   1006
 #define IDC_EDIT_JAMMERNAME             1007
@@ -315,14 +316,16 @@
 #define ID_R_RESUME                     32848
 #define ID_SIMULATION_PAUSE             32849
 #define ID_SIMULATION_RESUME            32850
+#define ID_A_ANTENNADIAGRAM             32851
+#define ID_ANTENNACHART                 32852
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        222
-#define _APS_NEXT_COMMAND_VALUE         32851
+#define _APS_NEXT_RESOURCE_VALUE        223
+#define _APS_NEXT_COMMAND_VALUE         32853
 #define _APS_NEXT_CONTROL_VALUE         1201
 #define _APS_NEXT_SYMED_VALUE           121
 #endif
