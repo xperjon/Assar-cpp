@@ -2120,17 +2120,11 @@ void CDlgRadarPPI::CalculateNoiseEffectTargets()
 }
 
 void CDlgRadarPPI::CalculateTargetSignal()
-
 {
-
 	for(int i=0;i<m_nAntal;i++)
-
 	{
-
-		m_ppTarget[i]->m_fSignal=(m_pRadar->m_fPeakPower*m_pRadar->m_nProcessingGain*(float)pow(m_pRadar->m_fGainMainlobe,2.0f)*m_ppTarget[i]->m_fSigma*(float)pow(m_pRadar->m_flambda, 2.0f))/((float)pow((4.0f*M_PI),3.0f)*(float)pow(m_ppTarget[i]->m_fDistanceToRadar,4.0f));
-
+		m_ppTarget[i]->m_fSignal=(m_pRadar->m_fPeakPower*m_pRadar->m_nProcessingGain*m_pRadar->m_fGainMainlobe*m_pRadar->m_fGainMainlobeRx*m_ppTarget[i]->m_fSigma*(float)pow(m_pRadar->m_flambda, 2.0f))/((float)pow((4.0f*M_PI),3.0f)*(float)pow(m_ppTarget[i]->m_fDistanceToRadar,4.0f));
 	}
-
 }
 
 
