@@ -4407,8 +4407,26 @@ void CRadarplotView::OnSize(UINT nType, int cx, int cy)
 
 void CRadarplotView::OnAntennachart()
 {
+	CUtrustning* pUtr;
+
+	CUtrustningLista::CNod *pTempPos;
+	CUtrustningLista* pLista = CUtrustningLista::getInstance();
+	pTempPos = pLista->m_pStartPos;
+
+	for (int i = 0; i < pLista->m_nAntalNoder; i++)
+	{
+
+		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+		{
+
+			pUtr = pTempPos->m_pUtrustning;
+			break;
+		}
+		pTempPos = pTempPos->m_pNext;
+	}
+
 	CDlgAntennaChart DlgAntChart;
-	//DlgAntChart.Init(pRadar);
+	DlgAntChart.Init(pUtr);
 
 	int result = DlgAntChart.DoModal();
 	if (result == IDOK)

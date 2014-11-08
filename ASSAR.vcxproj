@@ -168,6 +168,7 @@
     <ClCompile Include="Utrustning.cpp" />
     <ClCompile Include="UtrustningLista.cpp" />
     <ClCompile Include="UtrustningsKlasser.cpp" />
+    <ClCompile Include="XYPlot.cpp" />
     <ClCompile Include="YellowEdit.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -217,7 +218,6 @@
     <ClInclude Include="ASSAR.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="CellLista.h" />
-    <ClInclude Include="clPlot.h" />
     <ClInclude Include="ColorSlider.h" />
     <ClInclude Include="DataFile.h" />
     <ClInclude Include="DialogChoise.h" />
@@ -244,16 +244,12 @@
     <ClInclude Include="Utrustning.h" />
     <ClInclude Include="UtrustningLista.h" />
     <ClInclude Include="UtrustningsKlasser.h" />
+    <ClInclude Include="XYPlot.h" />
     <ClInclude Include="YellowEdit.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
     <Text Include="tips.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Documents\Visual Studio 2013\Projects\realtime_plot\Project\clPlot\plot\plot.vcxproj">
-      <Project>{2072b665-8b79-45fc-a3dd-5a9d26ee7aeb}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

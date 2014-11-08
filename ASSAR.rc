@@ -555,9 +555,9 @@ BEGIN
         MENUITEM "Open from File...",           ID_OPENRADAR
         MENUITEM "Save to File...",             ID_SAVERADAR
         MENUITEM "Properties Radar...",         ID_PROPERTIES_RADAR
+        MENUITEM "Antenna Diagram...",          ID_ANTENNACHART
         MENUITEM "Calibrate...",                ID_KALIBRERA_RADAR
         MENUITEM "Delete",                      ID_DELETE_RADAR
-        MENUITEM "Antenna Diagram",             ID_ANTENNACHART
     END
     POPUP ""
     BEGIN
@@ -1074,12 +1074,10 @@ BEGIN
 END
 
 IDD_DIALOG_CHART DIALOGEX 0, 0, 310, 176
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Chart"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,199,155,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,253,155,50,14
 END
 
 

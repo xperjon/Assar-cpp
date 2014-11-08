@@ -102,6 +102,9 @@
     <ClCompile Include="DlgAntennaChart.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="XYPlot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ASSAR.rc">
@@ -306,7 +309,7 @@
     <ClInclude Include="DlgAntennaChart.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="clPlot.h">
+    <ClInclude Include="XYPlot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "clPlot.h"
+#include "XYPlot.h"
 #include "Utrustning.h"
 // CDlgAntennaChart dialog
 
@@ -21,7 +21,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	clPlot m_Plot;
+	CXYPlot m_Plot;
 	BOOL canSize;
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
