@@ -607,7 +607,7 @@ void CXYPlot::Reset()
 
 //*******************************************************************************************************/
 //*******************************************************************************************************/
-void CXYPlot::SetSerie(int s, int style, COLORREF color, double minrange, double maxrange, const char *szTitle, BOOL Rightalign)
+void CXYPlot::SetSerie(int s, int style, COLORREF color, double minrange, double maxrange, const TCHAR *szTitle, BOOL Rightalign)
 {
 	m_series[s].m_bIAmInUse = TRUE;
 	m_series[s].m_color = color;

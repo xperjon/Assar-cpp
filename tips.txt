@@ -4,12 +4,13 @@ Ctrl + comma -> smart search
 Alt + up arrow/down arrow -> move line
 Ctrl + l -> cut line
 
-
+Character strings: http://www.codeproject.com/Articles/76252/What-are-TCHAR-WCHAR-LPSTR-LPWSTR-LPCTSTR-etc
 
 TODO:
 antenndiagram
-done gainrx tx
+done - gainrx tx
 se över waypoints hoppar mellan olika positioner, mål byter håll när man stoppar sim
 justera färgskalan så att mål ses vid räckviddsgränsen
 start, brusstörning, stop, start -> då är brusstörning på beräkningsmässigt men inte i gui. 
-Fortsätt med AntennaChart
+done - Fortsätt med AntennaChart
+OM en radar har antenndiagram filnamn satt måste filen läsas in när man öppnar radar från fil.

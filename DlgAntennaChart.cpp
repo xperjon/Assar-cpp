@@ -46,8 +46,8 @@ BOOL CDlgAntennaChart::OnInitDialog()
 	CRect Rect;
 	GetClientRect(Rect);
 	m_Plot.Create(WS_CHILD | WS_VISIBLE, Rect, this, 12000);
-	m_Plot.SetSerie(0, PS_SOLID, RGB(0, 0, 255), -2000.0, 2000.0, "Antenn Gain RX");
-	m_Plot.SetSerie(1, PS_SOLID, RGB(255, 0, 0), 0.0, 2000.0, "Antenna Gain TX");
+	m_Plot.SetSerie(0, PS_SOLID, RGB(0, 0, 255), -2000.0, 2000.0, _T("Antenn Gain RX"));
+	m_Plot.SetSerie(1, PS_SOLID, RGB(255, 0, 0), 0.0, 2000.0, _T("Antenna Gain TX"));
 
 	m_Plot.SetLegend(0, PS_SOLID, RGB(0, 0, 255), "Antenna Gain RX");
 	m_Plot.SetLegend(1, PS_SOLID, RGB(255, 0, 0), "Antenna Gain TX");

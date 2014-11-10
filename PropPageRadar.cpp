@@ -958,7 +958,7 @@ void CPropPage4Radar::OnCheckFromfile()
 		GetDlgItem(	IDC_STATIC_FILENAME)->EnableWindow(true);
 		GetDlgItem(IDC_LOOKUP_BUTTON)->EnableWindow(true);
 		m_fWidthMainLobe = m_fWidthMainLobeRx;
-		if(!(m_strFileName=="Data/antenndiagram.csv" || m_strFileName=="antenndiagram1.csv" || m_strFileName=="antenndiagram2.csv"))
+		if(!(m_strFileName == "antenndiagram.csv" || m_strFileName == "antenndiagram1.csv" || m_strFileName == "antenndiagram2.csv"))
 		{
 				ShowFileDialog();
 				
@@ -1026,12 +1026,12 @@ void CPropPage4Radar::OnChangeEditWidthmainlobe()
 void CPropPage4Radar::ShowFileDialog()
 {
 	CFileDialog DlgLookup(TRUE, NULL, NULL, OFN_OVERWRITEPROMPT, _T("Comma Separated Values(*.csv)|*.csv| Text Files (*.txt)|*.txt|"));
-			char szFileNameOfFile[5100];
-			GetModuleFileNameA(NULL, szFileNameOfFile, 5100);
-			char szDrive[20], szFolder[4096],
+			TCHAR szFileNameOfFile[5100];
+			GetModuleFileNameW(NULL, szFileNameOfFile, 5100);
+			TCHAR szDrive[20], szFolder[4096],
 				 szFileName[MAX_PATH], szFileExt[10];
 
-			_splitpath(szFileNameOfFile,szDrive,szFolder,szFileName,szFileExt);
+			_tsplitpath(szFileNameOfFile, szDrive, szFolder, szFileName, szFileExt);
 
 			CString strFilePath = "";
 			strFilePath += szDrive;
@@ -1040,38 +1040,27 @@ void CPropPage4Radar::ShowFileDialog()
 
 			DlgLookup.m_ofn.lpstrInitialDir = strFilePath;
 				
+			ATLTRACE(_T("File path: %s \n"), strFilePath);
 
 			if(DlgLookup.DoModal()==IDOK)
 
 			{
-				CString LookupFile=DlgLookup.GetPathName();
-				CString filename = DlgLookup.GetFileName();
+				CString fileWithPath = DlgLookup.GetPathName();
+				ATLTRACE(fileWithPath + "\n");
+				m_strFileName = DlgLookup.GetFileName();
+				ATLTRACE(_T("filename: %s \n"), m_strFileName);
 
-				if(!(filename=="antenndiagram.csv" || filename=="antenndiagram1.csv" || filename=="antenndiagram2.csv"))
+				if (!(m_strFileName == "antenndiagram.csv" || m_strFileName == "antenndiagram1.csv" || m_strFileName == "antenndiagram2.csv"))
 				{
 					AfxMessageBox(_T("Not possible to use customized antenna diagrams in demoversion!"));
 					return;
 				}
-				m_strFileName.Format(filename);
-/*
-				Lookup* lookup = new Lookup();
-
-				lookup->setFilename(LookupFile);
-
-				if(lookup->readLookupFile()!=-1)
-					((CRadarStation*)m_pUtr)->m_fAntennTabel = lookup->getAntennaVector();
-
-				delete lookup;
-				*/
 
 				CDataFile df;
 				df.SetDelimiter(";");
-				if (!df.ReadFile(CT2A(m_strFileName)))
+				if (!df.ReadFile(CW2A(fileWithPath)))
 				{
 					AfxMessageBox(_T("Unable to open Antennadiagram File!"));
-				//	m_fAntennTabel = new float[2];
-				//	m_fAntennTabel[0] = 1600;
-				//	m_fAntennTabel[1] = 1000;
 					m_bFromFile = false;
 					m_strFileName.Format(_T("error"));
 				}
@@ -1093,7 +1082,7 @@ void CPropPage4Radar::ShowFileDialog()
 					catch(...) 
 					{	
 						CString error;
-						error.Format(_T("Error in file: %s", m_strFileName));
+						error.Format(_T("Error in file: %s"), m_strFileName);
 						AfxMessageBox(error);
 						m_bFromFile = false;
 						m_strFileName.Format(_T("error"));

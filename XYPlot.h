@@ -155,7 +155,7 @@ public:
 	virtual void SetRYRange(double &minrange, double &maxrange);
 	virtual void Reset();
 
-	virtual void SetSerie(int s, int style, COLORREF color, double minrange, double maxrange, const char *szTitle, BOOL Rightalign = FALSE);
+	virtual void SetSerie(int s, int style, COLORREF color, double minrange, double maxrange, const TCHAR *szTitle, BOOL Rightalign = FALSE);
 	virtual void SetLegend(int l, int style, COLORREF color, const char *text);
 	virtual void SetBXTitle(const char *title);
 	virtual void SetLYTitle(const char *title);

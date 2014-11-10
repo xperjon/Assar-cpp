@@ -2713,12 +2713,14 @@ void CRadarplotView::Serialize(CArchive& ar, int val)
 
 			CDataFile df;
 			df.SetDelimiter(";");
-			if (!df.ReadFile(CT2A(pRadar->m_strAntennaDiagramFileName)))
+			TCHAR currentDir[MAX_PATH];
+			GetCurrentDirectory(MAX_PATH, currentDir);
+			CString cDir;
+			cDir.Format(currentDir);
+			ATLTRACE(cDir);
+			if (!df.ReadFile(CW2A(cDir + "\\Data\\" + pRadar->m_strAntennaDiagramFileName)))
 			{
-				//	m_fAntennTabel = new float[2];
 				AfxMessageBox(_T("Unable to open Antennadiagram File!"));
-				//		pRadar->m_fAntennTabel[0] = 1600;
-				//		pRadar->m_fAntennTabel[1] = 1000;
 				pRadar->m_bAntennDiagramFromFile = false;
 				pRadar->m_strAntennaDiagramFileName.Format(_T("error"));
 			}

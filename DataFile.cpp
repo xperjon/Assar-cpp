@@ -1,7 +1,7 @@
 #include "StdAfx.h" // comment out this line if not using pre-compiled header
 
 #include ".\DataFile.h"
-
+#include "stdafx.h"
 // supress warnings (restored at end)
 #pragma warning(push)
 

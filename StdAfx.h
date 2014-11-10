@@ -23,22 +23,16 @@
 #include <gl\gl.h>
 #include <gl\glu.h>
 
-//#include "ProgressBar.h"
+void HookTrace(const wchar_t* format, ...);
+void HookTrace(const char* format, ...);
 
-/*
- #ifdef _DEBUG
-      inline void * __cdecl operator new(unsigned int size, 
-                                         const char *file, int line)
-      {
-      };
+#ifdef ATLTRACE 
+#undef ATLTRACE
+#undef ATLTRACE2
 
-      inline void __cdecl operator delete(void *p)
-      {
-      };
-      #endif
-
-*/
-
+#define ATLTRACE HookTrace
+#define ATLTRACE2 ATLTRACE
+#endif // ATLTRACE
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

@@ -100,7 +100,6 @@ CDlgRadarPPI::~CDlgRadarPPI()
 
 	TRACE("~CDlgRadarPPI\n");
 
-
 	if(m_ppTarget!=NULL)
 		delete[] m_ppTarget;
 
@@ -2393,13 +2392,13 @@ void CDlgRadarPPI::position(float angle)
 
 				//-------Lite stulig variant(men fungerande) för att få jammers att uppdateras med svepet
 
-				if(pTempPos->m_pUtrustning->m_fDistanceToRadar<m_pRadar->m_fMaxRange && (angle<pTempPos->m_pUtrustning->m_fBaring+m_fAngleMove && angle>pTempPos->m_pUtrustning->m_fBaring-m_fAngleMove))
+				if (pTempPos->m_pUtrustning->m_fDistanceToRadar < m_pRadar->m_fMaxRange && (angle<pTempPos->m_pUtrustning->m_fBaring + m_fAngleMove && angle>pTempPos->m_pUtrustning->m_fBaring - m_fAngleMove))
 
 				{
 
 					//För att brusstråken inte skall röra sig(pulspulshopp) under utsläckningen
 
-					pTempPos->m_pUtrustning->m_fOldDistanceToRadar=pTempPos->m_pUtrustning->m_fDistanceToRadar;
+					pTempPos->m_pUtrustning->m_fOldDistanceToRadar = pTempPos->m_pUtrustning->m_fDistanceToRadar;
 
 
 
@@ -2408,62 +2407,34 @@ void CDlgRadarPPI::position(float angle)
 					pTempPos->m_pUtrustning->m_fOldPosY = Y;
 
 					//JEP060310
-					if(pTempPos->m_pUtrustning->m_fDistanceToRadar>((300*pow(10,6.0))*m_pRadar->m_fPulseWidth))
-
+					if (pTempPos->m_pUtrustning->m_fDistanceToRadar > ((300 * pow(10, 6.0))*m_pRadar->m_fPulseWidth))
 					{
-						if(pTempPos->m_pUtrustning->m_fSNR >= 1)
+						if (pTempPos->m_pUtrustning->m_fSNR >= 1)
 						{
-
-						
-
-						CCell*		tmpCell;
-
-						tmpCell = new CCell();
-
-						tmpCell->m_fDist = pTempPos->m_pUtrustning->m_fDistanceToRadar; 
-
-						tmpCell->m_fSize= m_pRadar->m_fWidthMainlobeRx; //2.0f;			
-
-						tmpCell->m_fBaring = pTempPos->m_pUtrustning->m_fBaring;
-
-						tmpCell->m_enumTyp = TARGET;
-
-						if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER )
-
-							tmpCell->m_fLifeTime=RAWVideoModeJammer();
-
-						else
-
-							tmpCell->m_fLifeTime=RAWVideoModeTarget(((CRadarTarget*)pTempPos->m_pUtrustning));
-
-						//JEP060310
-						if(tmpCell->m_fLifeTime>0)
-							((CRadarStation*)tmpRadar)->m_CellLista.LaggTill(tmpCell);
-
+							CCell*		tmpCell;
+							tmpCell = new CCell();
+							tmpCell->m_fDist = pTempPos->m_pUtrustning->m_fDistanceToRadar;
+							tmpCell->m_fSize = m_pRadar->m_fWidthMainlobeRx; //2.0f;			
+							tmpCell->m_fBaring = pTempPos->m_pUtrustning->m_fBaring;
+							tmpCell->m_enumTyp = TARGET;
+							if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+								tmpCell->m_fLifeTime = RAWVideoModeJammer();
+							else
+								tmpCell->m_fLifeTime = RAWVideoModeTarget(((CRadarTarget*)pTempPos->m_pUtrustning));
+							//JEP060310
+							if (tmpCell->m_fLifeTime > 0)
+								((CRadarStation*)tmpRadar)->m_CellLista.LaggTill(tmpCell);
+							else
+								delete tmpCell;
 						}
-
 					}
-					
 				}
-
-
-
-
-
 				pTempPos->m_pUtrustning->m_fPosX = X;
-
 				pTempPos->m_pUtrustning->m_fPosY = Y;	
-
 			}
-
-
-
 			pTempPos = pTempPos->m_pNext;
-
 		}
-
 	}
-
 }
 
 float CDlgRadarPPI::RAWVideoModeTarget(CRadarTarget* m_pTarget)

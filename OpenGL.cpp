@@ -861,7 +861,7 @@ void COpenGL::RenderScenario()
 							//	glColor4f(0,1.0f,0,pTempCellPos->m_pCell->m_fLifeTime/RadarDynamicRange*(((CRadarStation*)pTempPos->m_pUtrustning)->m_fIndicatorIntensity));
 
 
-								glColor4f(0,0.9f,0,(0.8f*pTempCellPos->m_pCell->m_fLifeTime/RadarDynamicRange)+0.2f*(((CRadarStation*)pTempPos->m_pUtrustning)->m_fIndicatorIntensity));
+								glColor4f(0,0.8f,0,(0.9f*pTempCellPos->m_pCell->m_fLifeTime/RadarDynamicRange)+0.1f*(((CRadarStation*)pTempPos->m_pUtrustning)->m_fIndicatorIntensity));
 
 								
 						//		glColor4f(0.05f, (0.75f*pTempCellPos->m_pCell->m_fLifeTime/RadarDynamicRange)+0.25f/*-(RadarDynamicRange-pTempCellPos->m_pCell->m_fLifeTime)/RadarDynamicRange+(RadarDynamicRange/5)*/,0.05f, ((CRadarStation*)pTempPos->m_pUtrustning)->m_fIndicatorIntensity/10);
