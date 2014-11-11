@@ -29,10 +29,6 @@
 #include "radarplotview.h"
 
 
-#define M_PI 3.1415926535897932384626433832795f
-#define DEFAULTGGRREALTIME 3.0f
-
-
 #ifdef _DEBUG
 
 #define new DEBUG_NEW
@@ -100,47 +96,46 @@ CDlgRadarPPI::~CDlgRadarPPI()
 
 	TRACE("~CDlgRadarPPI\n");
 
-	if(m_ppTarget!=NULL)
+	if (m_ppTarget != NULL)
 		delete[] m_ppTarget;
 
-	if(m_pDisplay!=NULL)
+	if (m_pDisplay != NULL)
 		delete m_pDisplay;
 
 }
 
 
 
-void CDlgRadarPPI::Init(CUtrustning* pRadar,CUtrustning* pJammer,int antalTarget)
-
+void CDlgRadarPPI::Init(CUtrustning* pRadar, CUtrustning* pJammer, int antalTarget)
 {
+	ATLTRACE2(_T("CDlgRadarPPI::Init\n"));
 
 
+	//****************
 
-//****************
+	//  Här görs alla beräkningar som måste göras innan scenario börjar
 
-//  Här görs alla beräkningar som måste göras innan scenario börjar
+	// ***************
 
-// ***************
+	// ***************
 
-// ***************
+	// OBS! Matematiska koordinater Norr = Y, Öster = X
 
-// OBS! Matematiska koordinater Norr = Y, Öster = X
+	// 0 grader = Norr, 90 grader = Öster
 
-// 0 grader = Norr, 90 grader = Öster
-
-// ***************
+	// ***************
 
 	//m_cLista			=*pUtrLista;
 
 	//m_pUtrLista			= pUtrLista;
 
-	m_pRadar			= (CRadarStation*)pRadar;
+	m_pRadar = (CRadarStation*)pRadar;
 
-	m_nAntal			= antalTarget;
+	m_nAntal = antalTarget;
 
-	m_pJammer			= (CRadarJammer*)pJammer;
+	m_pJammer = (CRadarJammer*)pJammer;
 
-//	m_ppJammer			= (CRadarJammer**)malloc(m_nAntalJammer);
+	//	m_ppJammer			= (CRadarJammer**)malloc(m_nAntalJammer);
 
 	//m_ppTarget			= (CRadarTarget**)malloc(m_nAntal);
 	if (m_nAntal != 0)
@@ -148,36 +143,36 @@ void CDlgRadarPPI::Init(CUtrustning* pRadar,CUtrustning* pJammer,int antalTarget
 		m_ppTarget = new CRadarTarget*[m_nAntal];
 	}
 
-//	m_nKillTime			= (int*)malloc(m_nAntalJammer);
+	//	m_nKillTime			= (int*)malloc(m_nAntalJammer);
 
-	m_fGgrRealTime		= m_pRadar->m_fGgrRealTime;
-
-
+	m_fGgrRealTime = m_pRadar->m_fGgrRealTime;
 
 
 
-	m_bRun				= true;
-
-	m_fTimeUnit			= 0;
-
-	m_nZoomin			= 45;
 
 
+	m_bRun = true;
 
-//	m_nFalseTargetCounter= 0;
+	m_fTimeUnit = 0;
 
-//	m_nFalseTargetCounter2= 0;
+	m_nZoomin = 45;
 
-	angle				= 0.0f;
 
-//	m_fVinkelupplosning	= 1.0f;
 
-	vinkel				= 0.0f;
+	//	m_nFalseTargetCounter= 0;
+
+	//	m_nFalseTargetCounter2= 0;
+
+	angle = 0.0f;
+
+	//	m_fVinkelupplosning	= 1.0f;
+
+	vinkel = 0.0f;
 
 
 	//val
 
-	ChoiceOfDistanceBetweenFalseTargets	=1;
+	ChoiceOfDistanceBetweenFalseTargets = 1;
 
 
 
@@ -185,13 +180,13 @@ void CDlgRadarPPI::Init(CUtrustning* pRadar,CUtrustning* pJammer,int antalTarget
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
 	pTempPos = pLista->m_pStartPos;
 
-	int l=0;
+	int l = 0;
 
-	for(int i=0;i<pLista->m_nAntalNoder;i++) 
+	for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 	{
 
-		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 
 		{
 
@@ -213,28 +208,26 @@ void CDlgRadarPPI::Init(CUtrustning* pRadar,CUtrustning* pJammer,int antalTarget
 
 void CDlgRadarPPI::StartSim()
 {
-	
 
-	if(m_pJammer->m_nNbrOfWayPoints>0)
-
-		m_fKillTime = ((m_pJammer->m_fDistWayPoints[m_pJammer->m_nNbrOfWayPoints-1] / m_pJammer->m_fVelocity) *1.0);
+	if (m_pJammer->m_nNbrOfWayPoints > 0)
+		m_fKillTime = ((m_pJammer->m_fDistWayPoints[m_pJammer->m_nNbrOfWayPoints - 1] / m_pJammer->m_fVelocity) *1.0);
 
 	else
 
-		m_fKillTime = ((m_pJammer->m_fDistanceToRadar / m_pJammer->m_fVelocity) * 1.0 ); 
+		m_fKillTime = ((m_pJammer->m_fDistanceToRadar / m_pJammer->m_fVelocity) * 1.0);
 
 
 
-//	m_ppJammer[m]->m_fVectorToGraphPowerRecieved = (float*)malloc(20);
+	//	m_ppJammer[m]->m_fVectorToGraphPowerRecieved = (float*)malloc(20);
 
-//	m_ppJammer[m]->m_fVectorToGraphTime			 = (float*)malloc(20);
+	//	m_ppJammer[m]->m_fVectorToGraphTime			 = (float*)malloc(20);
 
 	//m_ColorSlider.SetRange(1,m_fKillTime);
 
 
-	m_fAngleMove = (360.0f/(m_pRadar->m_fSvepHastighet*10))*m_fGgrRealTime;
-
-	SetTimer(0,100,NULL);
+	m_fAngleMove = (360.0f / (m_pRadar->m_fSvepHastighet * 10))*m_fGgrRealTime;
+	ATLTRACE2(_T("CDlgRadarPPI::StartSim angleMove: %2.2f \n"), m_fAngleMove);
+	SetTimer(0, 100, NULL);
 
 }
 
@@ -349,7 +342,7 @@ END_MESSAGE_MAP()
 
 
 
-BOOL CDlgRadarPPI::OnInitDialog() 
+BOOL CDlgRadarPPI::OnInitDialog()
 
 {
 
@@ -358,23 +351,23 @@ BOOL CDlgRadarPPI::OnInitDialog()
 
 
 
-	m_hIcon = LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(128)); 
+	m_hIcon = LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(128));
 
 
 
 	HICON m_PlayIcon = (HICON)::LoadImage(AfxGetInstanceHandle(),
 
-		MAKEINTRESOURCE(IDI_ICON_PLAY), IMAGE_ICON, 32, 32, 
+		MAKEINTRESOURCE(IDI_ICON_PLAY), IMAGE_ICON, 32, 32,
 
-		LR_DEFAULTCOLOR);	 
+		LR_DEFAULTCOLOR);
 
 
 
 	HICON m_PlayIcon2 = (HICON)::LoadImage(AfxGetInstanceHandle(),
 
-		MAKEINTRESOURCE(IDI_ICON_PAUS), IMAGE_ICON, 32, 32, 
+		MAKEINTRESOURCE(IDI_ICON_PAUS), IMAGE_ICON, 32, 32,
 
-		LR_DEFAULTCOLOR);	 
+		LR_DEFAULTCOLOR);
 
 	m_CtrlButPlay.SetIcon(m_PlayIcon);
 
@@ -386,29 +379,29 @@ BOOL CDlgRadarPPI::OnInitDialog()
 
 	this->GetClientRect(&rect);
 
-	rect.left=rect.right*0.2;
+	rect.left = rect.right*0.2;
 
-	rect.right=rect.right*0.6;
+	rect.right = rect.right*0.6;
 
-	rect.bottom=rect.bottom*0.90;
+	rect.bottom = rect.bottom*0.90;
 
 	// TODO: Add extra initialization here
 
-	m_pDisplay->Create( NULL,   //CWnd default
+	m_pDisplay->Create(NULL,   //CWnd default
 
-						NULL,   //has no name
+		NULL,   //has no name
 
-						WS_CHILD|WS_CLIPSIBLINGS|WS_CLIPCHILDREN|WS_VISIBLE,
+		WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE,
 
-						rect,
+		rect,
 
-						this,   //this is the parent
+		this,   //this is the parent
 
-						0);  
+		0);
 
-//	ShowMenu();
+	//	ShowMenu();
 
-//	MoveMenu();
+	//	MoveMenu();
 
 	HideMenu();
 
@@ -416,16 +409,16 @@ BOOL CDlgRadarPPI::OnInitDialog()
 
 	OnButDegrees();
 
-	m_bRun=false;
+	m_bRun = false;
 
-	m_bRestore=true;
+	m_bRestore = true;
 
-	
+
 
 	SetIcon(m_hIcon, FALSE);			// Set big icon
 
 	SetIcon(m_hIcon, TRUE);		// Set small icon
-	
+
 
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -434,7 +427,7 @@ BOOL CDlgRadarPPI::OnInitDialog()
 
 
 
-void CDlgRadarPPI::OnPaint() 
+void CDlgRadarPPI::OnPaint()
 
 {
 
@@ -446,7 +439,7 @@ void CDlgRadarPPI::OnPaint()
 
 
 
-		SendMessage(WM_ICONERASEBKGND, (WPARAM) dc.GetSafeHdc(), 0);
+		SendMessage(WM_ICONERASEBKGND, (WPARAM)dc.GetSafeHdc(), 0);
 
 
 
@@ -477,7 +470,7 @@ void CDlgRadarPPI::OnPaint()
 
 		CPaintDC dc(this); // device context for painting
 
-		if(m_bRun==true)
+		if (m_bRun == true)
 			CalculateScene();
 		else
 			CalculateTemp();
@@ -492,35 +485,35 @@ void CDlgRadarPPI::OnPaint()
 
 
 
-void CDlgRadarPPI::OnSize(UINT nType, int cx, int cy) 
+void CDlgRadarPPI::OnSize(UINT nType, int cx, int cy)
 
 {
 	CDialog::OnSize(nType, cx, cy);
-	if(m_pDisplay->m_bReady)
+	if (m_pDisplay->m_bReady)
 	{
 		CRect rect;
 		this->GetClientRect(&rect);
-		rect.left=rect.right*0.2;
-		rect.right=rect.right*0.6;
-		rect.bottom=rect.bottom*0.90;
-		m_pDisplay->SetWindowPos(&wndTop,rect.left,rect.top,rect.right,rect.bottom,SWP_SHOWWINDOW);
+		rect.left = rect.right*0.2;
+		rect.right = rect.right*0.6;
+		rect.bottom = rect.bottom*0.90;
+		m_pDisplay->SetWindowPos(&wndTop, rect.left, rect.top, rect.right, rect.bottom, SWP_SHOWWINDOW);
 		MoveMenu();
 	}
 
-	switch(nType)
+	switch (nType)
 	{
 	case SIZE_MAXIMIZED:
-		m_bRestore=true;
+		m_bRestore = true;
 		ShowMenu();
 		break;
 	case SIZE_MINIMIZED:
-		m_bRestore=false;
+		m_bRestore = false;
 		HideMenu();
 		break;
 
 	default:
-	//	m_bRestore=false;
-		if(m_pDisplay->m_bReady)
+		//	m_bRestore=false;
+		if (m_pDisplay->m_bReady)
 		{
 			HideMenu();
 		}
@@ -537,15 +530,15 @@ void CDlgRadarPPI::CalculateTemp()
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
 	pTempPos = pLista->m_pStartPos;
 
-	if(pLista->IsEmpty()==false)
+	if (pLista->IsEmpty() == false)
 
 	{
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
 
 			{
 
@@ -553,25 +546,25 @@ void CDlgRadarPPI::CalculateTemp()
 
 			}
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 
 			{
 
-			// ------- Jammer ------
+				// ------- Jammer ------
 
-				float X,Y;
+				float X, Y;
 
-				glColor3f(pTempPos->m_pUtrustning->m_fColor[0],pTempPos->m_pUtrustning->m_fColor[1],pTempPos->m_pUtrustning->m_fColor[2]);
+				glColor3f(pTempPos->m_pUtrustning->m_fColor[0], pTempPos->m_pUtrustning->m_fColor[1], pTempPos->m_pUtrustning->m_fColor[2]);
 
-				CRadarCalculate::Startpos(pTempPos->m_pUtrustning->m_fBaring,pTempPos->m_pUtrustning->m_fDistanceToRadar,X,Y);
+				CRadarCalculate::Startpos(pTempPos->m_pUtrustning->m_fBaring, pTempPos->m_pUtrustning->m_fDistanceToRadar, X, Y);
 
-				pTempPos->m_pUtrustning->m_fStartPosX=X;
+				pTempPos->m_pUtrustning->m_fStartPosX = X;
 
-				pTempPos->m_pUtrustning->m_fStartPosY=Y;
+				pTempPos->m_pUtrustning->m_fStartPosY = Y;
 
-				pTempPos->m_pUtrustning->m_fPosX=X;
+				pTempPos->m_pUtrustning->m_fPosX = X;
 
-				pTempPos->m_pUtrustning->m_fPosY=Y;
+				pTempPos->m_pUtrustning->m_fPosY = Y;
 
 
 
@@ -579,25 +572,25 @@ void CDlgRadarPPI::CalculateTemp()
 
 
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 
 			{
 
-			// ------- Target ------
+				// ------- Target ------
 
-				float X,Y;
+				float X, Y;
 
-				glColor3f(pTempPos->m_pUtrustning->m_fColor[0],pTempPos->m_pUtrustning->m_fColor[1],pTempPos->m_pUtrustning->m_fColor[2]);
+				glColor3f(pTempPos->m_pUtrustning->m_fColor[0], pTempPos->m_pUtrustning->m_fColor[1], pTempPos->m_pUtrustning->m_fColor[2]);
 
-				CRadarCalculate::Startpos(pTempPos->m_pUtrustning->m_fBaring,pTempPos->m_pUtrustning->m_fDistanceToRadar,X,Y);
+				CRadarCalculate::Startpos(pTempPos->m_pUtrustning->m_fBaring, pTempPos->m_pUtrustning->m_fDistanceToRadar, X, Y);
 
-				pTempPos->m_pUtrustning->m_fStartPosX=X;
+				pTempPos->m_pUtrustning->m_fStartPosX = X;
 
-				pTempPos->m_pUtrustning->m_fStartPosY=Y;
+				pTempPos->m_pUtrustning->m_fStartPosY = Y;
 
-				pTempPos->m_pUtrustning->m_fPosX=X;
+				pTempPos->m_pUtrustning->m_fPosX = X;
 
-				pTempPos->m_pUtrustning->m_fPosY=Y;
+				pTempPos->m_pUtrustning->m_fPosY = Y;
 
 
 
@@ -615,90 +608,90 @@ void CDlgRadarPPI::CalculateTemp()
 
 void CDlgRadarPPI::CalculateScene()
 
-{	
+{
 
 
 
-//Radar parametrar
+	//Radar parametrar
 
-//InitRadar();
+	//InitRadar();
 
-	
 
-	if(m_nAntal>0)
+
+	if (m_nAntal > 0)
 		CalculateNoiseEffectTargets();
 
 
 
 
-//Beräkna signalstyrka för Targets	
+	//Beräkna signalstyrka för Targets	
 
 	CalculateTargetSignal();
 
 
 
-//	if(m_nAntalJammer>1)//Ej aktuell i DEMO version ty bara 1 st Jammer
+	//	if(m_nAntalJammer>1)//Ej aktuell i DEMO version ty bara 1 st Jammer
 
-      //	CalculateNoisePower();
+	//	CalculateNoisePower();
 
-//		Sätter BARA repeterparametrar => kan köras även för brusstörning
+	//		Sätter BARA repeterparametrar => kan köras även för brusstörning
 
-//	SetParameterJammerFormRepeter(m_ppJammer[t]);
+	//	SetParameterJammerFormRepeter(m_ppJammer[t]);
 
-//		BrusParametrar
+	//		BrusParametrar
 
-//		CalculateBandwithjam(m_ppJammer[t]);
+	//		CalculateBandwithjam(m_ppJammer[t]);
 
 	CalculateNoiseEffectMainLobe();
 
 	CalculateSignalJammer();
 
-	if(m_pJammer->m_strStatus=="OFF")
+	if (m_pJammer->m_strStatus == "OFF")
 
 	{
-		m_pJammer->m_fJ=0.0f;
-		m_pJammer->m_fJ_mal=0.0f;
+		m_pJammer->m_fJ = 0.0f;
+		m_pJammer->m_fJ_mal = 0.0f;
 	}
 
-//----------------------Störstråk---------------------------------------------
+	//----------------------Störstråk---------------------------------------------
 
 	loop(angle);
 
-//	loopbrus(angle,m_ppJammer[t]);
+	//	loopbrus(angle,m_ppJammer[t]);
 
 	//Efterlys      OBS denna if-sats ska nog bort!!!
 
-//		if(abs(m_ppJammer[t]->m_fBaring-angle)>(10*m_fAngleMove))
+	//		if(abs(m_ppJammer[t]->m_fBaring-angle)>(10*m_fAngleMove))
 
-//	if(m_pRadar->m_bRAWVideoMode && m_nTimeUnit%20==0)
+	//	if(m_pRadar->m_bRAWVideoMode && m_nTimeUnit%20==0)
 
-//			DeflectionMode(m_ppJammer[t]);
+	//			DeflectionMode(m_ppJammer[t]);
 
 
 
 	position(angle);
 
 
-//----------------------Räkna upp svepräknare och tidräknare------------------
+	//----------------------Räkna upp svepräknare och tidräknare------------------
 
 	angle = angle + m_fAngleMove;
 
 	m_pRadar->m_fAngle = angle;
 
-	m_fTimeUnit+=(m_pRadar->m_fGgrRealTime/10);
+	m_fTimeUnit += (m_pRadar->m_fGgrRealTime / 10);
 
-	m_pRadar->m_nTimeUnit+=(m_pRadar->m_fGgrRealTime/10);
+	m_pRadar->m_nTimeUnit += (m_pRadar->m_fGgrRealTime / 10);
 
 
-//	if(int(m_nTimeUnit/m_fGgrRealTime)%100==0 && int(m_nTimeUnit/m_fGgrRealTime)<20)
+	//	if(int(m_nTimeUnit/m_fGgrRealTime)%100==0 && int(m_nTimeUnit/m_fGgrRealTime)<20)
 
-//		m_ppJammer[0]->m_fVectorToGraphTime[int(m_nTimeUnit/m_fGgrRealTime/100)]	=m_nTimeUnit;
+	//		m_ppJammer[0]->m_fVectorToGraphTime[int(m_nTimeUnit/m_fGgrRealTime/100)]	=m_nTimeUnit;
 
-//----------------------Nollställ svepräknare---------------------------------
+	//----------------------Nollställ svepräknare---------------------------------
 
-	if(angle >= 360.0)
-		angle = 0.0;
-
+	if (angle >= 360.0)
+		angle -= 360;
+	ATLTRACE2(_T("CDlgRadarPPI::CalculateScene angle: %2.2f \n"), angle);
 
 	//JEP060316 Clean list from non-visible cells
 	m_pRadar->m_CellLista.CleanList();
@@ -712,30 +705,30 @@ void CDlgRadarPPI::CalculateScene()
 
 
 
-void CDlgRadarPPI::OnTimer(UINT nIDEvent) 
+void CDlgRadarPPI::OnTimer(UINT nIDEvent)
 {
 
-	if(m_bRun==true)
+	if (m_bRun == true)
 	{
 
-		if(m_fTimeUnit > m_fKillTime)
+		if (m_fTimeUnit > m_fKillTime)
 		{
 			KillTimer(0);
 			AfxMessageBox(_T("Simulation finished."), 0);
-			SetTimer(0,100,NULL);
+			SetTimer(0, 100, NULL);
 			Stop();
 		}
 	}
 	else
-		m_fTimeUnit=0;
-	
+		m_fTimeUnit = 0;
+
 
 	float time = m_fTimeUnit;
-	int min = (int)time/60;
-	float sec = time-min*60.0;
+	int min = (int)time / 60;
+	float sec = time - min*60.0;
 	CString str;
-//	CString str2;
-//	str2.Format("%.19s %s",asctime(newtime),am_pm);
+	//	CString str2;
+	//	str2.Format("%.19s %s",asctime(newtime),am_pm);
 
 	m_strTimeLine.Format(_T("SimTime:  %d min %2.0f sec"), min, sec);
 
@@ -743,20 +736,20 @@ void CDlgRadarPPI::OnTimer(UINT nIDEvent)
 
 	CStatusBar* pStatus = pFrame->ReturnStatusBarPointer();
 
-	pStatus->SetPaneInfo(1,1,SBPS_NORMAL,180);
-	pStatus->SetPaneText(1,m_strTimeLine);
-	
+	pStatus->SetPaneInfo(1, 1, SBPS_NORMAL, 180);
+	pStatus->SetPaneText(1, m_strTimeLine);
 
-//	SetDlgItemText(IDC_PPIPLOT_STATIC,str);
 
-//	SetDlgItemText(IDC_LOKALTIME_STATIC,str2);
+	//	SetDlgItemText(IDC_PPIPLOT_STATIC,str);
 
-	
-	InvalidateRect(NULL,FALSE);
+	//	SetDlgItemText(IDC_LOKALTIME_STATIC,str2);
+
+
+	InvalidateRect(NULL, FALSE);
 
 	CDialog::OnTimer(nIDEvent);
 
-	
+
 
 }
 
@@ -766,11 +759,11 @@ int CDlgRadarPPI::InitTarget()
 
 
 
-//Vi kollar om målytan för mål är mindre än målytan för ref
+	//Vi kollar om målytan för mål är mindre än målytan för ref
 
-//Om detta är fallet skall ett eget Rmax för mål användas
+	//Om detta är fallet skall ett eget Rmax för mål användas
 
-//Annars skall Rmax_radar användas på alla ställen.
+	//Annars skall Rmax_radar användas på alla ställen.
 
 
 
@@ -782,7 +775,7 @@ int CDlgRadarPPI::InitTarget()
 
 int CDlgRadarPPI::InitRadar()
 {
-	
+
 	//141105 Kommenterat bort processing gain och bmf beräkningar, då dessa görs i view
 
 	//nytt030109
@@ -823,74 +816,74 @@ int CDlgRadarPPI::InitJammer()
 
 
 
-//	float X,Y;
+	//	float X,Y;
 
 	//Sätt initpositioner med bäring och avstånd till radar
 
-//	CRadarCalculate::pos(0,0,m_ppJammer[i]->m_fBaring,m_ppJammer[i]->m_fDistanceToRadar,X,Y);
+	//	CRadarCalculate::pos(0,0,m_ppJammer[i]->m_fBaring,m_ppJammer[i]->m_fDistanceToRadar,X,Y);
 
-//	m_ppJammer[i]->m_fPosX=X;
+	//	m_ppJammer[i]->m_fPosX=X;
 
-//	m_ppJammer[i]->m_fPosY=Y;
+	//	m_ppJammer[i]->m_fPosY=Y;
 
-//Kopiera parametrar som kan reduceras under simulering
+	//Kopiera parametrar som kan reduceras under simulering
 	m_fDlgPeakPower = m_pJammer->m_fPeakPower;
 	m_fDlgPeakPowerRepeater = m_pJammer->m_fPeakPowerRepeater;
 
 
 
-//Här beräknas Jammerns PRI
+	//Här beräknas Jammerns PRI
 
-	m_pJammer->m_fPRI=CalulateJammerPRI();
+	m_pJammer->m_fPRI = CalulateJammerPRI();
 
-//Här beräknas avståndet mellan falsmål vid asynkron repeterströrning
+	//Här beräknas avståndet mellan falsmål vid asynkron repeterströrning
 
-	m_pJammer->m_fAsynkDist=CalulateJammerAsynkDist();
-
-
-
-//Brus
-
-   	//Bestäm Bj utefter val (Bredbandig eller Smalbandig störning)
-
-		bool res = InitNoise();
-		if(res == 1)
-			return 1;
-
-
-//Rep
-
-	  //Sätt diverse parametrar
-
-		res = CalculateDistFalseTargets();
-		if(res == 1)
-			return 1;
-
-//Kolla frekvens band
-
-		CheckFreqBand();
+	m_pJammer->m_fAsynkDist = CalulateJammerAsynkDist();
 
 
 
-	  //Beräkna Arbetsfaktor REP
+	//Brus
+
+	//Bestäm Bj utefter val (Bredbandig eller Smalbandig störning)
+
+	bool res = InitNoise();
+	if (res == 1)
+		return 1;
+
+
+	//Rep
+
+	//Sätt diverse parametrar
+
+	res = CalculateDistFalseTargets();
+	if (res == 1)
+		return 1;
+
+	//Kolla frekvens band
+
+	CheckFreqBand();
+
+
+
+	//Beräkna Arbetsfaktor REP
 
 	//	BeraknaArbetsfaktorRep(m_ppJammer[i]);
 
 
 
-	  //kolla om antal falskmal är mindre än antal falskmal för aktivering av klotterkarta
+	//kolla om antal falskmal är mindre än antal falskmal för aktivering av klotterkarta
 
-//		InitKlotterkarta(m_ppJammer[i]);
+	//		InitKlotterkarta(m_ppJammer[i]);
 
 
 
-	  //Sätt om vinkelupplösningRepeter
+	//Sätt om vinkelupplösningRepeter
 
-//		if(m_ppJammer[i]->m_bSynkronaFalskmal||m_ppJammer[i]->m_bAsynkronaFalskmal||m_ppJammer[i]->m_bSlumpadeFalskmal==true)          //modifierat (line 184-187)  AW 020821
+	//		if(m_ppJammer[i]->m_bSynkronaFalskmal||m_ppJammer[i]->m_bAsynkronaFalskmal||m_ppJammer[i]->m_bSlumpadeFalskmal==true)          //modifierat (line 184-187)  AW 020821
 
-//			m_fVinkelupplosningRepeter=m_fPlotSeparation;
+	//			m_fVinkelupplosningRepeter=m_fPlotSeparation;
 
-	
+
 	return 0;
 
 }
@@ -899,21 +892,21 @@ void CDlgRadarPPI::CalculateCriticalBorder()
 
 {
 
-	for(int i=0;i<m_nAntal;i++)
+	for (int i = 0; i < m_nAntal; i++)
 
 	{
 
-		if(m_ppTarget[i]->m_fSigma<m_pRadar->m_fSigmaRef)
+		if (m_ppTarget[i]->m_fSigma < m_pRadar->m_fSigmaRef)
 
 		{
 
-		//	Beräkna och sätt Rmax mål
+			//	Beräkna och sätt Rmax mål
 
-			float a=m_ppTarget[i]->m_fSigma;
+			float a = m_ppTarget[i]->m_fSigma;
 
-			float b=CalculateMaxRange(a);
+			float b = CalculateMaxRange(a);
 
-			m_ppTarget[i]->m_fCriticalBorder=b;
+			m_ppTarget[i]->m_fCriticalBorder = b;
 
 		}
 
@@ -921,9 +914,9 @@ void CDlgRadarPPI::CalculateCriticalBorder()
 
 		{
 
-		//	Här säts Rmax_mal=Rmax_radar
+			//	Här säts Rmax_mal=Rmax_radar
 
-			m_ppTarget[i]->m_fCriticalBorder=m_pRadar->m_fMaxRange;
+			m_ppTarget[i]->m_fCriticalBorder = m_pRadar->m_fMaxRange;
 
 		}
 
@@ -936,56 +929,56 @@ void CDlgRadarPPI::CheckFreqBand()
 {
 
 
-	if(m_pRadar->m_bfixfrekvens==true && m_pJammer->m_fFreqMax>=m_pRadar->m_fFreqMin /*vilket=FreqMax*/&& m_pJammer->m_fFreqMin<=m_pRadar->m_fFreqMin)
+	if (m_pRadar->m_bfixfrekvens == true && m_pJammer->m_fFreqMax >= m_pRadar->m_fFreqMin /*vilket=FreqMax*/&& m_pJammer->m_fFreqMin <= m_pRadar->m_fFreqMin)
+	{
+
+		m_fDlgPeakPowerRepeater = m_fDlgPeakPowerRepeater;
+
+	}
+
+	if (m_pRadar->m_bfixfrekvens == true && m_pJammer->m_fFreqMax<m_pRadar->m_fFreqMin /*vilket=FreqMax*/ || (m_pRadar->m_bfixfrekvens == true && m_pJammer->m_fFreqMin>m_pRadar->m_fFreqMin))
+	{
+
+		m_fDlgPeakPowerRepeater = 0;
+
+	}
+
+	if (m_pRadar->m_bfixfrekvens == false)
+	{
+
+		float TotalBandwidthRadar = m_pRadar->m_fFreqMax - m_pRadar->m_fFreqMin;
+		float TotalBandwidthJammer = m_pJammer->m_fFreqMax - m_pJammer->m_fFreqMin;
+
+
+		if (m_pJammer->m_fFreqMax > m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin < m_pRadar->m_fFreqMin)
+
 		{
-
-		m_fDlgPeakPowerRepeater=m_fDlgPeakPowerRepeater;
-
+			m_fDlgPeakPowerRepeater = m_fDlgPeakPowerRepeater;
 		}
-	
-	if(m_pRadar->m_bfixfrekvens==true && m_pJammer->m_fFreqMax<m_pRadar->m_fFreqMin /*vilket=FreqMax*/|| (m_pRadar->m_bfixfrekvens==true && m_pJammer->m_fFreqMin>m_pRadar->m_fFreqMin))
+
+		if (m_pJammer->m_fFreqMax <= m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin >= m_pRadar->m_fFreqMin)
+
 		{
-
-		m_fDlgPeakPowerRepeater=0;
-
+			m_fDlgPeakPowerRepeater = m_fDlgPeakPowerRepeater*(TotalBandwidthJammer / TotalBandwidthRadar);
 		}
 
-	if(m_pRadar->m_bfixfrekvens==false)
-	{	
-	
-		float TotalBandwidthRadar=m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin;
-		float TotalBandwidthJammer=m_pJammer->m_fFreqMax-m_pJammer->m_fFreqMin;
+		if (m_pJammer->m_fFreqMax<m_pRadar->m_fFreqMin || m_pJammer->m_fFreqMin>m_pRadar->m_fFreqMax)
 
+		{
+			m_fDlgPeakPowerRepeater = 0;
+		}
 
-			if(m_pJammer->m_fFreqMax>m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin<m_pRadar->m_fFreqMin)
-		
-			{
-			m_fDlgPeakPowerRepeater=m_fDlgPeakPowerRepeater;
-			}
+		if (m_pJammer->m_fFreqMax <= m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin < m_pRadar->m_fFreqMin)
 
-			if(m_pJammer->m_fFreqMax<=m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin>=m_pRadar->m_fFreqMin)
+		{
+			m_fDlgPeakPowerRepeater = m_fDlgPeakPowerRepeater*((m_pJammer->m_fFreqMax - m_pRadar->m_fFreqMin) / TotalBandwidthRadar);
+		}
 
-			{
-			m_fDlgPeakPowerRepeater=m_fDlgPeakPowerRepeater*(TotalBandwidthJammer/TotalBandwidthRadar);
-			}
+		if (m_pJammer->m_fFreqMax >= m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin > m_pRadar->m_fFreqMin)
 
-			if(m_pJammer->m_fFreqMax<m_pRadar->m_fFreqMin || m_pJammer->m_fFreqMin>m_pRadar->m_fFreqMax)
-
-			{
-			m_fDlgPeakPowerRepeater=0;
-			}
-
-			if(m_pJammer->m_fFreqMax<=m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin<m_pRadar->m_fFreqMin)
-
-			{
-			m_fDlgPeakPowerRepeater=m_fDlgPeakPowerRepeater*((m_pJammer->m_fFreqMax-m_pRadar->m_fFreqMin)/TotalBandwidthRadar);
-			}
-
-			if(m_pJammer->m_fFreqMax>=m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin>m_pRadar->m_fFreqMin)
-
-			{
-			m_fDlgPeakPowerRepeater=m_fDlgPeakPowerRepeater*((m_pRadar->m_fFreqMax - m_pJammer->m_fFreqMin)/TotalBandwidthRadar);
-			}		
+		{
+			m_fDlgPeakPowerRepeater = m_fDlgPeakPowerRepeater*((m_pRadar->m_fFreqMax - m_pJammer->m_fFreqMin) / TotalBandwidthRadar);
+		}
 	}
 }
 
@@ -995,75 +988,75 @@ int CDlgRadarPPI::CalculateDistFalseTargets()
 
 {
 
-// Nytt 030110
+	// Nytt 030110
 
-//	if(ChoiceOfDistanceBetweenFalseTargets!=1)
+	//	if(ChoiceOfDistanceBetweenFalseTargets!=1)
 
-//		m_pJammer->m_fDistanceBetweenFalseTargets=((300*pow(10,6))*m_pRadar->m_dPulseWidth)/(2*(m_pJammer->m_nRepetedPulseWidth/100));
+	//		m_pJammer->m_fDistanceBetweenFalseTargets=((300*pow(10,6))*m_pRadar->m_dPulseWidth)/(2*(m_pJammer->m_nRepetedPulseWidth/100));
 
 
 
 	//Detta val måste göras av användaren (alltså: 1.mata in i direkt avstånd 2.Mata in i tid 3.Med hjälp av arbetsfaktor
 
-	switch(ChoiceOfDistanceBetweenFalseTargets)
+	switch (ChoiceOfDistanceBetweenFalseTargets)
 
 	{
 
 	case 1:
 
-			if(m_pJammer->m_fDistanceBetweenFalseTargets<((300.0f*(float)pow(10.0f,6.0f))*m_pRadar->m_fPulseWidth)/(2.0f))
+		if (m_pJammer->m_fDistanceBetweenFalseTargets < ((300.0f*(float)pow(10.0f, 6.0f))*m_pRadar->m_fPulseWidth) / (2.0f))
+
+		{
+
+			if ((100.0f / (m_pJammer->m_fRepetedPulseWidth)) < m_pRadar->m_nPulseCompRatio)
 
 			{
 
-				if((100.0f/(m_pJammer->m_fRepetedPulseWidth))<m_pRadar->m_nPulseCompRatio)
-
-				{
-
-					m_pJammer->m_fDistanceBetweenFalseTargets=m_pJammer->m_fRepetedPulseWidth*(300.0f*(float)pow(10.0f,6.0f)*m_pRadar->m_fPulseWidth)/200.0f;
-
-				}
-
-				else
-
-				{
-
-					m_pJammer->m_fDistanceBetweenFalseTargets=(300.0f*(float)pow(10.0f,6.0f)*m_pRadar->m_fPulseWidth)/2.0f;
-
-				}	
+				m_pJammer->m_fDistanceBetweenFalseTargets = m_pJammer->m_fRepetedPulseWidth*(300.0f*(float)pow(10.0f, 6.0f)*m_pRadar->m_fPulseWidth) / 200.0f;
 
 			}
 
-			
+			else
 
-			break;
+			{
+
+				m_pJammer->m_fDistanceBetweenFalseTargets = (300.0f*(float)pow(10.0f, 6.0f)*m_pRadar->m_fPulseWidth) / 2.0f;
+
+			}
+
+		}
+
+
+
+		break;
 
 	case 2:
 
-//			Jammer->m_fDistanceBetweenFalseTargets=(Jammer->m_fTimeBetweenFalseTargets*(300.0f*(float)pow(10.0f,6.0f)))/2.0f;
+		//			Jammer->m_fDistanceBetweenFalseTargets=(Jammer->m_fTimeBetweenFalseTargets*(300.0f*(float)pow(10.0f,6.0f)))/2.0f;
 
-//			if(Jammer->m_fDistanceBetweenFalseTargets<((300.0f*(float)pow(10.0f,6.0f))*m_pRadar->m_fPulseWidth)/(2.0f*(Jammer->m_fRepetedPulseWidth/100.0f)))
+		//			if(Jammer->m_fDistanceBetweenFalseTargets<((300.0f*(float)pow(10.0f,6.0f))*m_pRadar->m_fPulseWidth)/(2.0f*(Jammer->m_fRepetedPulseWidth/100.0f)))
 
-//					Jammer->m_fDistanceBetweenFalseTargets=((300.0f*(float)pow(10.0f,6.0f))*m_pRadar->m_fPulseWidth)/(2.0f*(Jammer->m_fRepetedPulseWidth/100.0f));
+		//					Jammer->m_fDistanceBetweenFalseTargets=((300.0f*(float)pow(10.0f,6.0f))*m_pRadar->m_fPulseWidth)/(2.0f*(Jammer->m_fRepetedPulseWidth/100.0f));
 
-			break;
+		break;
 
-			
+
 
 	case 3:
 
-//			Jammer->m_fDistanceBetweenFalseTargets=m_pRadar->m_fMaxRange/Jammer->m_fNumberOfFalseTargets;
+		//			Jammer->m_fDistanceBetweenFalseTargets=m_pRadar->m_fMaxRange/Jammer->m_fNumberOfFalseTargets;
 
-			break;
+		break;
 
 	default:
 
-			KillTimer(0);
+		KillTimer(0);
 
-			MessageBox(_T("Error in Radar DisplayMode!"));
-			return 1;
+		MessageBox(_T("Error in Radar DisplayMode!"));
+		return 1;
 
 
-	}		
+	}
 
 
 
@@ -1077,11 +1070,11 @@ int CDlgRadarPPI::InitNoise()
 
 {
 
-	if(m_pJammer->m_bIckeFoljande==true && m_pJammer->m_bFoljande==false)
+	if (m_pJammer->m_bIckeFoljande == true && m_pJammer->m_bFoljande == false)
 
 	{
 
-		m_pJammer->m_fNoiseBandwidth=(m_pJammer->m_fFreqMax-m_pJammer->m_fFreqMin)*(float)pow(10.0f,3.0f);
+		m_pJammer->m_fNoiseBandwidth = (m_pJammer->m_fFreqMax - m_pJammer->m_fFreqMin)*(float)pow(10.0f, 3.0f);
 
 		CheckBandConstantFQ();
 
@@ -1089,11 +1082,11 @@ int CDlgRadarPPI::InitNoise()
 
 
 
-	if(m_pJammer->m_bFoljande==true && m_pJammer->m_bIckeFoljande==false)
+	if (m_pJammer->m_bFoljande == true && m_pJammer->m_bIckeFoljande == false)
 
 	{
 
-		if(m_pJammer->m_fNoiseBandwidth>(m_pJammer->m_fFreqMax-m_pJammer->m_fFreqMin)*(float)pow(10.0f,3.0f))
+		if (m_pJammer->m_fNoiseBandwidth > (m_pJammer->m_fFreqMax - m_pJammer->m_fFreqMin)*(float)pow(10.0f, 3.0f))
 
 		{
 
@@ -1108,7 +1101,7 @@ int CDlgRadarPPI::InitNoise()
 
 
 
-	if(m_pJammer->m_bFoljande==true && m_pJammer->m_bIckeFoljande==true)
+	if (m_pJammer->m_bFoljande == true && m_pJammer->m_bIckeFoljande == true)
 
 	{
 
@@ -1117,9 +1110,9 @@ int CDlgRadarPPI::InitNoise()
 
 	}
 
-	
 
-	if(m_pJammer->m_bFoljande==false && m_pJammer->m_bIckeFoljande==false)
+
+	if (m_pJammer->m_bFoljande == false && m_pJammer->m_bIckeFoljande == false)
 
 	{
 
@@ -1138,11 +1131,11 @@ void CDlgRadarPPI::InitKlotterkarta(CRadarJammer* m_pJammer)
 
 {
 
-	if(m_pJammer->m_fNumberOfFalseTargets<=m_pRadar->m_nAntalFalskmalForAktiveringKlotterKarta)
+	if (m_pJammer->m_fNumberOfFalseTargets <= m_pRadar->m_nAntalFalskmalForAktiveringKlotterKarta)
 
 	{
 
-		m_pRadar->m_bKlotterKarta=false;
+		m_pRadar->m_bKlotterKarta = false;
 
 	}
 
@@ -1151,7 +1144,7 @@ void CDlgRadarPPI::InitKlotterkarta(CRadarJammer* m_pJammer)
 
 float CDlgRadarPPI::CalculateMaxRange(float malyta)
 {
-	float Rmax=(float)pow((((float)m_pRadar->m_fGainMainlobe*m_pRadar->m_fGainMainlobeRx*(float)pow(m_pRadar->m_flambda,2.0f)*malyta*m_pRadar->m_nProcessingGain*m_pRadar->m_fPeakPower)/(64.0f*(float)pow(M_PI,3.0f)*m_pRadar->m_fSensitivity)),0.25f);
+	float Rmax = (float)pow((((float)m_pRadar->m_fGainMainlobe*m_pRadar->m_fGainMainlobeRx*(float)pow(m_pRadar->m_flambda, 2.0f)*malyta*m_pRadar->m_nProcessingGain*m_pRadar->m_fPeakPower) / (64.0f*(float)pow(M_PI, 3.0f)*m_pRadar->m_fSensitivity)), 0.25f);
 	return Rmax;
 }
 
@@ -1161,9 +1154,9 @@ void CDlgRadarPPI::CalculateLambda()
 
 {
 
-	float c=300.0f*(float)pow(10.0f,6.0f);
+	float c = 300.0f*(float)pow(10.0f, 6.0f);
 
-    m_pRadar->m_flambda=c/((m_pRadar->m_fFreqMax-((m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin)/2.0f))*(float)pow(10.0f,9.0f));
+	m_pRadar->m_flambda = c / ((m_pRadar->m_fFreqMax - ((m_pRadar->m_fFreqMax - m_pRadar->m_fFreqMin) / 2.0f))*(float)pow(10.0f, 9.0f));
 
 }
 
@@ -1172,88 +1165,88 @@ void CDlgRadarPPI::CalculateLambda()
 void CDlgRadarPPI::CheckBandConstantFQ()
 {
 
-	if(m_pRadar->m_bfixfrekvens==true && m_pJammer->m_fFreqMax>=m_pRadar->m_fFreqMin /*vilket=FreqMax*/&& m_pJammer->m_fFreqMin<=m_pRadar->m_fFreqMin)
-		{
+	if (m_pRadar->m_bfixfrekvens == true && m_pJammer->m_fFreqMax >= m_pRadar->m_fFreqMin /*vilket=FreqMax*/&& m_pJammer->m_fFreqMin <= m_pRadar->m_fFreqMin)
+	{
 		//aka do nothing
-		m_fDlgPeakPower=m_fDlgPeakPower;
+		m_fDlgPeakPower = m_fDlgPeakPower;
 
-		}
-	
-	if(m_pRadar->m_bfixfrekvens==true && m_pJammer->m_fFreqMax<m_pRadar->m_fFreqMin /*vilket=FreqMax*/|| (m_pRadar->m_bfixfrekvens==true && m_pJammer->m_fFreqMin>m_pRadar->m_fFreqMin))
-		{
+	}
 
-		m_fDlgPeakPower=0;
-
-		}
-
-	if(m_pRadar->m_bfixfrekvens==false)
+	if (m_pRadar->m_bfixfrekvens == true && m_pJammer->m_fFreqMax<m_pRadar->m_fFreqMin /*vilket=FreqMax*/ || (m_pRadar->m_bfixfrekvens == true && m_pJammer->m_fFreqMin>m_pRadar->m_fFreqMin))
 	{
 
-/*		float TotalBandwidthRadar=m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin;
-		float TotalBandwidthJammer=m_pJammer->m_fFreqMax-m_pJammer->m_fFreqMin;
-		float TotalBandwidthRatio=m_pJammer->m_fFreqMax-m_pJammer->m_fFreqMin/m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin;
-*/
-	// Denna funk funkar klockrent!!!!!!!!!!!!!! (fast inte om Bj=0)
+		m_fDlgPeakPower = 0;
 
-			if(m_pJammer->m_fNoiseBandwidth<m_pRadar->m_fIFBandWidth)
+	}
 
-			{
+	if (m_pRadar->m_bfixfrekvens == false)
+	{
 
-				m_pJammer->m_fNoiseBandwidth=m_pRadar->m_fIFBandWidth;
+		/*		float TotalBandwidthRadar=m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin;
+				float TotalBandwidthJammer=m_pJammer->m_fFreqMax-m_pJammer->m_fFreqMin;
+				float TotalBandwidthRatio=m_pJammer->m_fFreqMax-m_pJammer->m_fFreqMin/m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin;
+				*/
+		// Denna funk funkar klockrent!!!!!!!!!!!!!! (fast inte om Bj=0)
 
-			}
+		if (m_pJammer->m_fNoiseBandwidth < m_pRadar->m_fIFBandWidth)
 
-	
+		{
 
-			if(m_pJammer->m_fFreqMax<m_pRadar->m_fFreqMin || m_pJammer->m_fFreqMin>m_pRadar->m_fFreqMax)
-
-			{
-
-				m_fDlgPeakPower=0;
-
-			}
-
-	
-
-			if(m_pJammer->m_fFreqMax<=m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin>=m_pRadar->m_fFreqMin)
-
-			{
-
-				m_fDlgPeakPower=m_fDlgPeakPower*((m_pJammer->m_fFreqMax-m_pJammer->m_fFreqMin)/(m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin));
-
-			}
-
-	
-
-			if(m_pJammer->m_fFreqMax<=m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin<=m_pRadar->m_fFreqMin && m_pJammer->m_fFreqMax>=m_pRadar->m_fFreqMin)
-
-			{
-
-				m_fDlgPeakPower=m_fDlgPeakPower*((m_pJammer->m_fFreqMax-m_pRadar->m_fFreqMin)/(m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin));
-
-			}
-
-	
-
-			if(m_pJammer->m_fFreqMax>=m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin>m_pRadar->m_fFreqMin && m_pJammer->m_fFreqMin<=m_pRadar->m_fFreqMax)
-
-			{
-	
-				m_fDlgPeakPower=m_fDlgPeakPower*((m_pRadar->m_fFreqMax-m_pJammer->m_fFreqMin)/(m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin));
-
-			}
-	
-	
-
-			if(m_pJammer->m_fFreqMax>=m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin<=m_pRadar->m_fFreqMin)
-
-			{
-		
-				m_fDlgPeakPower=m_fDlgPeakPower*((m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin)/(m_pJammer->m_fFreqMax-m_pJammer->m_fFreqMin));
-		
-			}
+			m_pJammer->m_fNoiseBandwidth = m_pRadar->m_fIFBandWidth;
 
 		}
+
+
+
+		if (m_pJammer->m_fFreqMax<m_pRadar->m_fFreqMin || m_pJammer->m_fFreqMin>m_pRadar->m_fFreqMax)
+
+		{
+
+			m_fDlgPeakPower = 0;
+
+		}
+
+
+
+		if (m_pJammer->m_fFreqMax <= m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin >= m_pRadar->m_fFreqMin)
+
+		{
+
+			m_fDlgPeakPower = m_fDlgPeakPower*((m_pJammer->m_fFreqMax - m_pJammer->m_fFreqMin) / (m_pRadar->m_fFreqMax - m_pRadar->m_fFreqMin));
+
+		}
+
+
+
+		if (m_pJammer->m_fFreqMax <= m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin <= m_pRadar->m_fFreqMin && m_pJammer->m_fFreqMax >= m_pRadar->m_fFreqMin)
+
+		{
+
+			m_fDlgPeakPower = m_fDlgPeakPower*((m_pJammer->m_fFreqMax - m_pRadar->m_fFreqMin) / (m_pRadar->m_fFreqMax - m_pRadar->m_fFreqMin));
+
+		}
+
+
+
+		if (m_pJammer->m_fFreqMax >= m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin > m_pRadar->m_fFreqMin && m_pJammer->m_fFreqMin <= m_pRadar->m_fFreqMax)
+
+		{
+
+			m_fDlgPeakPower = m_fDlgPeakPower*((m_pRadar->m_fFreqMax - m_pJammer->m_fFreqMin) / (m_pRadar->m_fFreqMax - m_pRadar->m_fFreqMin));
+
+		}
+
+
+
+		if (m_pJammer->m_fFreqMax >= m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin <= m_pRadar->m_fFreqMin)
+
+		{
+
+			m_fDlgPeakPower = m_fDlgPeakPower*((m_pRadar->m_fFreqMax - m_pRadar->m_fFreqMin) / (m_pJammer->m_fFreqMax - m_pJammer->m_fFreqMin));
+
+		}
+
+	}
 
 }
 
@@ -1266,182 +1259,182 @@ void CDlgRadarPPI::CheckBandFQtracking()
 	// Denna funk funkar klockrent!!!!!!!!!!!!!! (fast inte om Bj=0)
 
 
-	if(m_pRadar->m_bfixfrekvens==true && m_pJammer->m_fFreqMax>=m_pRadar->m_fFreqMin /*vilket=FreqMax*/&& m_pJammer->m_fFreqMin<=m_pRadar->m_fFreqMin)
-		{
-
-		m_fDlgPeakPower=m_fDlgPeakPower;
-
-		}
-	
-	if(m_pRadar->m_bfixfrekvens==true && m_pJammer->m_fFreqMax<m_pRadar->m_fFreqMin /*vilket=FreqMax*/|| (m_pRadar->m_bfixfrekvens==true && m_pJammer->m_fFreqMin>m_pRadar->m_fFreqMin))
-		{
-
-		m_fDlgPeakPower=0;
-
-		}
-
-	if(m_pRadar->m_bfixfrekvens==false)
-	{	
-
-/*		switch(m_pJammer->m_enumNoisePowerMode)
+	if (m_pRadar->m_bfixfrekvens == true && m_pJammer->m_fFreqMax >= m_pRadar->m_fFreqMin /*vilket=FreqMax*/&& m_pJammer->m_fFreqMin <= m_pRadar->m_fFreqMin)
 	{
-	case CRadarJammer::CONSTANTPOWER:
 
-		m_pJammer->m_fJ = ((m_fDlgPeakPower)*RadarAntennaGainRX*
+		m_fDlgPeakPower = m_fDlgPeakPower;
 
-		JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction)/(FourPISquare*JamRadarDistSquare);
+	}
 
-		break;
-		*/
+	if (m_pRadar->m_bfixfrekvens == true && m_pJammer->m_fFreqMax<m_pRadar->m_fFreqMin /*vilket=FreqMax*/ || (m_pRadar->m_bfixfrekvens == true && m_pJammer->m_fFreqMin>m_pRadar->m_fFreqMin))
+	{
 
+		m_fDlgPeakPower = 0;
 
-			if(m_pJammer->m_fNoiseBandwidth<m_pRadar->m_fIFBandWidth)
+	}
 
+	if (m_pRadar->m_bfixfrekvens == false)
+	{
+
+		/*		switch(m_pJammer->m_enumNoisePowerMode)
 			{
+			case CRadarJammer::CONSTANTPOWER:
 
-				m_pJammer->m_fNoiseBandwidth=m_pRadar->m_fIFBandWidth;
+			m_pJammer->m_fJ = ((m_fDlgPeakPower)*RadarAntennaGainRX*
 
-			}
+			JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction)/(FourPISquare*JamRadarDistSquare);
 
-	
-	float TotalBandwidthRadar=m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin;
-		float TotalBandwidthJammer=m_pJammer->m_fFreqMax-m_pJammer->m_fFreqMin;
+			break;
+			*/
 
 
-			if(m_pJammer->m_fFreqMax>m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin<m_pRadar->m_fFreqMin)
-		
-			{
-			m_pJammer->	m_fPeakPower=m_fDlgPeakPower;
-			}
+		if (m_pJammer->m_fNoiseBandwidth < m_pRadar->m_fIFBandWidth)
 
-			if(m_pJammer->m_fFreqMax<=m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin>=m_pRadar->m_fFreqMin)
+		{
 
-			{
-			m_fDlgPeakPower=m_fDlgPeakPower*(TotalBandwidthJammer/TotalBandwidthRadar);
-			}
+			m_pJammer->m_fNoiseBandwidth = m_pRadar->m_fIFBandWidth;
 
-			if(m_pJammer->m_fFreqMax<m_pRadar->m_fFreqMin || m_pJammer->m_fFreqMin>m_pRadar->m_fFreqMax)
+		}
 
-			{
-			m_fDlgPeakPower=0;
-			}
 
-			if(m_pJammer->m_fFreqMax<=m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin<m_pRadar->m_fFreqMin)
+		float TotalBandwidthRadar = m_pRadar->m_fFreqMax - m_pRadar->m_fFreqMin;
+		float TotalBandwidthJammer = m_pJammer->m_fFreqMax - m_pJammer->m_fFreqMin;
 
-			{
-			m_fDlgPeakPower=m_fDlgPeakPower*((m_pJammer->m_fFreqMax-m_pRadar->m_fFreqMin)/TotalBandwidthRadar);
-			}
 
-			if(m_pJammer->m_fFreqMax>=m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin>m_pRadar->m_fFreqMin)
+		if (m_pJammer->m_fFreqMax > m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin < m_pRadar->m_fFreqMin)
 
-			{
-			m_fDlgPeakPower=m_fDlgPeakPower*((m_pRadar->m_fFreqMax - m_pJammer->m_fFreqMin)/TotalBandwidthRadar);
-			}
-		
+		{
+			m_pJammer->m_fPeakPower = m_fDlgPeakPower;
+		}
+
+		if (m_pJammer->m_fFreqMax <= m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin >= m_pRadar->m_fFreqMin)
+
+		{
+			m_fDlgPeakPower = m_fDlgPeakPower*(TotalBandwidthJammer / TotalBandwidthRadar);
+		}
+
+		if (m_pJammer->m_fFreqMax<m_pRadar->m_fFreqMin || m_pJammer->m_fFreqMin>m_pRadar->m_fFreqMax)
+
+		{
+			m_fDlgPeakPower = 0;
+		}
+
+		if (m_pJammer->m_fFreqMax <= m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin < m_pRadar->m_fFreqMin)
+
+		{
+			m_fDlgPeakPower = m_fDlgPeakPower*((m_pJammer->m_fFreqMax - m_pRadar->m_fFreqMin) / TotalBandwidthRadar);
+		}
+
+		if (m_pJammer->m_fFreqMax >= m_pRadar->m_fFreqMax && m_pJammer->m_fFreqMin > m_pRadar->m_fFreqMin)
+
+		{
+			m_fDlgPeakPower = m_fDlgPeakPower*((m_pRadar->m_fFreqMax - m_pJammer->m_fFreqMin) / TotalBandwidthRadar);
+		}
+
 	}
 }
 
 
-void CDlgRadarPPI::CalculateNoiseEffectJammer(float k,CRadarJammer* m_pJammer)
+void CDlgRadarPPI::CalculateNoiseEffectJammer(float k, CRadarJammer* m_pJammer)
 
 {
 
-/*	m_pJammer->m_fPowerOverDetectionThreshold = m_pJammer->m_fPowerRecieved/m_pJammer->m_fSensitivity;
+	/*	m_pJammer->m_fPowerOverDetectionThreshold = m_pJammer->m_fPowerRecieved/m_pJammer->m_fSensitivity;
 
 
 
-	if(m_pJammer->m_fPowerOverDetectionThreshold>=m_pJammer->m_fIGDynamicRangeNoise)
+		if(m_pJammer->m_fPowerOverDetectionThreshold>=m_pJammer->m_fIGDynamicRangeNoise)
 
-	{
+		{
 
-		m_pJammer->m_fPowerOverDetectionThreshold = m_pJammer->m_fIGDynamicRangeNoise; 
+		m_pJammer->m_fPowerOverDetectionThreshold = m_pJammer->m_fIGDynamicRangeNoise;
 
-	}	*/
+		}	*/
 
 
 
-	float RadarAntennaGainTX = m_pRadar->ReturnAntennaGain(1,(float)k);
+	float RadarAntennaGainTX = m_pRadar->ReturnAntennaGain(1, (float)k);
 
-	float RadarAntennaGainRX = m_pRadar->ReturnAntennaGain(2,(float)k);
+	float RadarAntennaGainRX = m_pRadar->ReturnAntennaGain(2, (float)k);
 
-	float JammerAntennaGainTX = m_pJammer->ReturnAntennaGain(1,(180+m_pJammer->m_fBaring)-m_pJammer->m_fCourse);
+	float JammerAntennaGainTX = m_pJammer->ReturnAntennaGain(1, (180 + m_pJammer->m_fBaring) - m_pJammer->m_fCourse);
 
-	float JammerBandWidthReduction = (m_pRadar->m_fIFBandWidth/m_pJammer->m_fNoiseBandwidth);
+	float JammerBandWidthReduction = (m_pRadar->m_fIFBandWidth / m_pJammer->m_fNoiseBandwidth);
 
 	float LambdaSquare = (float)pow(m_pRadar->m_flambda, 2.0f);
 
-	float FourPISquare = (float)pow((4.0f*M_PI),2.0f);
+	float FourPISquare = (float)pow((4.0f*M_PI), 2.0f);
 
-	float JamRadarDistSquare = (float)pow(m_pJammer->m_fDistanceToRadar,2.0f);
-
-
-
-	float IGPowerCompensation=1;
+	float JamRadarDistSquare = (float)pow(m_pJammer->m_fDistanceToRadar, 2.0f);
 
 
 
-//	InverseGainDynamicRangeNoise;
+	float IGPowerCompensation = 1;
 
-	
+
+
+	//	InverseGainDynamicRangeNoise;
+
+
 	//Här kanske det skulle passa med en switch-sats
 	//I så fall blir den som följer
-	
-	switch(m_pJammer->m_enumNoisePowerMode)
+
+	switch (m_pJammer->m_enumNoisePowerMode)
 	{
 	case CRadarJammer::CONSTANTPOWER:
 
 		m_pJammer->m_fJ = ((m_fDlgPeakPower)*RadarAntennaGainRX*
 
-		JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction)/(FourPISquare*JamRadarDistSquare);
+			JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction) / (FourPISquare*JamRadarDistSquare);
 
 		break;
 
 
 	case CRadarJammer::CONSTANTGAIN:
 
-		if((m_pJammer->m_fPowerRecieved*m_pJammer->m_fLoopGainNoise)< m_fDlgPeakPower)
+		if ((m_pJammer->m_fPowerRecieved*m_pJammer->m_fLoopGainNoise) < m_fDlgPeakPower)
 		{
-		
-		m_pJammer->m_fJ = (m_pJammer->m_fPowerRecieved*m_pJammer->m_fLoopGainNoise*RadarAntennaGainRX*
 
-		JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction)/(FourPISquare*JamRadarDistSquare);
+			m_pJammer->m_fJ = (m_pJammer->m_fPowerRecieved*m_pJammer->m_fLoopGainNoise*RadarAntennaGainRX*
+
+				JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction) / (FourPISquare*JamRadarDistSquare);
 
 		}
 
-		else 
+		else
 
 			m_pJammer->m_fJ = ((m_fDlgPeakPower)*RadarAntennaGainRX*
 
-			JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction)/(FourPISquare*JamRadarDistSquare);
+			JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction) / (FourPISquare*JamRadarDistSquare);
 
 		break;
 
 
 	case CRadarJammer::INVERSEGAIN:
 
-	
-		
-		if(m_pRadar->m_fGainMainlobe/RadarAntennaGainTX<=m_pJammer->m_fIGDynamicRangeNoise)
+
+
+		if (m_pRadar->m_fGainMainlobe / RadarAntennaGainTX <= m_pJammer->m_fIGDynamicRangeNoise)
 		{
 
-			IGPowerCompensation=(m_pRadar->m_fGainMainlobe/RadarAntennaGainTX)/m_pJammer->m_fIGDynamicRangeNoise;
+			IGPowerCompensation = (m_pRadar->m_fGainMainlobe / RadarAntennaGainTX) / m_pJammer->m_fIGDynamicRangeNoise;
 
 		}
 
 		else
 
-			IGPowerCompensation=1;
+			IGPowerCompensation = 1;
 
 
 		m_pJammer->m_fJ = ((m_fDlgPeakPower)*IGPowerCompensation*RadarAntennaGainRX*
 
-			JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction)/(FourPISquare*JamRadarDistSquare);
-		
-		
+			JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction) / (FourPISquare*JamRadarDistSquare);
+
+
 
 		break;
 	}
-	
+
 
 
 }
@@ -1450,15 +1443,15 @@ void CDlgRadarPPI::CalculateNoiseEffectJammer(float k,CRadarJammer* m_pJammer)
 
 
 	if(m_pJammer->m_enumNoisePowerMode==CRadarJammer::INVERSEGAIN)
-	{		
+	{
 
-		if(RadarAntennaGainRX<=1)
+	if(RadarAntennaGainRX<=1)
 
-			LowGainPowerCompensation=RadarAntennaGainRX;
+	LowGainPowerCompensation=RadarAntennaGainRX;
 
-		else	LowGainPowerCompensation=1;
+	else	LowGainPowerCompensation=1;
 
-	
+
 
 
 
@@ -1472,12 +1465,12 @@ void CDlgRadarPPI::CalculateNoiseEffectJammer(float k,CRadarJammer* m_pJammer)
 
 	else
 
-		m_pJammer->m_fJ = ((m_fDlgPeakPower)*RadarAntennaGainRX*
+	m_pJammer->m_fJ = ((m_fDlgPeakPower)*RadarAntennaGainRX*
 
-		JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction)/(FourPISquare*JamRadarDistSquare);
+	JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction)/(FourPISquare*JamRadarDistSquare);
 
-*/
-  
+	*/
+
 
 
 
@@ -1485,97 +1478,97 @@ void CDlgRadarPPI::CalculateNoiseEffectMainLobe()
 
 {
 
-	if(m_pJammer->m_bBrusStorning==true)
+	if (m_pJammer->m_bBrusStorning == true)
 	{
 
-			float RadarAntennaGainRX=		m_pRadar->m_fGainMainlobeRx;
-			float RadarAntennaGainTX=		m_pRadar->m_fGainMainlobe;
-			float JammerAntennaGainTX=		m_pJammer->ReturnAntennaGain(1,(180+m_pJammer->m_fBaring)-m_pJammer->m_fCourse);
-			float FourPiSquare=				(float)pow((4.0f*M_PI),2.0f);
-			float DistanceSquare=			(float)pow(m_pJammer->m_fDistanceToRadar,2.0f);
-			float JammerBandWidthReduction=	m_pRadar->m_fIFBandWidth/m_pJammer->m_fNoiseBandwidth;
-			float LambdaSquare=				(float)pow(m_pRadar->m_flambda, 2.0f);
-			float IGPowerCompensation=		1;
-   			float PowerReceivedJammer=		(m_pRadar->m_fPeakPower*m_pJammer->ReturnAntennaGain(2,(180+m_pJammer->m_fBaring)-m_pJammer->m_fCourse)*RadarAntennaGainTX*(float)pow(m_pRadar->m_flambda, 2.0f))/((float)pow((4.0f*M_PI),2.0f)*(float)pow(m_pJammer->m_fDistanceToRadar,2.0f));
-
-			
-	if(PowerReceivedJammer>=m_pJammer->m_fSensitivity || m_pJammer->m_bFoljande==false )
-
-	{
-																		//(1=TX, 2=RX)
-
-	switch(m_pJammer->m_enumNoisePowerMode)
-	{
-	case CRadarJammer::CONSTANTPOWER:
-
-			m_pJammer->m_fJ_mal = ((m_fDlgPeakPower)*RadarAntennaGainRX*
-
-		JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction)/(FourPiSquare*DistanceSquare);
-
-		break;
+		float RadarAntennaGainRX = m_pRadar->m_fGainMainlobeRx;
+		float RadarAntennaGainTX = m_pRadar->m_fGainMainlobe;
+		float JammerAntennaGainTX = m_pJammer->ReturnAntennaGain(1, (180 + m_pJammer->m_fBaring) - m_pJammer->m_fCourse);
+		float FourPiSquare = (float)pow((4.0f*M_PI), 2.0f);
+		float DistanceSquare = (float)pow(m_pJammer->m_fDistanceToRadar, 2.0f);
+		float JammerBandWidthReduction = m_pRadar->m_fIFBandWidth / m_pJammer->m_fNoiseBandwidth;
+		float LambdaSquare = (float)pow(m_pRadar->m_flambda, 2.0f);
+		float IGPowerCompensation = 1;
+		float PowerReceivedJammer = (m_pRadar->m_fPeakPower*m_pJammer->ReturnAntennaGain(2, (180 + m_pJammer->m_fBaring) - m_pJammer->m_fCourse)*RadarAntennaGainTX*(float)pow(m_pRadar->m_flambda, 2.0f)) / ((float)pow((4.0f*M_PI), 2.0f)*(float)pow(m_pJammer->m_fDistanceToRadar, 2.0f));
 
 
-	case CRadarJammer::CONSTANTGAIN:
+		if (PowerReceivedJammer >= m_pJammer->m_fSensitivity || m_pJammer->m_bFoljande == false)
 
-		if((PowerReceivedJammer*m_pJammer->m_fLoopGainNoise)< m_fDlgPeakPower)
 		{
-		
-			m_pJammer->m_fJ_mal = (PowerReceivedJammer*m_pJammer->m_fLoopGainNoise*RadarAntennaGainRX*
+			//(1=TX, 2=RX)
 
-		JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction)/(FourPiSquare*DistanceSquare);
-
-		}
-
-		else 
+			switch (m_pJammer->m_enumNoisePowerMode)
+			{
+			case CRadarJammer::CONSTANTPOWER:
 
 				m_pJammer->m_fJ_mal = ((m_fDlgPeakPower)*RadarAntennaGainRX*
 
-			JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction)/(FourPiSquare*DistanceSquare);
+					JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction) / (FourPiSquare*DistanceSquare);
 
-		break;
+				break;
 
 
-	case CRadarJammer::INVERSEGAIN:
+			case CRadarJammer::CONSTANTGAIN:
 
-	
-		
-		if(m_pRadar->m_fGainMainlobe/RadarAntennaGainTX<=m_pJammer->m_fIGDynamicRangeNoise)
-		{
+				if ((PowerReceivedJammer*m_pJammer->m_fLoopGainNoise) < m_fDlgPeakPower)
+				{
 
-			IGPowerCompensation=(m_pRadar->m_fGainMainlobe/RadarAntennaGainTX)/m_pJammer->m_fIGDynamicRangeNoise;
+					m_pJammer->m_fJ_mal = (PowerReceivedJammer*m_pJammer->m_fLoopGainNoise*RadarAntennaGainRX*
+
+						JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction) / (FourPiSquare*DistanceSquare);
+
+				}
+
+				else
+
+					m_pJammer->m_fJ_mal = ((m_fDlgPeakPower)*RadarAntennaGainRX*
+
+					JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction) / (FourPiSquare*DistanceSquare);
+
+				break;
+
+
+			case CRadarJammer::INVERSEGAIN:
+
+
+
+				if (m_pRadar->m_fGainMainlobe / RadarAntennaGainTX <= m_pJammer->m_fIGDynamicRangeNoise)
+				{
+
+					IGPowerCompensation = (m_pRadar->m_fGainMainlobe / RadarAntennaGainTX) / m_pJammer->m_fIGDynamicRangeNoise;
+
+				}
+
+				else
+
+					IGPowerCompensation = 1;
+
+
+				m_pJammer->m_fJ_mal = ((m_fDlgPeakPower)*IGPowerCompensation*RadarAntennaGainRX*
+
+					JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction) / (FourPiSquare*DistanceSquare);
+
+
+
+				break;
+			}
 
 		}
-
-		else
-
-			IGPowerCompensation=1;
-
-
-		m_pJammer->m_fJ_mal = ((m_fDlgPeakPower)*IGPowerCompensation*RadarAntennaGainRX*
-
-			JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction)/(FourPiSquare*DistanceSquare);
-		
-		
-
-		break;
 	}
-	
-	}
-	}
-	
-	
-	
-	
+
+
+
+
 	else
 
-   		m_pJammer->m_fJ_mal=0;   
+		m_pJammer->m_fJ_mal = 0;
 
 }
 
 void CDlgRadarPPI::CalculateSignalJammer()
 {
 	//gainrx * gain tx
-	m_pJammer->m_fSignal=(m_pRadar->m_fPeakPower*m_pRadar->m_nProcessingGain*m_pRadar->m_fGainMainlobe*m_pRadar->m_fGainBacklobeRx*m_pJammer->m_fSigma*(float)pow(m_pRadar->m_flambda, 2.0f))/((float)pow((4.0f*M_PI),3.0f)*(float)pow(m_pJammer->m_fDistanceToRadar,4.0f));
+	m_pJammer->m_fSignal = (m_pRadar->m_fPeakPower*m_pRadar->m_nProcessingGain*m_pRadar->m_fGainMainlobe*m_pRadar->m_fGainMainlobeRx*m_pJammer->m_fSigma*(float)pow(m_pRadar->m_flambda, 2.0f)) / ((float)pow((4.0f*M_PI), 3.0f)*(float)pow(m_pJammer->m_fDistanceToRadar, 4.0f));
 }
 
 
@@ -1591,278 +1584,195 @@ void CDlgRadarPPI::CalculateSNR()
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
 	pTempPos = pLista->m_pStartPos;
 
-	if(pLista->IsEmpty())
+	if (pLista->IsEmpty())
 		return;
 
-	float	NoisefromJammer=0;
-	float	LossesRadarReceiver=	CRadarCalculate::FromdBToGgr(m_pRadar->m_fLosses);		//dB
-	float	BoltzmannsConstant=		1.38*pow(10,-23.0f);					
-	float	RadarNoiseFactor=		CRadarCalculate::FromdBToGgr(m_pRadar->m_fNoiseFactor);  //dB
-	float	NoiseTemperature=		290;
-	float	NoiseBandwidth=			m_pRadar->m_fIFBandWidth*1000000.0f;  //Hz
-	float	kTBNF=					BoltzmannsConstant*NoiseTemperature*NoiseBandwidth*RadarNoiseFactor;			//dB
-	float	TermalNoise=			kTBNF*LossesRadarReceiver;
+	float	NoisefromJammer = 0;
+	float	LossesRadarReceiver = CRadarCalculate::FromdBToGgr(m_pRadar->m_fLosses);		//dB
+	float	BoltzmannsConstant = 1.38*pow(10, -23.0f);
+	float	RadarNoiseFactor = CRadarCalculate::FromdBToGgr(m_pRadar->m_fNoiseFactor);  //dB
+	float	NoiseTemperature = 290;
+	float	NoiseBandwidth = m_pRadar->m_fIFBandWidth*1000000.0f;  //Hz
+	float	kTBNF = BoltzmannsConstant*NoiseTemperature*NoiseBandwidth*RadarNoiseFactor;			//dB
+	float	TermalNoise = kTBNF*LossesRadarReceiver;
 
-	CalculatePowerRecieved(0,m_pJammer);
+	CalculatePowerRecieved(0, m_pJammer);
 
-	CalculateNoiseEffectJammer(0,m_pJammer);
-		
-
-	for(int i=0;i<pLista->m_nAntalNoder;i++) 
+	CalculateNoiseEffectJammer(0, m_pJammer);
+	for (int i = 0; i < pLista->m_nAntalNoder; i++)
 	{
-
-		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
 		{
-
-		
-		}
-		
-		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
-		{
-			
-						float RadarAntennaGainTX=		m_pRadar->ReturnAntennaGain(1,0);
-				/*		float FourPiSquare=				(float)pow((4.0f*M_PI),2.0f);
-						float DistanceSquare=			(float)pow(m_pJammer->m_fDistanceToRadar,2.0f);
-						float LambdaSquare=				(float)pow(m_pRadar->m_flambda, 2.0f);*/
-			
-					
-
-				if(m_pJammer->m_bBrusStorning==true)
-					{
-
-					if(m_pJammer->m_bFoljande==true && m_pJammer->m_fPowerRecieved >= m_pJammer->m_fSensitivity)
-						{
-
-						if(m_pRadar->m_bPulseGroup==true && m_pJammer->m_fSorSetOnDelay >= m_pRadar->m_fPulseWidth*2)
-							{
-
-								NoisefromJammer=RadarEmittingReductionSORUpRange();
-
-							}
-						if((m_pRadar->m_bPulseGroup==true && m_pJammer->m_fSorSetOnDelay <= m_pRadar->m_fPulseWidth*2) || (m_pJammer->m_bFoljande==true && m_pRadar->m_bPulseGroup==false))
-							{
-								
-								NoisefromJammer=RadarEmittingReductionSORDownRange();
-
-							}
-
-						}
-
-
-
-					if(m_pJammer->m_bFoljande==false)
-					{
-	
-						NoisefromJammer=RadarEmittingReductionFixFQ();
-	
-					}
-
-					if(m_pJammer->m_bFoljande==true && m_pJammer->m_fPowerRecieved < m_pJammer->m_fSensitivity)
-					{
-
-					NoisefromJammer = 0;							
-						
-					}
-
-
-						pTempPos->m_pUtrustning->m_fSNR = pTempPos->m_pUtrustning->m_fSignal/CRadarCalculate::Max(NoisefromJammer, TermalNoise);
-	
-				}
-
-			if(m_pJammer->m_bBrusStorning==false)
-				{
-
-						pTempPos->m_pUtrustning->m_fSNR = pTempPos->m_pUtrustning->m_fSignal/TermalNoise;
-
-				}
 
 		}
-
-			
-		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 		{
-
-			
-			if(m_pJammer->m_bBrusStorning==true)
+			/*		float RadarAntennaGainTX = m_pRadar->ReturnAntennaGain(1, 0);
+					float FourPiSquare=				(float)pow((4.0f*M_PI),2.0f);
+					float DistanceSquare=			(float)pow(m_pJammer->m_fDistanceToRadar,2.0f);
+					float LambdaSquare=				(float)pow(m_pRadar->m_flambda, 2.0f);*/
+			if (m_pJammer->m_bBrusStorning == true)
+			{
+				if (m_pJammer->m_bFoljande == true && m_pJammer->m_fPowerRecieved >= m_pJammer->m_fSensitivity)
 				{
-				
-				float AngleJammerToTarget=		ReturnAngleJammertoTarget(i-2,m_pJammer);
-
-				CalculatePowerRecieved(AngleJammerToTarget,m_pJammer);	
-				
-				CalculateNoiseEffectJammer(AngleJammerToTarget,m_pJammer);
-					
+					if (m_pRadar->m_bPulseGroup == true && m_pJammer->m_fSorSetOnDelay >= m_pRadar->m_fPulseWidth * 2)
+					{
+						NoisefromJammer = RadarEmittingReductionSORUpRange();
+					}
+					if ((m_pRadar->m_bPulseGroup == true && m_pJammer->m_fSorSetOnDelay <= m_pRadar->m_fPulseWidth * 2) || (m_pJammer->m_bFoljande == true && m_pRadar->m_bPulseGroup == false))
+					{
+						NoisefromJammer = RadarEmittingReductionSORDownRange();
+					}
+				}
+				if (m_pJammer->m_bFoljande == false)
+				{
+					NoisefromJammer = RadarEmittingReductionFixFQ();
+				}
+				if (m_pJammer->m_bFoljande == true && m_pJammer->m_fPowerRecieved < m_pJammer->m_fSensitivity)
+				{
+					NoisefromJammer = 0;
+				}
+				pTempPos->m_pUtrustning->m_fSNR = pTempPos->m_pUtrustning->m_fSignal / CRadarCalculate::Max(NoisefromJammer, TermalNoise);
+			}
+			if (m_pJammer->m_bBrusStorning == false)
+			{
+				pTempPos->m_pUtrustning->m_fSNR = pTempPos->m_pUtrustning->m_fSignal / TermalNoise;
+			}
+		}
+		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+		{
+			if (m_pJammer->m_bBrusStorning == true)
+			{
+				float AngleJammerToTarget = ReturnAngleJammertoTarget(i - 2, m_pJammer);
+				CalculatePowerRecieved(AngleJammerToTarget, m_pJammer);
+				CalculateNoiseEffectJammer(AngleJammerToTarget, m_pJammer);
 				//		float RadarAntennaGainTX=		m_pRadar->ReturnAntennaGain(1,AngleJammerToTarget);
 				/*		float FourPiSquare=				(float)pow((4.0f*M_PI),2.0f);
 						float DistanceSquare=			(float)pow(m_pJammer->m_fDistanceToRadar,2.0f);
 						float LambdaSquare=				(float)pow(m_pRadar->m_flambda, 2.0f);*/
-																										//(1=TX, 2=RX)
-     				
-
-
-					if(m_pJammer->m_bFoljande==true && m_pJammer->m_fPowerRecieved >= m_pJammer->m_fSensitivity)
-						{
-				
-							if(m_pRadar->m_bPulseGroup==true && (pTempPos->m_pUtrustning->m_fDistanceToRadar < (m_pJammer->m_fDistanceToRadar + ((m_pJammer->m_fSorSetOnDelay/2)*150000000))))
-								{
-							
-									NoisefromJammer=RadarEmittingReductionSORUpRange();
-
-								}
-							if((m_pRadar->m_bPulseGroup==true && (pTempPos->m_pUtrustning->m_fDistanceToRadar >= (m_pJammer->m_fDistanceToRadar + (m_pJammer->m_fSorSetOnDelay/2)*150000000))) || (m_pJammer->m_bFoljande==true && m_pRadar->m_bPulseGroup==false))
-								{
-							
-									NoisefromJammer=RadarEmittingReductionSORDownRange();
-
-								}
-						}
-
-
-					if(m_pJammer->m_bFoljande==true && m_pJammer->m_fPowerRecieved < m_pJammer->m_fSensitivity)
-						{
-
-						NoisefromJammer = 0;							
-						
-						}
-
-
-					if(m_pJammer->m_bFoljande==false)
-						{
-
-							NoisefromJammer=RadarEmittingReductionFixFQ();
-
-						}
-
-						
-					
-					pTempPos->m_pUtrustning->m_fSNR = pTempPos->m_pUtrustning->m_fSignal/CRadarCalculate::Max(NoisefromJammer, TermalNoise);
-					
-
+				//(1=TX, 2=RX)
+				if (m_pJammer->m_bFoljande == true && m_pJammer->m_fPowerRecieved >= m_pJammer->m_fSensitivity)
+				{
+					if (m_pRadar->m_bPulseGroup == true && (pTempPos->m_pUtrustning->m_fDistanceToRadar < (m_pJammer->m_fDistanceToRadar + ((m_pJammer->m_fSorSetOnDelay / 2) * 150000000))))
+					{
+						NoisefromJammer = RadarEmittingReductionSORUpRange();
+					}
+					if ((m_pRadar->m_bPulseGroup == true && (pTempPos->m_pUtrustning->m_fDistanceToRadar >= (m_pJammer->m_fDistanceToRadar + (m_pJammer->m_fSorSetOnDelay / 2) * 150000000))) || (m_pJammer->m_bFoljande == true && m_pRadar->m_bPulseGroup == false))
+					{
+						NoisefromJammer = RadarEmittingReductionSORDownRange();
+					}
 				}
-
-			else 		pTempPos->m_pUtrustning->m_fSNR = pTempPos->m_pUtrustning->m_fSignal/TermalNoise;
-
+				if (m_pJammer->m_bFoljande == true && m_pJammer->m_fPowerRecieved < m_pJammer->m_fSensitivity)
+				{
+					NoisefromJammer = 0;
+				}
+				if (m_pJammer->m_bFoljande == false)
+				{
+					NoisefromJammer = RadarEmittingReductionFixFQ();
+				}
+				pTempPos->m_pUtrustning->m_fSNR = pTempPos->m_pUtrustning->m_fSignal / CRadarCalculate::Max(NoisefromJammer, TermalNoise);
+			}
+			else 		pTempPos->m_pUtrustning->m_fSNR = pTempPos->m_pUtrustning->m_fSignal / TermalNoise;
 		}
-
-		
 		pTempPos = pTempPos->m_pNext;
-
 	}
-
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void CDlgRadarPPI::CalcutalePowerJam(float search_angle,CRadarJammer* m_pJammer)
-{			
-	float RadarAntennaGainTX = m_pRadar->ReturnAntennaGain(1,(float)search_angle);
-	float RadarAntennaGainRX = m_pRadar->ReturnAntennaGain(2,(float)search_angle);
-	float JammerAntennaGainTX = m_pJammer->ReturnAntennaGain(1,(180+m_pJammer->m_fBaring)-m_pJammer->m_fCourse);
+void CDlgRadarPPI::CalcutalePowerJam(float search_angle, CRadarJammer* m_pJammer)
+{
+	float RadarAntennaGainTX = m_pRadar->ReturnAntennaGain(1, (float)search_angle);
+	float RadarAntennaGainRX = m_pRadar->ReturnAntennaGain(2, (float)search_angle);
+	float JammerAntennaGainTX = m_pJammer->ReturnAntennaGain(1, (180 + m_pJammer->m_fBaring) - m_pJammer->m_fCourse);
 	float LambdaSquare = (float)pow(m_pRadar->m_flambda, 2.0f);
-	float FourPISquare = (float)pow((4.0f*M_PI),2.0f);
-	float JamRadarDistSquare = (float)pow(m_pJammer->m_fDistanceToRadar,2.0f);
-	float IGPowerCompensation=1;
-	switch(m_pJammer->m_enumRepeaterPowerMode)
+	float FourPISquare = (float)pow((4.0f*M_PI), 2.0f);
+	float JamRadarDistSquare = (float)pow(m_pJammer->m_fDistanceToRadar, 2.0f);
+	float IGPowerCompensation = 1;
+	switch (m_pJammer->m_enumRepeaterPowerMode)
 	{
 	case CRadarJammer::CONSTANTPOWER:
 
 		m_pJammer->m_fPower = ((m_fDlgPeakPowerRepeater)*RadarAntennaGainRX*
 
-		JammerAntennaGainTX*LambdaSquare*m_pRadar->m_nProcessingGain)/(FourPISquare*JamRadarDistSquare);
+			JammerAntennaGainTX*LambdaSquare*m_pRadar->m_nProcessingGain) / (FourPISquare*JamRadarDistSquare);
 
 		break;
 
 
 	case CRadarJammer::CONSTANTGAIN:
 
-		if((m_pJammer->m_fPowerRecieved*m_pJammer->m_fLoopGainRepeater)< m_fDlgPeakPowerRepeater)
+		if ((m_pJammer->m_fPowerRecieved*m_pJammer->m_fLoopGainRepeater) < m_fDlgPeakPowerRepeater)
 		{
-		
-		m_pJammer->m_fPower = (m_pJammer->m_fPowerRecieved*m_pJammer->m_fLoopGainRepeater*RadarAntennaGainRX*
 
-		JammerAntennaGainTX*LambdaSquare*m_pRadar->m_nProcessingGain)/(FourPISquare*JamRadarDistSquare);
+			m_pJammer->m_fPower = (m_pJammer->m_fPowerRecieved*m_pJammer->m_fLoopGainRepeater*RadarAntennaGainRX*
+
+				JammerAntennaGainTX*LambdaSquare*m_pRadar->m_nProcessingGain) / (FourPISquare*JamRadarDistSquare);
 
 		}
 
-		else 
+		else
 
 			m_pJammer->m_fPower = ((m_fDlgPeakPowerRepeater)*RadarAntennaGainRX*
 
-			JammerAntennaGainTX*LambdaSquare*m_pRadar->m_nProcessingGain)/(FourPISquare*JamRadarDistSquare);
+			JammerAntennaGainTX*LambdaSquare*m_pRadar->m_nProcessingGain) / (FourPISquare*JamRadarDistSquare);
 
 		break;
 
 
 	case CRadarJammer::INVERSEGAIN:
 
-	
-		
-		if(m_pRadar->m_fGainMainlobe/RadarAntennaGainTX<=m_pJammer->m_fIGDynamicRangeRepeater)
+
+
+		if (m_pRadar->m_fGainMainlobe / RadarAntennaGainTX <= m_pJammer->m_fIGDynamicRangeRepeater)
 		{
 
-			IGPowerCompensation=(m_pRadar->m_fGainMainlobe/RadarAntennaGainTX)/m_pJammer->m_fIGDynamicRangeRepeater;
+			IGPowerCompensation = (m_pRadar->m_fGainMainlobe / RadarAntennaGainTX) / m_pJammer->m_fIGDynamicRangeRepeater;
 
 		}
 
 		else
 
-			IGPowerCompensation=1;
+			IGPowerCompensation = 1;
 
 
-			m_pJammer->m_fPower = ((m_fDlgPeakPowerRepeater)*IGPowerCompensation*RadarAntennaGainRX*
+		m_pJammer->m_fPower = ((m_fDlgPeakPowerRepeater)*IGPowerCompensation*RadarAntennaGainRX*
 
-			JammerAntennaGainTX*LambdaSquare*m_pRadar->m_nProcessingGain)/(FourPISquare*JamRadarDistSquare);
-		
-		
+			JammerAntennaGainTX*LambdaSquare*m_pRadar->m_nProcessingGain) / (FourPISquare*JamRadarDistSquare);
+
+
 
 		break;
 	}
-	
 
-	
+
+
 
 	//(1=TX, 2=RX)
 
-//		m_pJammer->m_fPower=(m_fDlgPeakPowerRepeater*m_pJammer->ReturnAntennaGain(1,(180+m_pJammer->m_fBaring)-m_pJammer->m_fCourse)*m_pRadar->ReturnAntennaGain(2, search_angle)*(float)pow(m_pRadar->m_flambda, 2.0f)*m_pRadar->m_nProcessingGain)/((float)pow((4.0f*M_PI),2.0f)*(float)pow(m_pJammer->m_fDistanceToRadar,2.0f));
+	//		m_pJammer->m_fPower=(m_fDlgPeakPowerRepeater*m_pJammer->ReturnAntennaGain(1,(180+m_pJammer->m_fBaring)-m_pJammer->m_fCourse)*m_pRadar->ReturnAntennaGain(2, search_angle)*(float)pow(m_pRadar->m_flambda, 2.0f)*m_pRadar->m_nProcessingGain)/((float)pow((4.0f*M_PI),2.0f)*(float)pow(m_pJammer->m_fDistanceToRadar,2.0f));
 
-	  //MTI-filter (ligger här eftersom användaren kan tänkas byta radar PPI under körning och MTI filtret bara påverkar Syntetisk presentation)
+	//MTI-filter (ligger här eftersom användaren kan tänkas byta radar PPI under körning och MTI filtret bara påverkar Syntetisk presentation)
 
-		if(abs(m_pJammer->m_fFalseTargetVelocity+m_pJammer->m_fVelocity)<m_pRadar->m_fMTILowerVelocityLimit && m_pRadar->m_bMTIFilter==true && m_pRadar->m_bSynteticMode==true)
+	if (abs(m_pJammer->m_fFalseTargetVelocity + m_pJammer->m_fVelocity) < m_pRadar->m_fMTILowerVelocityLimit && m_pRadar->m_bMTIFilter == true && m_pRadar->m_bSynteticMode == true)
 
-		{
+	{
 
-			m_pJammer->m_fPower=CRadarCalculate::FromdBToGgr((CRadarCalculate::FromGgrTodB(m_pJammer->m_fPower)-m_pRadar->m_fMTIAttenuation));
+		m_pJammer->m_fPower = CRadarCalculate::FromdBToGgr((CRadarCalculate::FromGgrTodB(m_pJammer->m_fPower) - m_pRadar->m_fMTIAttenuation));
 
-		}		
+	}
 
 }
 
-void CDlgRadarPPI::CalculatePowerRecieved(float search_angle,CRadarJammer* m_pJammer)
+void CDlgRadarPPI::CalculatePowerRecieved(float search_angle, CRadarJammer* m_pJammer)
 
 {
-		float AngleToJammer=search_angle;
-																				//(1=TX, 2=RX)
+	float AngleToJammer = search_angle;
+	//(1=TX, 2=RX)
 
-     	m_pJammer->m_fPowerRecieved=(m_pRadar->m_fPeakPower*m_pJammer->ReturnAntennaGain(2,(180+m_pJammer->m_fBaring)-m_pJammer->m_fCourse)*m_pRadar->ReturnAntennaGain(1, AngleToJammer)*(float)pow(m_pRadar->m_flambda, 2.0f))/((float)pow((4.0f*M_PI),2.0f)*(float)pow(m_pJammer->m_fDistanceToRadar,2.0f));
+	m_pJammer->m_fPowerRecieved = (m_pRadar->m_fPeakPower*m_pJammer->ReturnAntennaGain(2, (180 + m_pJammer->m_fBaring) - m_pJammer->m_fCourse)*m_pRadar->ReturnAntennaGain(1, AngleToJammer)*(float)pow(m_pRadar->m_flambda, 2.0f)) / ((float)pow((4.0f*M_PI), 2.0f)*(float)pow(m_pJammer->m_fDistanceToRadar, 2.0f));
 
 	//	if(int(m_nTimeUnit/m_fGgrRealTime)%100==0 & int(m_nTimeUnit/m_fGgrRealTime)<20)
 
-		//	m_pJammer->m_fVectorToGraphPowerRecieved[int(m_nTimeUnit/m_fGgrRealTime/100)] = m_pJammer->m_fPowerRecieved;
+	//	m_pJammer->m_fVectorToGraphPowerRecieved[int(m_nTimeUnit/m_fGgrRealTime/100)] = m_pJammer->m_fPowerRecieved;
 
 }
 
@@ -1870,17 +1780,17 @@ float CDlgRadarPPI::CalulateJammerPRI()
 
 {
 
-	if(m_pJammer->m_fClockRateRepeater==0)
+	if (m_pJammer->m_fClockRateRepeater == 0)
 
 	{
 
 		MessageBox(_T("Error:Jammer Clock Rate"));
 
-		m_pJammer->m_fClockRateRepeater=1;
+		m_pJammer->m_fClockRateRepeater = 1;
 
 	}
 
-	return 1/m_pJammer->m_fClockRateRepeater;
+	return 1 / m_pJammer->m_fClockRateRepeater;
 
 }
 
@@ -1890,9 +1800,9 @@ float CDlgRadarPPI::CalulateJammerAsynkDist()
 
 {
 
-	float tid=0;
+	float tid = 0;
 
-	tid=m_pRadar->m_fPRI-m_pJammer->m_fPRI;
+	tid = m_pRadar->m_fPRI - m_pJammer->m_fPRI;
 
 	//return (300.0f*(float)pow(10,6))*tid/2.0f;
 
@@ -1901,28 +1811,28 @@ float CDlgRadarPPI::CalulateJammerAsynkDist()
 }
 
 
-float CDlgRadarPPI::ReturnAngleJammertoTarget(int i,CRadarJammer* m_pJammer)
+float CDlgRadarPPI::ReturnAngleJammertoTarget(int i, CRadarJammer* m_pJammer)
 
 {
 
-   float A,B;
+	float A, B;
 
-   A=CRadarCalculate::bearing(m_pRadar->m_fPosX,m_pRadar->m_fPosY,m_pJammer->m_fPosX,m_pJammer->m_fPosY);
+	A = CRadarCalculate::bearing(m_pRadar->m_fPosX, m_pRadar->m_fPosY, m_pJammer->m_fPosX, m_pJammer->m_fPosY);
 
-   B=CRadarCalculate::bearing(m_pRadar->m_fPosX,m_pRadar->m_fPosY,m_ppTarget[i]->m_fPosX,m_ppTarget[i]->m_fPosY);
+	B = CRadarCalculate::bearing(m_pRadar->m_fPosX, m_pRadar->m_fPosY, m_ppTarget[i]->m_fPosX, m_ppTarget[i]->m_fPosY);
 
-	
-   if(A>B)
-   {
-	return 360-(A-B);
-   }
 
-   if(B>=A)
-   {
-	return B-A;
-   }
+	if (A > B)
+	{
+		return 360 - (A - B);
+	}
 
- //  return (A-B);
+	if (B >= A)
+	{
+		return B - A;
+	}
+
+	//  return (A-B);
 
 
 
@@ -1936,203 +1846,203 @@ void CDlgRadarPPI::CalculateNoiseEffectTargets()
 
 	//float* J_mal= new float[m_nAntal];
 
-	for(int i=0;i<m_nAntal;i++)
+	for (int i = 0; i < m_nAntal; i++)
 	{
 
-   		if(m_pJammer->m_bBrusStorning==true)
+		if (m_pJammer->m_bBrusStorning == true)
 
 		{
 
-			float AngleJammerToTarget=		ReturnAngleJammertoTarget(i,m_pJammer);
-			float RadarAntennaGainRX=		m_pRadar->ReturnAntennaGain(2,AngleJammerToTarget);
-			float RadarAntennaGainTX=		m_pRadar->ReturnAntennaGain(1,AngleJammerToTarget);
-			float JammerAntennaGainTX=		m_pJammer->ReturnAntennaGain(1,(180+m_pJammer->m_fBaring)-m_pJammer->m_fCourse);
-			float FourPiSquare=				(float)pow((4.0f*M_PI),2.0f);
-			float DistanceSquare=			(float)pow(m_pJammer->m_fDistanceToRadar,2.0f);
-			float JammerBandWidthReduction=	m_pRadar->m_fIFBandWidth/m_pJammer->m_fNoiseBandwidth;
-			float LambdaSquare=				(float)pow(m_pRadar->m_flambda, 2.0f);
-			float IGPowerCompensation=		1;
-																							//(1=TX, 2=RX)
-     		float PowerReceivedJammer=		(m_pRadar->m_fPeakPower*m_pJammer->ReturnAntennaGain(2,(180+m_pJammer->m_fBaring)-m_pJammer->m_fCourse)*RadarAntennaGainTX*(float)pow(m_pRadar->m_flambda, 2.0f))/((float)pow((4.0f*M_PI),2.0f)*(float)pow(m_pJammer->m_fDistanceToRadar,2.0f));
+			float AngleJammerToTarget = ReturnAngleJammertoTarget(i, m_pJammer);
+			float RadarAntennaGainRX = m_pRadar->ReturnAntennaGain(2, AngleJammerToTarget);
+			float RadarAntennaGainTX = m_pRadar->ReturnAntennaGain(1, AngleJammerToTarget);
+			float JammerAntennaGainTX = m_pJammer->ReturnAntennaGain(1, (180 + m_pJammer->m_fBaring) - m_pJammer->m_fCourse);
+			float FourPiSquare = (float)pow((4.0f*M_PI), 2.0f);
+			float DistanceSquare = (float)pow(m_pJammer->m_fDistanceToRadar, 2.0f);
+			float JammerBandWidthReduction = m_pRadar->m_fIFBandWidth / m_pJammer->m_fNoiseBandwidth;
+			float LambdaSquare = (float)pow(m_pRadar->m_flambda, 2.0f);
+			float IGPowerCompensation = 1;
+			//(1=TX, 2=RX)
+			float PowerReceivedJammer = (m_pRadar->m_fPeakPower*m_pJammer->ReturnAntennaGain(2, (180 + m_pJammer->m_fBaring) - m_pJammer->m_fCourse)*RadarAntennaGainTX*(float)pow(m_pRadar->m_flambda, 2.0f)) / ((float)pow((4.0f*M_PI), 2.0f)*(float)pow(m_pJammer->m_fDistanceToRadar, 2.0f));
 
-   		//	
-			
-	//m_ppTarget[i]->m_fJ_mal=0;
+			//	
 
-	if(PowerReceivedJammer>=m_pJammer->m_fSensitivity || m_pJammer->m_bFoljande==false )
+			//m_ppTarget[i]->m_fJ_mal=0;
 
-	{
+			if (PowerReceivedJammer >= m_pJammer->m_fSensitivity || m_pJammer->m_bFoljande == false)
 
-	switch(m_pJammer->m_enumNoisePowerMode)
-	{
-	case CRadarJammer::CONSTANTPOWER:
+			{
 
-		m_ppTarget[i]->m_fJ_mal = ((m_fDlgPeakPower)*RadarAntennaGainRX*
+				switch (m_pJammer->m_enumNoisePowerMode)
+				{
+				case CRadarJammer::CONSTANTPOWER:
 
-		JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction)/(FourPiSquare*DistanceSquare);
+					m_ppTarget[i]->m_fJ_mal = ((m_fDlgPeakPower)*RadarAntennaGainRX*
 
-		break;
+						JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction) / (FourPiSquare*DistanceSquare);
 
-
-	case CRadarJammer::CONSTANTGAIN:
-
-		if((PowerReceivedJammer*m_pJammer->m_fLoopGainNoise)< m_fDlgPeakPower)
-		{
-		
-		m_ppTarget[i]->m_fJ_mal = (PowerReceivedJammer*m_pJammer->m_fLoopGainNoise*RadarAntennaGainRX*
-
-		JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction)/(FourPiSquare*DistanceSquare);
-
-		}
-
-		else 
-
-			m_ppTarget[i]->m_fJ_mal = ((m_fDlgPeakPower)*RadarAntennaGainRX*
-
-			JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction)/(FourPiSquare*DistanceSquare);
-
-		break;
+					break;
 
 
-	case CRadarJammer::INVERSEGAIN:
+				case CRadarJammer::CONSTANTGAIN:
 
-	
-		
-		if(m_pRadar->m_fGainMainlobe/RadarAntennaGainTX<=m_pJammer->m_fIGDynamicRangeNoise)
-		{
+					if ((PowerReceivedJammer*m_pJammer->m_fLoopGainNoise) < m_fDlgPeakPower)
+					{
 
-			IGPowerCompensation=(m_pRadar->m_fGainMainlobe/RadarAntennaGainTX)/m_pJammer->m_fIGDynamicRangeNoise;
+						m_ppTarget[i]->m_fJ_mal = (PowerReceivedJammer*m_pJammer->m_fLoopGainNoise*RadarAntennaGainRX*
 
-		}
+							JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction) / (FourPiSquare*DistanceSquare);
 
-		else
+					}
 
-			IGPowerCompensation=1;
+					else
 
+						m_ppTarget[i]->m_fJ_mal = ((m_fDlgPeakPower)*RadarAntennaGainRX*
 
-		m_ppTarget[i]->m_fJ_mal = ((m_fDlgPeakPower)*IGPowerCompensation*RadarAntennaGainRX*
+						JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction) / (FourPiSquare*DistanceSquare);
 
-			JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction)/(FourPiSquare*DistanceSquare);
-		
-
-		break;
-	}
-
-   			//J_mal skapas för att kunna summera störeffekten för alla störare (om det finns flera brusare)
-
-   			//J_mal[i]=(m_fDlgPeakPower*m_pJammer->ReturnAntennaGain(1,(180+m_pJammer->m_fBaring)-m_pJammer->m_fCourse)*m_pRadar->ReturnAntennaGain(2, ReturnAngleJammertoTarget(i,m_pJammer))*(float)pow(m_pRadar->m_flambda, 2.0f)*(m_pRadar->m_fIFBandWidth/m_pJammer->m_fNoiseBandwidth))/((float)pow((4.0f*M_PI),2.0f)*(float)pow(m_pJammer->m_fDistanceToRadar,2.0f));
-
-   		//	m_ppTarget[i]->m_fJ_mal=(m_ppTarget[i]->m_fJ_mal+J_mal[i]);
+					break;
 
 
-		//	m_ppTarget[i]->m_fJ_mal= m_pJammer->m_fJ;
+				case CRadarJammer::INVERSEGAIN:
+
+
+
+					if (m_pRadar->m_fGainMainlobe / RadarAntennaGainTX <= m_pJammer->m_fIGDynamicRangeNoise)
+					{
+
+						IGPowerCompensation = (m_pRadar->m_fGainMainlobe / RadarAntennaGainTX) / m_pJammer->m_fIGDynamicRangeNoise;
+
+					}
+
+					else
+
+						IGPowerCompensation = 1;
+
+
+					m_ppTarget[i]->m_fJ_mal = ((m_fDlgPeakPower)*IGPowerCompensation*RadarAntennaGainRX*
+
+						JammerAntennaGainTX*LambdaSquare*JammerBandWidthReduction) / (FourPiSquare*DistanceSquare);
+
+
+					break;
+				}
+
+				//J_mal skapas för att kunna summera störeffekten för alla störare (om det finns flera brusare)
+
+				//J_mal[i]=(m_fDlgPeakPower*m_pJammer->ReturnAntennaGain(1,(180+m_pJammer->m_fBaring)-m_pJammer->m_fCourse)*m_pRadar->ReturnAntennaGain(2, ReturnAngleJammertoTarget(i,m_pJammer))*(float)pow(m_pRadar->m_flambda, 2.0f)*(m_pRadar->m_fIFBandWidth/m_pJammer->m_fNoiseBandwidth))/((float)pow((4.0f*M_PI),2.0f)*(float)pow(m_pJammer->m_fDistanceToRadar,2.0f));
+
+				//	m_ppTarget[i]->m_fJ_mal=(m_ppTarget[i]->m_fJ_mal+J_mal[i]);
+
+
+				//	m_ppTarget[i]->m_fJ_mal= m_pJammer->m_fJ;
 				/*(PeakPowerJammer*JammerAntennaGain*RadarAntennaGain*LambdaSquare*BandwidthRatio)/
 									(FourPiSquare*DistanceSquare);*/
-	}
+			}
 		}
 
 		else
 
-			m_ppTarget[i]->m_fJ_mal=0;
+			m_ppTarget[i]->m_fJ_mal = 0;
 
-   }
+	}
 
 
 
- //  delete[] J_mal;
+	//  delete[] J_mal;
 
 }
 
 void CDlgRadarPPI::CalculateTargetSignal()
 {
-	for(int i=0;i<m_nAntal;i++)
+	for (int i = 0; i < m_nAntal; i++)
 	{
-		m_ppTarget[i]->m_fSignal=(m_pRadar->m_fPeakPower*m_pRadar->m_nProcessingGain*m_pRadar->m_fGainMainlobe*m_pRadar->m_fGainMainlobeRx*m_ppTarget[i]->m_fSigma*(float)pow(m_pRadar->m_flambda, 2.0f))/((float)pow((4.0f*M_PI),3.0f)*(float)pow(m_ppTarget[i]->m_fDistanceToRadar,4.0f));
+		m_ppTarget[i]->m_fSignal = (m_pRadar->m_fPeakPower*m_pRadar->m_nProcessingGain*m_pRadar->m_fGainMainlobe*m_pRadar->m_fGainMainlobeRx*m_ppTarget[i]->m_fSigma*(float)pow(m_pRadar->m_flambda, 2.0f)) / ((float)pow((4.0f*M_PI), 3.0f)*(float)pow(m_ppTarget[i]->m_fDistanceToRadar, 4.0f));
 	}
 }
 
 
 void CDlgRadarPPI::loop(float angle)
-{	
-	if(m_pJammer->m_strStatus=="OFF")
+{
+	if (m_pJammer->m_strStatus == "OFF")
 		return;
 
-	
-	for(float k=0.0f;k<360.0f;k+=0.5f)
+
+	for (float k = 0.0f; k < 360.0f; k += 0.5f)
 	{
 
-		if((k+m_pJammer->m_fBaring)>360)
-			vinkel=k+m_pJammer->m_fBaring-360;	
-		else 
-			vinkel=k+m_pJammer->m_fBaring;
+		if ((k + m_pJammer->m_fBaring)>360)
+			vinkel = k + m_pJammer->m_fBaring - 360;
+		else
+			vinkel = k + m_pJammer->m_fBaring;
 
-		if(angle>=vinkel-m_fAngleMove && angle<vinkel+m_fAngleMove)
+		if (angle >= vinkel - m_fAngleMove && angle<vinkel + m_fAngleMove)
 		{
-			if(m_pJammer->m_bBrusStorning==true)// && int(vinkel)%1 /*int(m_pRadar->m_fWidthMainlobe)*/==0)							
-			{			
+			if (m_pJammer->m_bBrusStorning == true)// && int(vinkel)%1 /*int(m_pRadar->m_fWidthMainlobe)*/==0)							
+			{
 
-				if(m_pJammer->m_bFoljande==true)
+				if (m_pJammer->m_bFoljande == true)
 				{
-					CalculatePowerRecieved(k,m_pJammer);
+					CalculatePowerRecieved(k, m_pJammer);
 
-					if(m_pJammer->m_fPowerRecieved>m_pJammer->m_fSensitivity)
+					if (m_pJammer->m_fPowerRecieved>m_pJammer->m_fSensitivity)
 					{
 						//Skapar cell framför och bakom störaren
-						CalculateNoiseEffectJammer(k,m_pJammer);
+						CalculateNoiseEffectJammer(k, m_pJammer);
 						//Buggrättning 060530 
-						if(m_pJammer->m_fJ>m_pRadar->m_fSensitivity)
+						if (m_pJammer->m_fJ > m_pRadar->m_fSensitivity)
 						{
 							//Skapar cell framför och bakom störaren
 							CCell*		tmpCellUpRange;  //Cell på avstånd 0 till Störarens avstånd
 							tmpCellUpRange = new CCell();
-							
+
 							//JEP060310
-							tmpCellUpRange->m_fDist =(150000000.0f*m_pRadar->m_fPulseWidth);
+							tmpCellUpRange->m_fDist = (150000000.0f*m_pRadar->m_fPulseWidth);
 							tmpCellUpRange->m_fBaring = vinkel;
 							tmpCellUpRange->m_enumTyp = NOISE;
-							if(m_pJammer->m_fDistanceToRadar+m_pJammer->m_fSorSetOnDelay*150000000.0f<m_pRadar->m_fMaxRange)
+							if (m_pJammer->m_fDistanceToRadar + m_pJammer->m_fSorSetOnDelay*150000000.0f < m_pRadar->m_fMaxRange)
 							{
-								tmpCellUpRange->m_fSize=m_pJammer->m_fDistanceToRadar+m_pJammer->m_fSorSetOnDelay*150000000.0f;//m_pRadar->m_fMaxRange/300;
+								tmpCellUpRange->m_fSize = m_pJammer->m_fDistanceToRadar + m_pJammer->m_fSorSetOnDelay*150000000.0f;//m_pRadar->m_fMaxRange/300;
 							}
 							else
-								tmpCellUpRange->m_fSize=m_pRadar->m_fMaxRange;
+								tmpCellUpRange->m_fSize = m_pRadar->m_fMaxRange;
 
-						
-							tmpCellUpRange->m_fLifeTime=Intensity(RadarEmittingReductionSORUpRange());
+
+							tmpCellUpRange->m_fLifeTime = Intensity(RadarEmittingReductionSORUpRange());
 							m_pRadar->m_CellLista.LaggTill(tmpCellUpRange);
 
-							if((m_pJammer->m_fDistanceToRadar+m_pJammer->m_fSorSetOnDelay*150000000.0f)<m_pRadar->m_fMaxRange)
+							if ((m_pJammer->m_fDistanceToRadar + m_pJammer->m_fSorSetOnDelay*150000000.0f) < m_pRadar->m_fMaxRange)
 							{
 								CCell*		tmpCellDownRange; //Cell på Störarens avstånd till radar maxavstånd
 								tmpCellDownRange = new CCell();
-								tmpCellDownRange->m_fDist = m_pJammer->m_fDistanceToRadar+m_pJammer->m_fSorSetOnDelay*150000000.0f;//Jammer->m_fDistanceToRadar;
+								tmpCellDownRange->m_fDist = m_pJammer->m_fDistanceToRadar + m_pJammer->m_fSorSetOnDelay*150000000.0f;//Jammer->m_fDistanceToRadar;
 								tmpCellDownRange->m_fBaring = vinkel;
 								tmpCellDownRange->m_enumTyp = NOISE;
-								tmpCellDownRange->m_fSize=m_pRadar->m_fMaxRange;
-								tmpCellDownRange->m_fLifeTime=Intensity(RadarEmittingReductionSORDownRange());
+								tmpCellDownRange->m_fSize = m_pRadar->m_fMaxRange;
+								tmpCellDownRange->m_fLifeTime = Intensity(RadarEmittingReductionSORDownRange());
 								m_pRadar->m_CellLista.LaggTill(tmpCellDownRange);
 							}
-						}		
-				
+						}
+
 					}
-						//Rita bakom störaren samt effektreducer
+					//Rita bakom störaren samt effektreducer
 				}
 
-				
-				if(m_pJammer->m_bFoljande==false)
+
+				if (m_pJammer->m_bFoljande == false)
 				{
-					CalculateNoiseEffectJammer(k,m_pJammer);
-					if(m_pJammer->m_fJ>(m_pRadar->m_fSensitivity/m_pRadar->m_fSNRRadar))
+					CalculateNoiseEffectJammer(k, m_pJammer);
+					if (m_pJammer->m_fJ > (m_pRadar->m_fSensitivity / m_pRadar->m_fSNRRadar))
 					{
-										
+
 						CCell*		tmpCell;
 						tmpCell = new CCell();
 						//JEP060310
 						tmpCell->m_fDist = (150000000.0f*m_pRadar->m_fPulseWidth);
 						tmpCell->m_fBaring = vinkel;
 						tmpCell->m_enumTyp = NOISE;
-						tmpCell->m_fSize=m_pRadar->m_fMaxRange;
-						tmpCell->m_fLifeTime=Intensity(RadarEmittingReductionFixFQ());
+						tmpCell->m_fSize = m_pRadar->m_fMaxRange;
+						tmpCell->m_fLifeTime = Intensity(RadarEmittingReductionFixFQ());
 						m_pRadar->m_CellLista.LaggTill(tmpCell);
 					}
 
@@ -2140,58 +2050,58 @@ void CDlgRadarPPI::loop(float angle)
 
 			}
 
-			if(m_pJammer->m_bRepeterStorning==true)
+			if (m_pJammer->m_bRepeterStorning == true)
 
 			{
 
-				CalculatePowerRecieved(k,m_pJammer);
-				CalcutalePowerJam(k,m_pJammer);
-				if(m_pJammer->m_fPowerRecieved>m_pJammer->m_fSensitivity && m_pJammer->m_fPower>(m_pRadar->m_fSensitivity*m_pRadar->m_nProcessingGain))	
-				{	
+				CalculatePowerRecieved(k, m_pJammer);
+				CalcutalePowerJam(k, m_pJammer);
+				if (m_pJammer->m_fPowerRecieved > m_pJammer->m_fSensitivity && m_pJammer->m_fPower > (m_pRadar->m_fSensitivity*m_pRadar->m_nProcessingGain))
+				{
 
-					if(m_pJammer->m_bSlumpadeFalskmal==true)
+					if (m_pJammer->m_bSlumpadeFalskmal == true)
 					{
-			
+
 						CUtrustningLista::CNod *pTempPos;
 						CUtrustningLista* pLista = CUtrustningLista::getInstance();
-						pTempPos= pLista->m_pStartPos;
+						pTempPos = pLista->m_pStartPos;
 
-						for(int i=0;i<pLista->m_nAntalNoder;i++) 
+						for (int i = 0; i < pLista->m_nAntalNoder; i++)
 						{
 
-							if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+							if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
 							{
 
 								//m_ppJammer[k] = (CRadarStation*)pTempPos->m_pUtrustning;
 
-							
-								if(int(vinkel)%int(m_pRadar->m_fWidthMainlobeRx)==0)
+
+								if (int(vinkel) % int(m_pRadar->m_fWidthMainlobeRx) == 0)
 								{
 									CCell*		tmpCell;
 									tmpCell = new CCell();
 
-									
-									tmpCell->m_fDist = (int)(((long)rand()*((CRadarStation*)pTempPos->m_pUtrustning)->m_fMaxRange)/(RAND_MAX+1));
-									if(tmpCell->m_fDist <= (m_pJammer->m_fDistanceToRadar+m_pJammer->m_fRepeaterThroughputDelay*150000000.0f) && m_pRadar->m_bPulseGroup ==true && tmpCell->m_fDist>(150000000.0f*m_pRadar->m_fPulseWidth))
-									{									
-										tmpCell->m_fSize=m_pRadar->m_fWidthMainlobeRx;
+
+									tmpCell->m_fDist = (int)(((long)rand()*((CRadarStation*)pTempPos->m_pUtrustning)->m_fMaxRange) / (RAND_MAX + 1));
+									if (tmpCell->m_fDist <= (m_pJammer->m_fDistanceToRadar + m_pJammer->m_fRepeaterThroughputDelay*150000000.0f) && m_pRadar->m_bPulseGroup == true && tmpCell->m_fDist > (150000000.0f*m_pRadar->m_fPulseWidth))
+									{
+										tmpCell->m_fSize = m_pRadar->m_fWidthMainlobeRx;
 										tmpCell->m_fBaring = vinkel;
 										tmpCell->m_enumTyp = REPEATER;
-										tmpCell->m_fLifeTime=Intensity(RadarEmittingReductionDRFMUpRange());//m_fIndicatorIntensity*Intensity(m_pJammer->m_fPower);
+										tmpCell->m_fLifeTime = Intensity(RadarEmittingReductionDRFMUpRange());//m_fIndicatorIntensity*Intensity(m_pJammer->m_fPower);
 										((CRadarStation*)pTempPos->m_pUtrustning)->m_CellLista.LaggTill(tmpCell);
 									}
 									else
 									{
-										tmpCell->m_fSize=m_pRadar->m_fWidthMainlobeRx;
+										tmpCell->m_fSize = m_pRadar->m_fWidthMainlobeRx;
 										tmpCell->m_fBaring = vinkel;
 										tmpCell->m_enumTyp = REPEATER;
-										tmpCell->m_fLifeTime=Intensity(m_pJammer->m_fPower);
+										tmpCell->m_fLifeTime = Intensity(m_pJammer->m_fPower);
 										//tmpCell->m_nColor=Intensity(Jammer->m_fPower,1,(int)vinkel);
 										((CRadarStation*)pTempPos->m_pUtrustning)->m_CellLista.LaggTill(tmpCell);
 									}
 								}
 							}
-						}				
+						}
 					}
 				}
 			}
@@ -2206,40 +2116,40 @@ void CDlgRadarPPI::position(float angle)
 
 	CUtrustningLista::CNod *pTempPos;
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
-	pTempPos= pLista->m_pStartPos;
+	pTempPos = pLista->m_pStartPos;
 
-	if(pLista->IsEmpty()==false)
+	if (pLista->IsEmpty() == false)
 
 	{
 
-		for(int i=0;i<pLista->m_nAntalNoder;i++) 
+		for (int i = 0; i < pLista->m_nAntalNoder; i++)
 
 		{
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
 
 			{
 
-				tmpRadar	=	pTempPos->m_pUtrustning;
+				tmpRadar = pTempPos->m_pUtrustning;
 
 			}
 
-			if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER  || pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER || pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 
 			{
 
-				
-				if(pTempPos->m_pUtrustning->m_nNbrOfWayPoints>0)
+
+				if (pTempPos->m_pUtrustning->m_nNbrOfWayPoints>0)
 
 				{
 
-					float BearingToWayPoint	 = CRadarCalculate::bearing(pTempPos->m_pUtrustning->m_fWayPoints[0],pTempPos->m_pUtrustning->m_fWayPoints[1],pTempPos->m_pUtrustning->m_fStartPosX,pTempPos->m_pUtrustning->m_fStartPosY);
+					float BearingToWayPoint = CRadarCalculate::bearing(pTempPos->m_pUtrustning->m_fWayPoints[0], pTempPos->m_pUtrustning->m_fWayPoints[1], pTempPos->m_pUtrustning->m_fStartPosX, pTempPos->m_pUtrustning->m_fStartPosY);
 
-						pTempPos->m_pUtrustning->m_fCourse = BearingToWayPoint+180;
+					pTempPos->m_pUtrustning->m_fCourse = BearingToWayPoint + 180;
 
-					if(pTempPos->m_pUtrustning->m_fCourse>360)
+					if (pTempPos->m_pUtrustning->m_fCourse > 360)
 
-						pTempPos->m_pUtrustning->m_fCourse-=360;
+						pTempPos->m_pUtrustning->m_fCourse -= 360;
 
 				}
 
@@ -2247,73 +2157,73 @@ void CDlgRadarPPI::position(float angle)
 
 				{
 
-					float BearingToWayPoint	 = CRadarCalculate::bearing(m_pRadar->m_fPosX,m_pRadar->m_fPosY,pTempPos->m_pUtrustning->m_fStartPosX,pTempPos->m_pUtrustning->m_fStartPosY);
+					float BearingToWayPoint = CRadarCalculate::bearing(m_pRadar->m_fPosX, m_pRadar->m_fPosY, pTempPos->m_pUtrustning->m_fStartPosX, pTempPos->m_pUtrustning->m_fStartPosY);
 
-						pTempPos->m_pUtrustning->m_fCourse = BearingToWayPoint+180;
+					pTempPos->m_pUtrustning->m_fCourse = BearingToWayPoint + 180;
 
-					if(pTempPos->m_pUtrustning->m_fCourse>360)
+					if (pTempPos->m_pUtrustning->m_fCourse > 360)
 
-						pTempPos->m_pUtrustning->m_fCourse-=360;
+						pTempPos->m_pUtrustning->m_fCourse -= 360;
 
 				}
-				
 
 
 
 
-				float X,Y,PosX,PosY;
 
-				float DistToWayPoint=0;
+				float X, Y, PosX, PosY;
 
-				PosX=pTempPos->m_pUtrustning->m_fStartPosX;
+				float DistToWayPoint = 0;
 
-				PosY=pTempPos->m_pUtrustning->m_fStartPosY;
+				PosX = pTempPos->m_pUtrustning->m_fStartPosX;
 
-
-
-				float td = CRadarCalculate::covereddist(pTempPos->m_pUtrustning->m_fVelocity,m_fTimeUnit);
+				PosY = pTempPos->m_pUtrustning->m_fStartPosY;
 
 
 
-				for(int k=1;k<pTempPos->m_pUtrustning->m_nNbrOfWayPoints;k++)
+				float td = CRadarCalculate::covereddist(pTempPos->m_pUtrustning->m_fVelocity, m_fTimeUnit);
+
+
+
+				for (int k = 1; k<pTempPos->m_pUtrustning->m_nNbrOfWayPoints; k++)
 
 				{
 
-					if(td>pTempPos->m_pUtrustning->m_fDistWayPoints[k-1])
+					if (td>pTempPos->m_pUtrustning->m_fDistWayPoints[k - 1])
 
 					{
 
-						float BearingToWayPoint	 = CRadarCalculate::bearing(pTempPos->m_pUtrustning->m_fWayPoints[2*k],pTempPos->m_pUtrustning->m_fWayPoints[2*k+1],pTempPos->m_pUtrustning->m_fWayPoints[2*k-2],pTempPos->m_pUtrustning->m_fWayPoints[2*k-1]);
+						float BearingToWayPoint = CRadarCalculate::bearing(pTempPos->m_pUtrustning->m_fWayPoints[2 * k], pTempPos->m_pUtrustning->m_fWayPoints[2 * k + 1], pTempPos->m_pUtrustning->m_fWayPoints[2 * k - 2], pTempPos->m_pUtrustning->m_fWayPoints[2 * k - 1]);
 
-						pTempPos->m_pUtrustning->m_fCourse = BearingToWayPoint+180.0f;
+						pTempPos->m_pUtrustning->m_fCourse = BearingToWayPoint + 180.0f;
 
-						if(pTempPos->m_pUtrustning->m_fCourse>360)
+						if (pTempPos->m_pUtrustning->m_fCourse > 360)
 
-							pTempPos->m_pUtrustning->m_fCourse-=360;	
+							pTempPos->m_pUtrustning->m_fCourse -= 360;
 
-						PosX=pTempPos->m_pUtrustning->m_fWayPoints[2*k-2];
+						PosX = pTempPos->m_pUtrustning->m_fWayPoints[2 * k - 2];
 
-						PosY=pTempPos->m_pUtrustning->m_fWayPoints[2*k-1];
+						PosY = pTempPos->m_pUtrustning->m_fWayPoints[2 * k - 1];
 
-						DistToWayPoint=pTempPos->m_pUtrustning->m_fDistWayPoints[k-1];
+						DistToWayPoint = pTempPos->m_pUtrustning->m_fDistWayPoints[k - 1];
 
 					}
 
 				}
 
-				
 
-				CRadarCalculate::pos(PosX,PosY,pTempPos->m_pUtrustning->m_fCourse,td-DistToWayPoint,X,Y);
+
+				CRadarCalculate::pos(PosX, PosY, pTempPos->m_pUtrustning->m_fCourse, td - DistToWayPoint, X, Y);
 
 				pTempPos->m_pUtrustning->m_fPosX = X;
 
 				pTempPos->m_pUtrustning->m_fPosY = Y;
 
-				pTempPos->m_pUtrustning->m_fDistanceToRadar = CRadarCalculate::dist(m_pRadar->m_fPosX,m_pRadar->m_fPosY,X,Y);
+				pTempPos->m_pUtrustning->m_fDistanceToRadar = CRadarCalculate::dist(m_pRadar->m_fPosX, m_pRadar->m_fPosY, X, Y);
 
-				pTempPos->m_pUtrustning->m_fBaring = CRadarCalculate::bearing(m_pRadar->m_fPosX,m_pRadar->m_fPosY,	X,Y);
+				pTempPos->m_pUtrustning->m_fBaring = CRadarCalculate::bearing(m_pRadar->m_fPosX, m_pRadar->m_fPosY, X, Y);
 
-											
+
 
 				//-------Lite stulig variant(men fungerande) för att få jammers att uppdateras med svepet
 
@@ -2346,6 +2256,7 @@ void CDlgRadarPPI::position(float angle)
 								tmpCell->m_fLifeTime = RAWVideoModeJammer();
 							else
 								tmpCell->m_fLifeTime = RAWVideoModeTarget(((CRadarTarget*)pTempPos->m_pUtrustning));
+							ATLTRACE2(_T("CDlgRadarPPI::position new cell lifeTime: %4.1f \n"), tmpCell->m_fLifeTime);
 							//JEP060310
 							if (tmpCell->m_fLifeTime > 0)
 								((CRadarStation*)tmpRadar)->m_CellLista.LaggTill(tmpCell);
@@ -2355,7 +2266,7 @@ void CDlgRadarPPI::position(float angle)
 					}
 				}
 				pTempPos->m_pUtrustning->m_fPosX = X;
-				pTempPos->m_pUtrustning->m_fPosY = Y;	
+				pTempPos->m_pUtrustning->m_fPosY = Y;
 			}
 			pTempPos = pTempPos->m_pNext;
 		}
@@ -2379,15 +2290,15 @@ float CDlgRadarPPI::RAWVideoModeJammer()
 	return Intensity(m_pJammer->m_fSignal);
 
 	/*
-	
+
 	if((m_pJammer->m_fS*m_pRadar->m_nProcessingGain)>=(m_pRadar->m_fSNR*m_pJammer->m_fJ_huvudlob+m_pJammer->m_fJ_mal))
 
 	{
 
-		if((m_pJammer->m_fS/m_pRadar->m_fSensitivity)<m_pRadar->m_fDynamicRange)
-			return CRadarCalculate::FromGgrTodB(m_pJammer->m_fS/m_pRadar->m_fSensitivity); ///(m_pRadar->m_fSensitivity/m_pRadar->m_nProcessingGain));  // Detta motsvarar log kanal i radarn -- 030618 AW				
-		else
-			return CRadarCalculate::FromGgrTodB(m_pRadar->m_fSensitivity*m_pRadar->m_fDynamicRange);
+	if((m_pJammer->m_fS/m_pRadar->m_fSensitivity)<m_pRadar->m_fDynamicRange)
+	return CRadarCalculate::FromGgrTodB(m_pJammer->m_fS/m_pRadar->m_fSensitivity); ///(m_pRadar->m_fSensitivity/m_pRadar->m_nProcessingGain));  // Detta motsvarar log kanal i radarn -- 030618 AW
+	else
+	return CRadarCalculate::FromGgrTodB(m_pRadar->m_fSensitivity*m_pRadar->m_fDynamicRange);
 
 	}
 
@@ -2395,7 +2306,7 @@ float CDlgRadarPPI::RAWVideoModeJammer()
 
 	{
 
-		return 0;
+	return 0;
 
 	}
 	*/
@@ -2403,9 +2314,9 @@ float CDlgRadarPPI::RAWVideoModeJammer()
 
 float CDlgRadarPPI::Intensity(float JamPower)
 {
-	float rawVideoLevel = JamPower/*NoiceEffect*//(m_pRadar->m_fSensitivity/*/CRadarCalculate::FromdBToGgr(m_pRadar->m_fSNRRadar)*/);
-
-	if(rawVideoLevel>m_pRadar->m_fDynamicRange)
+	float rawVideoLevel = JamPower/*NoiceEffect*/ / (m_pRadar->m_fSensitivity/*/CRadarCalculate::FromdBToGgr(m_pRadar->m_fSNRRadar)*/);
+	ATLTRACE2(_T("CDlgRadarPPI::Intensity rawVideoLevel: %3.1f , DynamicRange: %3.1f \n"), rawVideoLevel, m_pRadar->m_fDynamicRange);
+	if (rawVideoLevel > m_pRadar->m_fDynamicRange)
 		return CRadarCalculate::FromGgrTodB(m_pRadar->m_fDynamicRange);
 	else
 		return CRadarCalculate::FromGgrTodB(rawVideoLevel); ///(m_pRadar->m_fSensitivity/m_pRadar->m_nProcessingGain));  // Detta motsvarar log kanal i radarn -- 030618 AW				
@@ -2426,58 +2337,58 @@ float CDlgRadarPPI::RadarEmittingReductionDRFMUpRange()
 {
 
 
-				float Nytt_J=0;
+	float Nytt_J = 0;
 
-				float reduce1=0;
+	float reduce1 = 0;
 
-				float reduce2=0;
+	float reduce2 = 0;
 
-				float Antalkanaler=(m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin)/m_pRadar->m_fChannelSeparation;
-
-
-			if(m_pRadar->m_bPulseGroup==false)
-
-			{
-
-				return m_pJammer->m_fPower;
-
-			}
-
-			else //if pulsegroup is true
+	float Antalkanaler = (m_pRadar->m_fFreqMax - m_pRadar->m_fFreqMin) / m_pRadar->m_fChannelSeparation;
 
 
-/*				float Nytt_J=0;
+	if (m_pRadar->m_bPulseGroup == false)
 
-				float reduce1=0;
+	{
 
-				float reduce2=0;
-
-				float Antalkanaler=(m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin)/m_pRadar->m_fChannelSeparation;
-*/
-
-
-
-					if(m_pRadar->m_fantal_pulser==1)  //Behövs egentligen inte då det inte skapas nån cell
-
-					{
-
-							return 0;
-		
-
-					}
-
-					else/*(m_pRadar->m_nantal_pulser>1)*/
-
-					//	reduce1=(m_pJammer->m_fNoiseBandwidth/1000)/(m_pRadar->m_fChannelSeparation*Antalkanaler);
-
-   						reduce2=(m_pRadar->m_fantal_pulser-1)/m_pRadar->m_fantal_pulser;
-
-
-						Nytt_J=(reduce2)*m_pJammer->m_fPower;
-
-							return Nytt_J;
+		return m_pJammer->m_fPower;
 
 	}
+
+	else //if pulsegroup is true
+
+
+		/*				float Nytt_J=0;
+
+						float reduce1=0;
+
+						float reduce2=0;
+
+						float Antalkanaler=(m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin)/m_pRadar->m_fChannelSeparation;
+						*/
+
+
+
+						if (m_pRadar->m_fantal_pulser == 1)  //Behövs egentligen inte då det inte skapas nån cell
+
+						{
+
+		return 0;
+
+
+						}
+
+						else/*(m_pRadar->m_nantal_pulser>1)*/
+
+							//	reduce1=(m_pJammer->m_fNoiseBandwidth/1000)/(m_pRadar->m_fChannelSeparation*Antalkanaler);
+
+							reduce2 = (m_pRadar->m_fantal_pulser - 1) / m_pRadar->m_fantal_pulser;
+
+
+	Nytt_J = (reduce2)*m_pJammer->m_fPower;
+
+	return Nytt_J;
+
+}
 
 
 
@@ -2486,96 +2397,96 @@ float CDlgRadarPPI::RadarEmittingReductionDRFMUpRange()
 
 float CDlgRadarPPI::RadarEmittingReductionSORUpRange()
 
+{
+
+	float Nytt_J = 0;
+
+	float reduce1 = 0;
+
+	float reduce2 = 0;
+
+	float Antalkanaler = (m_pRadar->m_fFreqMax - m_pRadar->m_fFreqMin) / m_pRadar->m_fChannelSeparation;
+
+
+	if (m_pRadar->m_bPulseGroup == false)
+
 	{
 
-				float Nytt_J=0;
+		//Begränsning om jammer stör med Tracking noise. Då måste man kunna ta enom signal från radarn innan man kan störa(samma sak längre ned i denna funk.)
 
-				float reduce1=0;
-
-				float reduce2=0;
-
-				float Antalkanaler=(m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin)/m_pRadar->m_fChannelSeparation;
-
-
-			if(m_pRadar->m_bPulseGroup==false)
-
-			{
-
-			//Begränsning om jammer stör med Tracking noise. Då måste man kunna ta enom signal från radarn innan man kan störa(samma sak längre ned i denna funk.)
-
-				return m_pJammer->m_fJ;
-
-			}
-
-			if(m_pRadar->m_bPulseGroup==true)
-
-			{
-/*				float Nytt_J=0;
-
-				float reduce1=0;
-
-				float reduce2=0;
-
-				float Antalkanaler=(m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin)/m_pRadar->m_fChannelSeparation;
-*/
-
-
-
-					if(m_pRadar->m_fantal_pulser==1)
-
-					{
-
-					//OBS 1000 är för att kanalseparation är i GHz och Bj i MHz
-
-						if(m_pRadar->m_fChannelSeparation>=(m_pJammer->m_fNoiseBandwidth/(2*1000)))
-
-						{
-
-   						//Nytt_J=0;
-
-							return Nytt_J;
-
-						}
-
-
-						if(m_pRadar->m_fChannelSeparation<(m_pJammer->m_fNoiseBandwidth/(2*1000)))
-
-						{
-
-   						reduce1=(m_pJammer->m_fNoiseBandwidth/1000)/(m_pRadar->m_fChannelSeparation*Antalkanaler);
-
-						Nytt_J=(reduce1)*m_pJammer->m_fJ;
-
-							return Nytt_J;
-
-
-						}
-
-
-					}
-
-					else/*(m_pRadar->m_nantal_pulser>1)*/
-
-					//	reduce1=(m_pJammer->m_fNoiseBandwidth/1000)/(m_pRadar->m_fChannelSeparation*Antalkanaler);
-
-   						reduce2=(m_pRadar->m_fantal_pulser-1)/m_pRadar->m_fantal_pulser;
-
-
-						Nytt_J=(reduce2)*m_pJammer->m_fJ;
-
-							return Nytt_J;
-
-			}
-
+		return m_pJammer->m_fJ;
 
 	}
+
+	if (m_pRadar->m_bPulseGroup == true)
+
+	{
+		/*				float Nytt_J=0;
+
+						float reduce1=0;
+
+						float reduce2=0;
+
+						float Antalkanaler=(m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin)/m_pRadar->m_fChannelSeparation;
+						*/
+
+
+
+		if (m_pRadar->m_fantal_pulser == 1)
+
+		{
+
+			//OBS 1000 är för att kanalseparation är i GHz och Bj i MHz
+
+			if (m_pRadar->m_fChannelSeparation >= (m_pJammer->m_fNoiseBandwidth / (2 * 1000)))
+
+			{
+
+				//Nytt_J=0;
+
+				return Nytt_J;
+
+			}
+
+
+			if (m_pRadar->m_fChannelSeparation < (m_pJammer->m_fNoiseBandwidth / (2 * 1000)))
+
+			{
+
+				reduce1 = (m_pJammer->m_fNoiseBandwidth / 1000) / (m_pRadar->m_fChannelSeparation*Antalkanaler);
+
+				Nytt_J = (reduce1)*m_pJammer->m_fJ;
+
+				return Nytt_J;
+
+
+			}
+
+
+		}
+
+		else/*(m_pRadar->m_nantal_pulser>1)*/
+
+			//	reduce1=(m_pJammer->m_fNoiseBandwidth/1000)/(m_pRadar->m_fChannelSeparation*Antalkanaler);
+
+			reduce2 = (m_pRadar->m_fantal_pulser - 1) / m_pRadar->m_fantal_pulser;
+
+
+		Nytt_J = (reduce2)*m_pJammer->m_fJ;
+
+		return Nytt_J;
+
+	}
+
+
+}
 
 
 float CDlgRadarPPI::RadarEmittingReductionSORDownRange()
 
 
 {
-		return m_pJammer->m_fJ;
+	return m_pJammer->m_fJ;
 
 }
 
@@ -2588,19 +2499,19 @@ float CDlgRadarPPI::RadarEmittingReductionSORDownRange()
 
 		{
 
-			//Begränsning om jammer stör med Tracking noise. Då måste man kunna ta enom signal från radarn innan man kan störa(samma sak längre ned i denna funk.)
+		//Begränsning om jammer stör med Tracking noise. Då måste man kunna ta enom signal från radarn innan man kan störa(samma sak längre ned i denna funk.)
 
-			if(m_pJammer->m_fPowerRecieved>m_pJammer->m_fSensitivity && m_pJammer->m_bFoljande==true)	
+		if(m_pJammer->m_fPowerRecieved>m_pJammer->m_fSensitivity && m_pJammer->m_bFoljande==true)
 
-			{			
+		{
 
-				return Intensity(m_pJammer->m_fJ);
+		return Intensity(m_pJammer->m_fJ);
 
-			}
+		}
 
-			if(m_pJammer->m_bFoljande==false)
+		if(m_pJammer->m_bFoljande==false)
 
-				return Intensity(m_pJammer->m_fJ);
+		return Intensity(m_pJammer->m_fJ);
 
 		}
 
@@ -2610,101 +2521,101 @@ float CDlgRadarPPI::RadarEmittingReductionSORDownRange()
 
 
 
-			float Nytt_J=0;
+		float Nytt_J=0;
 
-			float reduce1=0;
+		float reduce1=0;
 
-			float reduce2=0;
+		float reduce2=0;
 
-			float Antalkanaler=(m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin)/m_pRadar->m_fChannelSeparation;
-
-
-
-			if(m_pRadar->m_fantal_pulser==1)
-
-			{
-
-			//OBS 1000 är för att kanalseparation är i GHz och Bj i MHz
-
-			if(m_pRadar->m_fChannelSeparation>=(m_pJammer->m_fNoiseBandwidth/(2*1000)))
-
-   				Nytt_J=0;
-
-			if(m_pRadar->m_fChannelSeparation<(m_pJammer->m_fNoiseBandwidth/(2*1000)))
-
-   				reduce1=(m_pJammer->m_fNoiseBandwidth/1000)/(m_pRadar->m_fChannelSeparation*Antalkanaler);
-
-			}
-
-			else/*(m_pRadar->m_nantal_pulser>1)*//*
-
-   			reduce2=(m_pRadar->m_fantal_pulser-1)/m_pRadar->m_fantal_pulser;
+		float Antalkanaler=(m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin)/m_pRadar->m_fChannelSeparation;
 
 
 
-			Nytt_J=(reduce1+reduce2)*m_pJammer->m_fJ;
+		if(m_pRadar->m_fantal_pulser==1)
 
+		{
 
+		//OBS 1000 är för att kanalseparation är i GHz och Bj i MHz
 
-			//Om bruset är icke följande skall reduceringen gälla både framför OCH bakom!
+		if(m_pRadar->m_fChannelSeparation>=(m_pJammer->m_fNoiseBandwidth/(2*1000)))
 
-			if(m_pJammer->m_bIckeFoljande==true)
+		Nytt_J=0;
 
-				m_pJammer->m_fJ=Nytt_J;
+		if(m_pRadar->m_fChannelSeparation<(m_pJammer->m_fNoiseBandwidth/(2*1000)))
 
-
-
-			//Ritar bakom jammer!!!!!!
-
-			if((m_pJammer->m_fDistanceToRadar)<m_pRadar->m_fMaxRange)
-
-			{
-
-				
-
-				if(m_pJammer->m_fPowerRecieved>m_pJammer->m_fSensitivity && m_pJammer->m_bFoljande==true)	
-
-				{
-
-				//	Intensity(m_pJammer->m_fJ,2);
-
-					return Intensity(Nytt_J);	
-
-				}
-
-				if(m_pJammer->m_bFoljande==false)
-
-				{
-
-				//	Intensity(m_pJammer->m_fJ,2);
-
-					return Intensity(Nytt_J);	
-
-				}
-
-			}
-
-			else
-
-			{
-
-				if(m_pJammer->m_fPowerRecieved>m_pJammer->m_fSensitivity && m_pJammer->m_bFoljande==true)	
-
-					return Intensity(Nytt_J);	
-
-				if(m_pJammer->m_bFoljande==false)
-
-					return Intensity(Nytt_J);	
-
-				
-
-			}
+		reduce1=(m_pJammer->m_fNoiseBandwidth/1000)/(m_pRadar->m_fChannelSeparation*Antalkanaler);
 
 		}
 
-}
-*/
-					//Råvideo mål
+		else/*(m_pRadar->m_nantal_pulser>1)*//*
+
+		reduce2=(m_pRadar->m_fantal_pulser-1)/m_pRadar->m_fantal_pulser;
+
+
+
+		Nytt_J=(reduce1+reduce2)*m_pJammer->m_fJ;
+
+
+
+		//Om bruset är icke följande skall reduceringen gälla både framför OCH bakom!
+
+		if(m_pJammer->m_bIckeFoljande==true)
+
+		m_pJammer->m_fJ=Nytt_J;
+
+
+
+		//Ritar bakom jammer!!!!!!
+
+		if((m_pJammer->m_fDistanceToRadar)<m_pRadar->m_fMaxRange)
+
+		{
+
+
+
+		if(m_pJammer->m_fPowerRecieved>m_pJammer->m_fSensitivity && m_pJammer->m_bFoljande==true)
+
+		{
+
+		//	Intensity(m_pJammer->m_fJ,2);
+
+		return Intensity(Nytt_J);
+
+		}
+
+		if(m_pJammer->m_bFoljande==false)
+
+		{
+
+		//	Intensity(m_pJammer->m_fJ,2);
+
+		return Intensity(Nytt_J);
+
+		}
+
+		}
+
+		else
+
+		{
+
+		if(m_pJammer->m_fPowerRecieved>m_pJammer->m_fSensitivity && m_pJammer->m_bFoljande==true)
+
+		return Intensity(Nytt_J);
+
+		if(m_pJammer->m_bFoljande==false)
+
+		return Intensity(Nytt_J);
+
+
+
+		}
+
+		}
+
+		}
+		*/
+//Råvideo mål
 
 //		glBegin(GL_LINES);
 
@@ -2720,26 +2631,26 @@ float CDlgRadarPPI::RadarEmittingReductionSORDownRange()
 
 
 
-void CDlgRadarPPI::OnMenuStop() 
+void CDlgRadarPPI::OnMenuStop()
 {
 
 }
 
 
 
-void CDlgRadarPPI::OnMenuRun() 
+void CDlgRadarPPI::OnMenuRun()
 
 {
 
 	// TODO: Add your command handler code here
 
-	m_pRadar->m_fGgrRealTime=DEFAULTGGRREALTIME;
+	m_pRadar->m_fGgrRealTime = DEFAULTGGRREALTIME;
 
-	m_pRadar->m_bRun=true;
+	m_pRadar->m_bRun = true;
 
-	m_bRun=true;
+	m_bRun = true;
 
-	SetTimer(0,100,NULL);
+	SetTimer(0, 100, NULL);
 
 	m_pRadar->m_CellLista.TaBortAlla();
 
@@ -2747,13 +2658,13 @@ void CDlgRadarPPI::OnMenuRun()
 
 
 
-void CDlgRadarPPI::OnMenuPause() 
+void CDlgRadarPPI::OnMenuPause()
 
 {
 
 	// TODO: Add your command handler code here
 
-	m_pRadar->m_fGgrRealTime=0.0f;
+	m_pRadar->m_fGgrRealTime = 0.0f;
 
 	KillTimer(0);
 
@@ -2761,21 +2672,21 @@ void CDlgRadarPPI::OnMenuPause()
 
 
 
-void CDlgRadarPPI::Stop() 
+void CDlgRadarPPI::Stop()
 
 {
 
-	m_bRun=false;
+	m_bRun = false;
 
-	m_pRadar->m_bRun=false;	
+	//m_pRadar->m_bRun = false;
 
-	m_pRadar->m_fGgrRealTime=DEFAULTGGRREALTIME;
+	//m_pRadar->m_fGgrRealTime = DEFAULTGGRREALTIME;
 
-	m_pRadar->m_CellLista.TaBortAlla();
+	//m_pRadar->m_CellLista.TaBortAlla();
 
 	HideMenu();
 
-	m_pDisplay->m_nZoomin=45;
+	m_pDisplay->m_nZoomin = 45;
 
 	KillTimer(0);
 
@@ -2785,17 +2696,17 @@ void CDlgRadarPPI::Stop()
 
 void CDlgRadarPPI::HideMenu()
 {
-//Dölj knappar m.m
+	//Dölj knappar m.m
 
-	GetDlgItem(IDC_BUTTON_JAMMODE1)->ShowWindow(SW_HIDE);	
+	GetDlgItem(IDC_BUTTON_JAMMODE1)->ShowWindow(SW_HIDE);
 
-	GetDlgItem(IDC_BUTTON_JAMMODE2)->ShowWindow(SW_HIDE);	
+	GetDlgItem(IDC_BUTTON_JAMMODE2)->ShowWindow(SW_HIDE);
 
-	GetDlgItem(IDC_BUTTON_JAMMODE3)->ShowWindow(SW_HIDE);	
+	GetDlgItem(IDC_BUTTON_JAMMODE3)->ShowWindow(SW_HIDE);
 
-	GetDlgItem(IDC_BUTTON_JAMMODE4)->ShowWindow(SW_HIDE);	
+	GetDlgItem(IDC_BUTTON_JAMMODE4)->ShowWindow(SW_HIDE);
 
-	GetDlgItem(IDC_BUTTON_PAUS)->ShowWindow(SW_HIDE);	
+	GetDlgItem(IDC_BUTTON_PAUS)->ShowWindow(SW_HIDE);
 
 	GetDlgItem(IDC_BUTTON1)->ShowWindow(SW_HIDE);
 
@@ -2805,7 +2716,7 @@ void CDlgRadarPPI::HideMenu()
 
 	GetDlgItem(IDC_BUT_SHOWDISK)->ShowWindow(SW_HIDE);
 
-//	GetDlgItem(IDC_BUTTON_RESTORE)->ShowWindow(SW_HIDE);
+	//	GetDlgItem(IDC_BUTTON_RESTORE)->ShowWindow(SW_HIDE);
 
 	GetDlgItem(IDC_BUTTON_RADRAWVIDEO)->ShowWindow(SW_HIDE);
 
@@ -2817,7 +2728,7 @@ void CDlgRadarPPI::HideMenu()
 
 
 
-//Editrutor
+	//Editrutor
 
 	GetDlgItem(IDC_EDIT_JAM1)->ShowWindow(SW_HIDE);
 
@@ -2851,15 +2762,15 @@ void CDlgRadarPPI::HideMenu()
 
 
 
-//TimdeLine
+	//TimdeLine
 
 	//GetDlgItem(IDC_TIMELINE)->ShowWindow(SW_HIDE);
 
-	
 
-//Frames
 
-//	GetDlgItem(IDC_STATIC_FRAME)->ShowWindow(SW_HIDE);
+	//Frames
+
+	//	GetDlgItem(IDC_STATIC_FRAME)->ShowWindow(SW_HIDE);
 
 }
 
@@ -2869,19 +2780,19 @@ void CDlgRadarPPI::ShowMenu()
 
 {
 
-// Visa knappar m.m
+	// Visa knappar m.m
 
-	GetDlgItem(IDC_BUTTON_JAMMODE1)->ShowWindow(true);	
+	GetDlgItem(IDC_BUTTON_JAMMODE1)->ShowWindow(true);
 
-	GetDlgItem(IDC_BUTTON_JAMMODE2)->ShowWindow(true);	
+	GetDlgItem(IDC_BUTTON_JAMMODE2)->ShowWindow(true);
 
-	GetDlgItem(IDC_BUTTON_JAMMODE3)->ShowWindow(true);	
+	GetDlgItem(IDC_BUTTON_JAMMODE3)->ShowWindow(true);
 
-	GetDlgItem(IDC_BUTTON_JAMMODE4)->ShowWindow(true);	
+	GetDlgItem(IDC_BUTTON_JAMMODE4)->ShowWindow(true);
 
-	GetDlgItem(IDC_BUTTON_PAUS)->ShowWindow(true);	
+	GetDlgItem(IDC_BUTTON_PAUS)->ShowWindow(true);
 
-	GetDlgItem(IDC_BUTTON1)->ShowWindow(true);	
+	GetDlgItem(IDC_BUTTON1)->ShowWindow(true);
 
 	GetDlgItem(IDC_BUTTON_OFF)->ShowWindow(true);
 
@@ -2904,7 +2815,7 @@ void CDlgRadarPPI::ShowMenu()
 
 
 
-//Editrutor
+	//Editrutor
 
 	GetDlgItem(IDC_EDIT_JAM1)->ShowWindow(true);
 
@@ -2938,17 +2849,17 @@ void CDlgRadarPPI::ShowMenu()
 
 
 
-	
 
-//TimeLine
+
+	//TimeLine
 
 	//GetDlgItem(IDC_TIMELINE)->ShowWindow(true);
 
 
 
-//Frames
+	//Frames
 	//JEP060310
-//	GetDlgItem(IDC_STATIC_FRAME)->ShowWindow(true);
+	//	GetDlgItem(IDC_STATIC_FRAME)->ShowWindow(true);
 
 }
 
@@ -2973,9 +2884,9 @@ void CDlgRadarPPI::MoveMenu()
 	MoveEditBoxRight(&m_CtrlRad6);
 	MoveEditBoxRight(&m_CtrlRad7);
 	MoveEditBoxRight(&m_CtrlRad8);
-	
 
-//***********************knappar Radar******************
+
+	//***********************knappar Radar******************
 
 	MoveEditBoxRight(&m_CtrlButRawVieo);
 	MoveEditBoxRight(&m_CtrlButSyntetic);
@@ -2988,42 +2899,42 @@ void CDlgRadarPPI::MoveMenu()
 
 	m_CtrlButRestore.GetWindowRect(rect);
 	m_CtrlButRestore.GetClientRect(rectsize);
-	rect.left=test.left;//test.right-rectsize.right;
-//	rect.right=test.right;
-	rect.top=test.bottom-(1.5*rectsize.bottom);
+	rect.left = test.left;//test.right-rectsize.right;
+	//	rect.right=test.right;
+	rect.top = test.bottom - (1.5*rectsize.bottom);
 	ScreenToClient(rect);
-	m_CtrlButRestore.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
+	m_CtrlButRestore.MoveWindow(rect.left, rect.top, rectsize.right, rectsize.bottom, true);
 
 
 
-//*******************knappar Jammer***********************
+	//*******************knappar Jammer***********************
 
-//*******************Spelkontroll***********************
+	//*******************Spelkontroll***********************
 
 
-// Static frame: Sunken, color Black
+	// Static frame: Sunken, color Black
 
-// Timeline: align Text Centered 
+	// Timeline: align Text Centered 
 
-//JEP060310
-/*
-	m_CtrlStaticFramePlayer.GetWindowRect(rect);
+	//JEP060310
+	/*
+		m_CtrlStaticFramePlayer.GetWindowRect(rect);
 
-	m_CtrlStaticFramePlayer.GetClientRect(rectsize);
+		m_CtrlStaticFramePlayer.GetClientRect(rectsize);
 
-	rect.top=test.bottom-(rectsize.bottom);
+		rect.top=test.bottom-(rectsize.bottom);
 
-	rect.left=(test.right/2)-(rectsize.right/2);
+		rect.left=(test.right/2)-(rectsize.right/2);
 
-	//rect.right=test.left-rectsize.left;
+		//rect.right=test.left-rectsize.left;
 
-	rect.bottom=test.top+(rectsize.bottom);
+		rect.bottom=test.top+(rectsize.bottom);
 
-	ScreenToClient(rect);
+		ScreenToClient(rect);
 
-	m_CtrlStaticFramePlayer.MoveWindow(rect.left,rect.top,rectsize.right,rect.bottom,true);
+		m_CtrlStaticFramePlayer.MoveWindow(rect.left,rect.top,rectsize.right,rect.bottom,true);
 
-*/
+		*/
 
 	m_CtrlButPaus.GetWindowRect(rect);
 	m_CtrlButPaus.GetClientRect(rectsize);
@@ -3055,29 +2966,29 @@ void CDlgRadarPPI::MoveMenu()
 	rect.top = test.bottom - rectsize.bottom;
 	ScreenToClient(rect);
 	m_CtrlButFFW.MoveWindow(rect.left, rect.top, rectsize.right, rectsize.bottom, true);
-	
+
 
 	CRect newRectSize;
 	m_CtrlTimeLineEdit.GetWindowRect(rect);
 	m_CtrlTimeLineEdit.GetClientRect(newRectSize);
 	ClientToScreen(rectsize);
-		
-	rect.top=test.bottom - newRectSize.bottom - rectsize.bottom;
-	rect.left=(test.right/2)-(newRectSize.right/2);
+
+	rect.top = test.bottom - newRectSize.bottom - rectsize.bottom;
+	rect.left = (test.right / 2) - (newRectSize.right / 2);
 	ScreenToClient(rect);
-	m_CtrlTimeLineEdit.MoveWindow(rect.left,rect.top,newRectSize.right,newRectSize.bottom,true);
+	m_CtrlTimeLineEdit.MoveWindow(rect.left, rect.top, newRectSize.right, newRectSize.bottom, true);
 
 
-//	m_ColorSlider.GetWindowRect(rect);
-//	m_ColorSlider.GetClientRect(rectsize);
-////	rect.top=test.bottom-rectsize.bottom;
-//	rect.left=(test.right/2)-(rectsize.right/2);
-//	ScreenToClient(rect);
-//	m_ColorSlider.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
-//
+	//	m_ColorSlider.GetWindowRect(rect);
+	//	m_ColorSlider.GetClientRect(rectsize);
+	////	rect.top=test.bottom-rectsize.bottom;
+	//	rect.left=(test.right/2)-(rectsize.right/2);
+	//	ScreenToClient(rect);
+	//	m_ColorSlider.MoveWindow(rect.left,rect.top,rectsize.right,rectsize.bottom,true);
+	//
 }
 
-void CDlgRadarPPI::OnClose() 
+void CDlgRadarPPI::OnClose()
 
 {
 
@@ -3091,77 +3002,77 @@ void CDlgRadarPPI::OnClose()
 
 
 
-void CDlgRadarPPI::OnMenudRawvideomode() 
+void CDlgRadarPPI::OnMenudRawvideomode()
 
 {
 
 	// TODO: Add your command handler code here
 
-	m_pRadar->m_bSynteticMode			=false;
+	m_pRadar->m_bSynteticMode = false;
 
-	m_pRadar->m_bSyntAndRAWVideoMode	=false;
+	m_pRadar->m_bSyntAndRAWVideoMode = false;
 
-	m_pRadar->m_bRAWVideoMode			=true;
+	m_pRadar->m_bRAWVideoMode = true;
 
 }
 
 
 
-void CDlgRadarPPI::OnMenudRawvideosyntetic() 
+void CDlgRadarPPI::OnMenudRawvideosyntetic()
 
 {
 
 	// TODO: Add your command handler code here
 
-	m_pRadar->m_bSynteticMode			=false;
+	m_pRadar->m_bSynteticMode = false;
 
-	m_pRadar->m_bSyntAndRAWVideoMode	=true;
+	m_pRadar->m_bSyntAndRAWVideoMode = true;
 
-	m_pRadar->m_bRAWVideoMode			=false;
+	m_pRadar->m_bRAWVideoMode = false;
 
 }
 
 
 
-void CDlgRadarPPI::OnMenudSynteticmode() 
+void CDlgRadarPPI::OnMenudSynteticmode()
 
 {
 
 	// TODO: Add your command handler code here
 
-	m_pRadar->m_bSynteticMode			=true;
+	m_pRadar->m_bSynteticMode = true;
 
-	m_pRadar->m_bSyntAndRAWVideoMode	=false;
+	m_pRadar->m_bSyntAndRAWVideoMode = false;
 
-	m_pRadar->m_bRAWVideoMode			=false;
+	m_pRadar->m_bRAWVideoMode = false;
 
 }
 
 
 
-void CDlgRadarPPI::OnMenudZoomin() 
+void CDlgRadarPPI::OnMenudZoomin()
 {
 
-	
-	if(m_nZoomin>5)
-		m_nZoomin=m_nZoomin-2;
 
-		
+	if (m_nZoomin > 5)
+		m_nZoomin = m_nZoomin - 2;
+
+
 
 }
 
 
 
-void CDlgRadarPPI::OnMenudZoomout() 
+void CDlgRadarPPI::OnMenudZoomout()
 
 {
 
 	// TODO: Add your command handler code here
 
 
-	if(m_nZoomin<130)
+	if (m_nZoomin < 130)
 
-		m_nZoomin=m_nZoomin+2;
+		m_nZoomin = m_nZoomin + 2;
 
 
 
@@ -3169,83 +3080,83 @@ void CDlgRadarPPI::OnMenudZoomout()
 
 
 
-void CDlgRadarPPI::OnMenudFittoscreen() 
+void CDlgRadarPPI::OnMenudFittoscreen()
 {
-	m_nZoomin=45;	
+	m_nZoomin = 45;
 
 }
 
 
 
-void CDlgRadarPPI::OnUpdateMenudRawvideomode(CCmdUI* pCmdUI) 
+void CDlgRadarPPI::OnUpdateMenudRawvideomode(CCmdUI* pCmdUI)
 
 {
 
 	// TODO: Add your command update UI handler code here
 
-//	if(m_pRadar->m_bRAWVideoMode==true)
+	//	if(m_pRadar->m_bRAWVideoMode==true)
 
 
 
 	//	pCmdUI->SetCheck(1);
 
-		pCmdUI->Enable(true);
+	pCmdUI->Enable(true);
 
-		//GetDlgItem
+	//GetDlgItem
 
-//	else
+	//	else
 
 	//	pCmdUI->SetCheck(0);
 
 
 
-	
+
 
 }
 
 
 
-void CDlgRadarPPI::OnMenuSlower() 
+void CDlgRadarPPI::OnMenuSlower()
 
 {
-	if(m_fGgrRealTime>1.0f)
+	if (m_fGgrRealTime > 1.0f)
 	{
 		m_fGgrRealTime--;
 		m_pRadar->m_fGgrRealTime--;
-		m_fAngleMove = (360.0f/(m_pRadar->m_fSvepHastighet*10))*m_fGgrRealTime;
+		m_fAngleMove = (360.0f / (m_pRadar->m_fSvepHastighet * 10))*m_fGgrRealTime;
 
-	}	
+	}
 
 }
 
 
 
-void CDlgRadarPPI::OnMenuFaster() 
+void CDlgRadarPPI::OnMenuFaster()
 {
-	if(m_fGgrRealTime<20.0f)
+	if (m_fGgrRealTime < 20.0f)
 	{
 		m_fGgrRealTime++;
 		m_pRadar->m_fGgrRealTime++;
-		m_fAngleMove = (360.0f/(m_pRadar->m_fSvepHastighet*10))*m_fGgrRealTime;
-	}	
+		m_fAngleMove = (360.0f / (m_pRadar->m_fSvepHastighet * 10))*m_fGgrRealTime;
+	}
 }
 
 
 
-void CDlgRadarPPI::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CDlgRadarPPI::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 
 	// TODO: Add your message handler code here and/or call default
 
-	
-//	int kalle=m_CtlTimeLine.GetPos();
 
-	m_fTimeUnit=m_ColorSlider.GetPos();
+	//	int kalle=m_CtlTimeLine.GetPos();
 
-	m_pRadar->m_nTimeUnit=m_ColorSlider.GetPos();
+	m_fTimeUnit = m_ColorSlider.GetPos();
+
+	m_pRadar->m_nTimeUnit = m_ColorSlider.GetPos();
 
 
-//	C???::OnHScroll(nSBCode, nPos, pScrollBar);
+	//	C???::OnHScroll(nSBCode, nPos, pScrollBar);
 
 }
 
@@ -3257,11 +3168,11 @@ void CDlgRadarPPI::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 	if(m_CtrlBut2.GetState())
 
-		m_CtrlBut2.SetState(0);
+	m_CtrlBut2.SetState(0);
 
 	else
 
-		m_CtrlBut2.SetState(1);
+	m_CtrlBut2.SetState(1);
 
 	*/
 
@@ -3273,16 +3184,16 @@ void CDlgRadarPPI::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 
 
-void CDlgRadarPPI::UpdateView() 
+void CDlgRadarPPI::UpdateView()
 
 {
 
-//Scenario
+	//Scenario
 
-	m_valueTimeLine=m_fTimeUnit;
+	m_valueTimeLine = m_fTimeUnit;
 
 
-//Störare
+	//Störare
 
 	m_strJam1.Format(_T("Name: \r\n %s"), m_pJammer->m_strUniqID);
 
@@ -3294,7 +3205,7 @@ void CDlgRadarPPI::UpdateView()
 
 
 
-	if(m_pJammer->m_bBrusStorning==true && m_pJammer->m_strStatus!="OFF")
+	if (m_pJammer->m_bBrusStorning == true && m_pJammer->m_strStatus != "OFF")
 
 	{
 
@@ -3306,14 +3217,14 @@ void CDlgRadarPPI::UpdateView()
 
 	}
 
-	else if(m_pJammer->m_bRepeterStorning==true && m_pJammer->m_strStatus!="OFF")
+	else if (m_pJammer->m_bRepeterStorning == true && m_pJammer->m_strStatus != "OFF")
 
 	{
 
 		m_strJam5.Format(_T("Effective Radiated Power: \r\n %3.1f[W]"), m_pJammer->m_fPeakPowerRepeaterRef*m_pJammer->m_nAntennaGainTX);
 
 		m_strJam6.Format(_T("Power Received: \r\n %3.1f[dBm]"), CRadarCalculate::FromGgrTodBm(CRadarCalculate::PowerRecieved(m_pRadar->m_fPeakPower, m_pRadar->m_fGainMainlobe, m_pRadar->m_flambda, m_pJammer->ReturnAntennaGain(2, (180 + m_pJammer->m_fBaring) - m_pJammer->m_fCourse), m_pJammer->m_fDistanceToRadar)));
-		
+
 
 		//		text.Format("Velocity False Targets: %d [m/s]",(int)(((CRadarJammer*)pTempPos->m_pUtrustning)->m_fFalseTargetVelocity+pTempPos->m_pUtrustning->m_fVelocity));
 
@@ -3333,7 +3244,7 @@ void CDlgRadarPPI::UpdateView()
 
 
 
-//Radar
+	//Radar
 
 
 
@@ -3353,7 +3264,7 @@ void CDlgRadarPPI::UpdateView()
 
 	m_strRad7.Format(_T("Pulse Width: \r\n %3.1f [us] "), (m_pRadar->m_fPulseWidth * 1000000));
 
-	m_strRad8.Format(_T("Peakpower: \r\n %d [W] "), (int)(m_pRadar->m_fPeakPower));	
+	m_strRad8.Format(_T("Peakpower: \r\n %d [W] "), (int)(m_pRadar->m_fPeakPower));
 
 
 	UpdateData(false);
@@ -3362,102 +3273,102 @@ void CDlgRadarPPI::UpdateView()
 
 
 
-void CDlgRadarPPI::OnButtonJammode1() 
+void CDlgRadarPPI::OnButtonJammode1()
 {
 
-//	if(m_ppJammer[0]->m_bBrusStorning==false && m_ppJammer[0]->m_bRepeterStorning==true)
+	//	if(m_ppJammer[0]->m_bBrusStorning==false && m_ppJammer[0]->m_bRepeterStorning==true)
 
-//	{
+	//	{
 
-		m_pJammer->m_bBrusStorning=true;
+	m_pJammer->m_bBrusStorning = true;
 
-		m_pJammer->m_bRepeterStorning=false;
+	m_pJammer->m_bRepeterStorning = false;
 
-		if(m_pJammer->m_bIckeFoljande==true && m_pJammer->m_bFoljande==false)
+	if (m_pJammer->m_bIckeFoljande == true && m_pJammer->m_bFoljande == false)
 
-			m_pJammer->m_strStatus="1. Noise (Fix Frequency)";
+		m_pJammer->m_strStatus = "1. Noise (Fix Frequency)";
 
-		if(m_pJammer->m_bIckeFoljande==false && m_pJammer->m_bFoljande==true)
+	if (m_pJammer->m_bIckeFoljande == false && m_pJammer->m_bFoljande == true)
 
-			m_pJammer->m_strStatus="1. Noise (Tracking (SOR))";
+		m_pJammer->m_strStatus = "1. Noise (Tracking (SOR))";
 
-//	}
+	//	}
 
 }
 
 
 
-void CDlgRadarPPI::OnButtonJammode2() 
+void CDlgRadarPPI::OnButtonJammode2()
 
 {
 
-//	if(m_ppJammer[0]->m_bSlumpadeFalskmal==false && m_ppJammer[0]->m_bRepeterStorning==true)
+	//	if(m_ppJammer[0]->m_bSlumpadeFalskmal==false && m_ppJammer[0]->m_bRepeterStorning==true)
 
-//	{
+	//	{
 
-	m_pJammer->m_bBrusStorning=false;
+	m_pJammer->m_bBrusStorning = false;
 
-	m_pJammer->m_bRepeterStorning=true;
+	m_pJammer->m_bRepeterStorning = true;
 
-		//Vilken störstatus har jammern
+	//Vilken störstatus har jammern
 
-	if(m_pJammer->m_bSynkronaFalskmal==true)
+	if (m_pJammer->m_bSynkronaFalskmal == true)
 
-		m_pJammer->m_strStatus="2. DRFM Repeater (Synchronized FalseTargets)";
+		m_pJammer->m_strStatus = "2. DRFM Repeater (Synchronized FalseTargets)";
 
-	if(m_pJammer->m_bAsynkronaFalskmal==true)
+	if (m_pJammer->m_bAsynkronaFalskmal == true)
 
-		m_pJammer->m_strStatus="2. DRFM Repeater (Asynchronized FalseTargets)";
+		m_pJammer->m_strStatus = "2. DRFM Repeater (Asynchronized FalseTargets)";
 
-	if(m_pJammer->m_bSlumpadeFalskmal==true)
+	if (m_pJammer->m_bSlumpadeFalskmal == true)
 
-		m_pJammer->m_strStatus="2. DRFM Repeater (Random FalseTargets)";
+		m_pJammer->m_strStatus = "2. DRFM Repeater (Random FalseTargets)";
 
-				
 
-		//	}
 
-		//	else if(m_ppJammer[0]->m_bSlumpadeFalskmal==true && m_ppJammer[0]->m_bRepeterStorning==true)
+	//	}
 
-		//	{
+	//	else if(m_ppJammer[0]->m_bSlumpadeFalskmal==true && m_ppJammer[0]->m_bRepeterStorning==true)
 
-		//		m_ppJammer[0]->m_bSlumpadeFalskmal=false;
+	//	{
 
-		//		m_ppJammer[0]->m_strStatus="OFF";
+	//		m_ppJammer[0]->m_bSlumpadeFalskmal=false;
 
-				
+	//		m_ppJammer[0]->m_strStatus="OFF";
 
-		//	}
 
-	
 
-	
+	//	}
+
+
+
+
 
 }
 
 
 
 
-void CDlgRadarPPI::OnButtonOff() 
+void CDlgRadarPPI::OnButtonOff()
 
 {
 
-	m_pJammer->m_strStatus="OFF";
-	
-	m_pJammer->m_bBrusStorning=false;
+	m_pJammer->m_strStatus = "OFF";
 
-	m_pJammer->m_bRepeterStorning=false;
+	m_pJammer->m_bBrusStorning = false;
 
-	
+	m_pJammer->m_bRepeterStorning = false;
+
+
 
 }
 
 
-void CDlgRadarPPI::OnButtonPaus() 
+void CDlgRadarPPI::OnButtonPaus()
 
 {
 
-	m_pRadar->m_fGgrRealTime=0.0f;
+	m_pRadar->m_fGgrRealTime = 0.0f;
 
 	KillTimer(0);
 
@@ -3465,52 +3376,52 @@ void CDlgRadarPPI::OnButtonPaus()
 
 
 
-void CDlgRadarPPI::OnButton1() 
+void CDlgRadarPPI::OnButton1()
 
 {
 
-	m_pRadar->m_fGgrRealTime=DEFAULTGGRREALTIME;
+	m_pRadar->m_fGgrRealTime = DEFAULTGGRREALTIME;
 
-	m_pRadar->m_bRun=true;
+	m_pRadar->m_bRun = true;
 
-	m_bRun=true;
+	m_bRun = true;
 
-	SetTimer(0,100,NULL);
+	SetTimer(0, 100, NULL);
 
 }
 
 
 
-void CDlgRadarPPI::OnButtonRestore() 
+void CDlgRadarPPI::OnButtonRestore()
 
 {/*
 
 	if(m_CtrlButRestore.GetState())
 
-		m_CtrlButRestore.SetState(0);
+	m_CtrlButRestore.SetState(0);
 
 	else
 
-		m_CtrlButRestore.SetState(1);
+	m_CtrlButRestore.SetState(1);
 
-*/
+	*/
 
-	if(!m_bRun)
+	if (!m_bRun)
 
 	{
 
 		AfxMessageBox(_T("Press Play!"));
 
-		return ;
+		return;
 
 	}
 
-	if(m_bRestore)
+	if (m_bRestore)
 
 	{
 
 		ShowWindow(SW_RESTORE);
-		m_bRestore=false;
+		m_bRestore = false;
 
 	}
 
@@ -3519,14 +3430,14 @@ void CDlgRadarPPI::OnButtonRestore()
 	{
 
 		ShowWindow(SW_MAXIMIZE);
-		m_bRestore=true;
+		m_bRestore = true;
 
 	}
 }
 
 
 
-void CDlgRadarPPI::OnMouseMove(UINT nFlags, CPoint point) 
+void CDlgRadarPPI::OnMouseMove(UINT nFlags, CPoint point)
 
 {
 
@@ -3538,121 +3449,121 @@ void CDlgRadarPPI::OnMouseMove(UINT nFlags, CPoint point)
 
 	{
 
-		
 
-		CRect rect,tempwnd;
 
-		m_CtrlStaticFramePlayer.GetClientRect(rect);
+	CRect rect,tempwnd;
 
-		m_CtrlStaticFramePlayer.GetWindowRect(tempwnd);
+	m_CtrlStaticFramePlayer.GetClientRect(rect);
 
-		ScreenToClient(tempwnd);
+	m_CtrlStaticFramePlayer.GetWindowRect(tempwnd);
 
-		tempwnd.top=point.y-100-clickY[0];
+	ScreenToClient(tempwnd);
 
-		tempwnd.left=point.x-clickX[0];
+	tempwnd.top=point.y-100-clickY[0];
 
-		ClientToScreen(tempwnd);
+	tempwnd.left=point.x-clickX[0];
 
-		m_CtrlStaticFramePlayer.MoveWindow(tempwnd.left,tempwnd.top,rect.right,rect.bottom,true);
+	ClientToScreen(tempwnd);
 
+	m_CtrlStaticFramePlayer.MoveWindow(tempwnd.left,tempwnd.top,rect.right,rect.bottom,true);
 
 
 
 
-		m_CtrlTimeLineEdit.GetRect(rect);
 
-		m_CtrlStaticFramePlayer.GetWindowRect(tempwnd);
+	m_CtrlTimeLineEdit.GetRect(rect);
 
-		ScreenToClient(tempwnd);
+	m_CtrlStaticFramePlayer.GetWindowRect(tempwnd);
 
-		tempwnd.top=point.y-100-clickY[1];
+	ScreenToClient(tempwnd);
 
-		tempwnd.left=point.x-clickX[1];
+	tempwnd.top=point.y-100-clickY[1];
 
-		ClientToScreen(tempwnd);
+	tempwnd.left=point.x-clickX[1];
 
-		m_CtrlTimeLineEdit.MoveWindow(tempwnd.left,tempwnd.top,rect.right,rect.bottom,true);
+	ClientToScreen(tempwnd);
 
+	m_CtrlTimeLineEdit.MoveWindow(tempwnd.left,tempwnd.top,rect.right,rect.bottom,true);
 
 
-		m_ColorSlider.GetClientRect(rect);
 
-		m_CtrlStaticFramePlayer.GetWindowRect(tempwnd);
+	m_ColorSlider.GetClientRect(rect);
 
-		ScreenToClient(tempwnd);
+	m_CtrlStaticFramePlayer.GetWindowRect(tempwnd);
 
-		tempwnd.top=point.y-100-clickY[2];
+	ScreenToClient(tempwnd);
 
-		tempwnd.left=point.x-clickX[2];
+	tempwnd.top=point.y-100-clickY[2];
 
-		ClientToScreen(tempwnd);
+	tempwnd.left=point.x-clickX[2];
 
-		m_ColorSlider.MoveWindow(tempwnd.left,tempwnd.top,rect.right,rect.bottom,true);
+	ClientToScreen(tempwnd);
 
+	m_ColorSlider.MoveWindow(tempwnd.left,tempwnd.top,rect.right,rect.bottom,true);
 
 
-		m_CtrlButPaus.GetClientRect(rect);
 
-		m_CtrlStaticFramePlayer.GetWindowRect(tempwnd);
+	m_CtrlButPaus.GetClientRect(rect);
 
-		ScreenToClient(tempwnd);
+	m_CtrlStaticFramePlayer.GetWindowRect(tempwnd);
 
-		tempwnd.top=point.y-100-clickY[3];
+	ScreenToClient(tempwnd);
 
-		tempwnd.left=point.x-clickX[3];
+	tempwnd.top=point.y-100-clickY[3];
 
-		ClientToScreen(tempwnd);
+	tempwnd.left=point.x-clickX[3];
 
-		m_CtrlButPaus.MoveWindow(tempwnd.left,tempwnd.top,rect.right,rect.bottom,true);
+	ClientToScreen(tempwnd);
 
+	m_CtrlButPaus.MoveWindow(tempwnd.left,tempwnd.top,rect.right,rect.bottom,true);
 
 
-		m_CtrlButPlay.GetClientRect(rect);
 
-		m_CtrlStaticFramePlayer.GetWindowRect(tempwnd);
+	m_CtrlButPlay.GetClientRect(rect);
 
-		ScreenToClient(tempwnd);
+	m_CtrlStaticFramePlayer.GetWindowRect(tempwnd);
 
-		tempwnd.top=point.y-100-clickY[4];
+	ScreenToClient(tempwnd);
 
-		tempwnd.left=point.x-clickX[4];
+	tempwnd.top=point.y-100-clickY[4];
 
-		ClientToScreen(tempwnd);
+	tempwnd.left=point.x-clickX[4];
 
-		m_CtrlButPlay.MoveWindow(tempwnd.left,tempwnd.top,rect.right,rect.bottom,true);
+	ClientToScreen(tempwnd);
 
+	m_CtrlButPlay.MoveWindow(tempwnd.left,tempwnd.top,rect.right,rect.bottom,true);
 
 
-		m_CtrlButREW.GetClientRect(rect);
 
-		m_CtrlStaticFramePlayer.GetWindowRect(tempwnd);
+	m_CtrlButREW.GetClientRect(rect);
 
-		ScreenToClient(tempwnd);
+	m_CtrlStaticFramePlayer.GetWindowRect(tempwnd);
 
-		tempwnd.top=point.y-100-clickY[5];
+	ScreenToClient(tempwnd);
 
-		tempwnd.left=point.x-clickX[5];
+	tempwnd.top=point.y-100-clickY[5];
 
-		ClientToScreen(tempwnd);
+	tempwnd.left=point.x-clickX[5];
 
-		m_CtrlButREW.MoveWindow(tempwnd.left,tempwnd.top,rect.right,rect.bottom,true);
+	ClientToScreen(tempwnd);
 
+	m_CtrlButREW.MoveWindow(tempwnd.left,tempwnd.top,rect.right,rect.bottom,true);
 
 
-		m_CtrlButFFW.GetClientRect(rect);
 
-		m_CtrlStaticFramePlayer.GetWindowRect(tempwnd);
+	m_CtrlButFFW.GetClientRect(rect);
 
-		ScreenToClient(tempwnd);
+	m_CtrlStaticFramePlayer.GetWindowRect(tempwnd);
 
-		tempwnd.top=point.y-100-clickY[6];
+	ScreenToClient(tempwnd);
 
-		tempwnd.left=point.x-clickX[6];
+	tempwnd.top=point.y-100-clickY[6];
 
-		ClientToScreen(tempwnd);
+	tempwnd.left=point.x-clickX[6];
 
-		m_CtrlButFFW.MoveWindow(tempwnd.left,tempwnd.top,rect.right,rect.bottom,true);
+	ClientToScreen(tempwnd);
+
+	m_CtrlButFFW.MoveWindow(tempwnd.left,tempwnd.top,rect.right,rect.bottom,true);
 
 
 
@@ -3662,71 +3573,71 @@ void CDlgRadarPPI::OnMouseMove(UINT nFlags, CPoint point)
 
 	CDialog::OnMouseMove(nFlags, point);
 
-	
+
 
 }
 
 
 
-void CDlgRadarPPI::OnButtonRadrawvideo() 
+void CDlgRadarPPI::OnButtonRadrawvideo()
 
 {
 
-	m_pRadar->m_bSynteticMode			=false;
+	m_pRadar->m_bSynteticMode = false;
 
-	m_pRadar->m_bSyntAndRAWVideoMode	=false;
+	m_pRadar->m_bSyntAndRAWVideoMode = false;
 
-	m_pRadar->m_bRAWVideoMode			=true;
+	m_pRadar->m_bRAWVideoMode = true;
 
-	
+
 
 }
 
 
 
-void CDlgRadarPPI::OnButtonRadsyntetic() 
+void CDlgRadarPPI::OnButtonRadsyntetic()
 
 {
 
-	m_pRadar->m_bSynteticMode			=true;
+	m_pRadar->m_bSynteticMode = true;
 
-	m_pRadar->m_bSyntAndRAWVideoMode	=false;
+	m_pRadar->m_bSyntAndRAWVideoMode = false;
 
-	m_pRadar->m_bRAWVideoMode			=false;	
+	m_pRadar->m_bRAWVideoMode = false;
 
 }
 
 
 
-void CDlgRadarPPI::OnButShowdisk() 
+void CDlgRadarPPI::OnButShowdisk()
 
 {
 
-	if(m_pDisplay->m_bShow==true)	
+	if (m_pDisplay->m_bShow == true)
 
-		m_pDisplay->m_bShow=false;
+		m_pDisplay->m_bShow = false;
 
 	else
 
-		m_pDisplay->m_bShow=true;
+		m_pDisplay->m_bShow = true;
 
 }
 
 
 
-BOOL CDlgRadarPPI::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) 
+BOOL CDlgRadarPPI::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 {
 
-	if(zDelta>0)
+	if (zDelta > 0)
 
 		m_pDisplay->ZoomIn();
 
 	else
 
-		m_pDisplay->ZoomOut() ;
+		m_pDisplay->ZoomOut();
 
-	
+
 
 	return CDialog::OnMouseWheel(nFlags, zDelta, pt);
 
@@ -3734,29 +3645,29 @@ BOOL CDlgRadarPPI::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 
 
-void CDlgRadarPPI::OnButDegrees() 
+void CDlgRadarPPI::OnButDegrees()
 
 {
 
-	if(m_pDisplay->m_bShowDegrees==true)	
+	if (m_pDisplay->m_bShowDegrees == true)
 
-		m_pDisplay->m_bShowDegrees=false;
+		m_pDisplay->m_bShowDegrees = false;
 
 	else
 
-		m_pDisplay->m_bShowDegrees=true;
+		m_pDisplay->m_bShowDegrees = true;
 
 }
 
 
 
-void CDlgRadarPPI::OnButFfw() 
+void CDlgRadarPPI::OnButFfw()
 {
 	OnMenuFaster();
-	
+
 }
 
-void CDlgRadarPPI::OnButRew() 
+void CDlgRadarPPI::OnButRew()
 {
-	OnMenuSlower();	
+	OnMenuSlower();
 }

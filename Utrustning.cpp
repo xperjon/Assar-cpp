@@ -208,3 +208,7 @@ void CUtrustning::Serialize(CArchive &ar)
 
 }
 
+void CUtrustning::stop()
+{
+	m_strStatus = "OFF";
+}

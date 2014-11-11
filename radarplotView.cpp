@@ -266,7 +266,7 @@ void CRadarplotView::OnDraw(CDC* pDC)
 			}
 			else
 				text.Format(_T("SNR: %3.1f [dB]  Noise Type: Jammer Noise"), CRadarCalculate::FromGgrTodB(pTempPos->m_pUtrustning->m_fSNR));
-
+			
 
 			ShowText(pDC, 3400, 4700, 180, &text);
 			CBitmap bitmap;
@@ -3416,36 +3416,25 @@ void CRadarplotView::OnButtonStop()
 	CUtrustningLista::CNod *pTempPos;
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
 	pTempPos = pLista->m_pStartPos;
-
 	for (int i = 0; i < pLista->m_nAntalNoder; i++)
 	{
+		pTempPos->m_pUtrustning->stop();
 
-		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+		/*if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 		{
-
 			pUtr = pTempPos->m_pUtrustning;
 			break;
-
-		}/*
-
-		if(pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
-
-		{
-
-		((CRadarStation*)pTempPos->m_pUtrustning)->m_CellLista.TaBortAlla();
-
 		}*/
-
 		pTempPos = pTempPos->m_pNext;
-
 	}
 
-	pUtr->m_strStatus = "OFF";
+	//pUtr->m_strStatus = "OFF";
+
 	m_pDlgScenOpenGL->Stop();
 	//	m_pDlgOVOpenGL->Stop();
 	m_bRun = false;
 	KillTimer(4);
-	m_pDlgScenOpenGL->m_pRadar->m_CellLista.TaBortAlla();
+	//m_pDlgScenOpenGL->m_pRadar->m_CellLista.TaBortAlla();
 	m_pDlgScenOpenGL->Invalidate();
 
 	m_strSimulationStatus.Format(_T("Ready"));

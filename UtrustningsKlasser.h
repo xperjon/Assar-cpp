@@ -33,6 +33,8 @@ class CRadarTarget : public CUtrustning
 
 public:
 
+	void stop();
+
 	CRadarTarget();
 
 	~CRadarTarget();
@@ -66,7 +68,7 @@ public:
 
 	void operator=(CUtrustning &pUtr);
 
-
+	void stop();
 
 public:
 
@@ -250,6 +252,7 @@ public:
 
 	void operator=(CUtrustning &pUtr);
 
+	void stop();
 
 
 	float ReturnAntennaGain(bool TXorRX, float alfa);

@@ -17,6 +17,8 @@
 #include <afxext.h>         // MFC extensions
 #include <afxdisp.h>        // MFC Automation classes
 #include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
+
+#include <atlbase.h>
 #ifndef _AFX_NO_AFXCMN_SUPPORT
 #include <afxcmn.h>			// MFC support for Windows Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
@@ -26,6 +28,10 @@
 void HookTrace(const wchar_t* format, ...);
 void HookTrace(const char* format, ...);
 
+#define M_PI 3.1415926535897932384626433832795f
+#define DEFAULTGGRREALTIME 3.0f
+
+/*
 #ifdef ATLTRACE 
 #undef ATLTRACE
 #undef ATLTRACE2
@@ -33,6 +39,7 @@ void HookTrace(const char* format, ...);
 #define ATLTRACE HookTrace
 #define ATLTRACE2 ATLTRACE
 #endif // ATLTRACE
+*/
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

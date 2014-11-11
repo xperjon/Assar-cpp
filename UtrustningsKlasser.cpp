@@ -81,34 +81,21 @@ CRadarTarget::CRadarTarget(): CUtrustning()
 
 
 CRadarTarget::~CRadarTarget()
-
 {
-
-
-
 	TRACE("~CRadarTarget\n");
-
 }
 
+void CRadarTarget::stop()
+{
+	CUtrustning::stop();
+}
 
 // Default-konstruktor för att skapa default objekt med "standard" inställningar
-
-
-
-
-
 // --------------------------
-
 // ---- CRadarJammer
-
 // --------------------------
 
-
-
-
-
 // Default-konstruktor för att skapa default objekt med "standard" inställningar
-
 CRadarJammer::CRadarJammer() : CUtrustning()
 
 {
@@ -652,7 +639,12 @@ float CRadarJammer::lob(float x, float y, float z,float u)
 
 
 
-
+void CRadarJammer::stop()
+{
+	CUtrustning::stop();
+	m_bBrusStorning = false;
+	m_bRepeterStorning = false;
+}
 
 
 
@@ -1235,3 +1227,10 @@ float CRadarStation::lob(float x, float y, float z,float u)
 }
 
 
+void CRadarStation::stop()
+{
+	CUtrustning::stop();
+	m_bRun = false;
+	m_fGgrRealTime = DEFAULTGGRREALTIME;
+	m_CellLista.TaBortAlla();
+}

@@ -34,6 +34,8 @@ public:
 
 	virtual ~CUtrustning();
 
+	virtual void stop();
+
 //	CUtrustning(CUtrustning& utr);
 
 	//~CUtrustning();

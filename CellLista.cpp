@@ -90,12 +90,13 @@ CCellLista::~CCellLista()
 void CCellLista::LaggTill(CCell *pCell)
 {
 	CNod *pTempPos;
-	TRACE("~LaggTillCELL\n");
+	TRACE("LaggTillCELL\n");
 
 	if(!IsEmpty())
 	{
 		if(!AlreadyJammed(pCell))
 		{
+			ATLTRACE2(_T("CCellLista::LaggTill lifeTime: %4.1f , type: %d \n"),pCell->m_fLifeTime,pCell->m_enumTyp);
 			pTempPos = End();
 			pTempPos->m_pNext = new CCellLista::CNod;
 			pTempPos->m_pNext->m_pPrev = pTempPos;
