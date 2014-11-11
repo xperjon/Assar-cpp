@@ -1714,35 +1714,19 @@ void COpenGL::CalcWindowExt()
 
 
 void COpenGL::OnContextMenu(CWnd* pWnd, CPoint point) 
-
 {
-
 	// TODO: Add your message handler code here
-
-	
-/*
+	/*
 	if(m_strCurrentObject=="Scenario")
-
 	{
-
 		CMenu menuRun;	
-
 		VERIFY(menuRun.LoadMenu(IDR_MENU_RUN));
-
 		CMenu* pPop = menuRun.GetSubMenu(0);
-
 		ASSERT(pPop != NULL);
-
 		pPop->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x, point.y, this);
+	}*/
 
-	}
-
-	
-*/
 //	if(m_strCurrentObject=="OverView")
-
-
-
 }
 
 

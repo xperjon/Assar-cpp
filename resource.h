@@ -55,7 +55,6 @@
 #define IDI_ICON_PLAY                   183
 #define IDI_ICON_PAUS                   184
 #define IDB_BIT_MOVE                    186
-#define IDD_DIALOG_CHOISE               187
 #define IDI_ICON_WARNING                188
 #define IDD_DIALOG_DIAGRAM              189
 #define IDD_DIALOG_RADARPPI             190
@@ -227,7 +226,6 @@
 #define IDC_BUT_WAYPOINT                1165
 #define IDC_BUT_MOVE                    1166
 #define IDC_BUT_DELETEWAYPOINT          1167
-#define IDC_STATIC_CHOISE               1168
 #define IDC_BUTTON_RADSYNTETIC          1169
 #define IDC_BUTTON_RADRAWVIDEO          1170
 #define IDC_BUT_REW                     1171

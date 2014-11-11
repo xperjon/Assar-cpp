@@ -713,96 +713,21 @@ void CDlgRadarPPI::CalculateScene()
 
 
 void CDlgRadarPPI::OnTimer(UINT nIDEvent) 
-
 {
 
-	// TODO: Add your message handler code here and/or call default
-
-	// Lokal Tid
-
-/*
-	struct tm *newtime;
-    char am_pm[] = "AM";
-    time_t long_time;
-
-
-    time( &long_time );                
-    newtime = localtime( &long_time ); 
-
-
-
-    if( newtime->tm_hour > 12 )        
-
-            strcpy( am_pm, "PM" );
-
-    if( newtime->tm_hour > 12 )        
-
-            newtime->tm_hour -= 12;    
-
-    if( newtime->tm_hour == 0 )       
-
-            newtime->tm_hour = 12;
-
-*/
-
-	//InvalidateRect(NULL,FALSE);
-
 	if(m_bRun==true)
-
 	{
 
-	//	for(int u=0;u<m_nAntalJammer;u++)
-
-	//	{
-
-			if(m_fTimeUnit > m_fKillTime)
-
-			{
-
-					
-
-				KillTimer(0);
-
-				CDialogChoise DlgCh;
-
-				DlgCh.m_strChoise.Format(_T("Abort Simulation?"));
-
-				int nRet=-1;
-
-				nRet=DlgCh.DoModal();
-
-				if(nRet==IDOK)
-
-				{
-
-					SetTimer(0,100,NULL);
-
-					Stop();
-
-				}
-
-				else
-
-				{
-
-					OnMenuPause() ;
-
-				}
-
-				
-
-		//		break;
-
-			}
-
-	//	}
-
+		if(m_fTimeUnit > m_fKillTime)
+		{
+			KillTimer(0);
+			AfxMessageBox(_T("Simulation finished."), 0);
+			SetTimer(0,100,NULL);
+			Stop();
+		}
 	}
-
 	else
-
 		m_fTimeUnit=0;
-
 	
 
 	float time = m_fTimeUnit;
@@ -2796,42 +2721,7 @@ float CDlgRadarPPI::RadarEmittingReductionSORDownRange()
 
 
 void CDlgRadarPPI::OnMenuStop() 
-
 {
-
-	// TODO: Add your command handler code here
-
-	//m_bRun=false;
-
-	//m_pRadar->m_bRun=false;
-
-	CDialogChoise DlgCh;
-
-	DlgCh.m_strChoise.Format(_T("Abort Simulation?"));
-
-	int nRet=-1;
-
-	nRet=DlgCh.DoModal();
-
-	if(nRet==IDOK)
-
-	{
-
-		m_pJammer->m_strStatus="OFF";
-
-		OnButtonRestore() ;
-
-		Stop();
-
-	}
-
-	else
-
-	{
-
-	
-
-	}
 
 }
 

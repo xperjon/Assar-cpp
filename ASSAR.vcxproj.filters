@@ -30,9 +30,6 @@
     <ClCompile Include="DataFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DialogChoise.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DialogKalibreraRadar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -76,9 +73,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="radarplotView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RadarPPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Splash.cpp">
@@ -234,9 +228,6 @@
     <ClInclude Include="DataFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DialogChoise.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DialogKalibreraRadar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -282,9 +273,6 @@
     <ClInclude Include="radarplotView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RadarPPI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -321,5 +309,8 @@
     <CustomBuild Include="res\radarplot.rc2">
       <Filter>Resource Files</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

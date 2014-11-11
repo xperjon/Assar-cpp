@@ -15,9 +15,6 @@
 #include "PropSheetUtrustning.h"
 #include "PropSheetUtrustning1.h"
 #include "PropSheetUtrustning2.h"
-#include "DialogChoise.h"
-//#include "RadarPPI.h"
-#include "radarppi.h"
 #include "DlgOverViewOpenGL.h"
 #include "DataFile.h"
 #include <math.h>
