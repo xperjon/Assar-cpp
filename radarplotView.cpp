@@ -1049,72 +1049,39 @@ void CRadarplotView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 
 void CRadarplotView::OnButtonCreateRadar()
-
 {
-
 	if (m_bRun)
-
 		return;
-
 	if (NbrOfRadar > 0)
-
 		AfxMessageBox(_T("Not available in DEMO version!"));
-
 	else
-
 	{
-
 		CUtrustning*		tmpUtr;
-
 		CUtrustningLista* pLista = CUtrustningLista::getInstance();
-
 		tmpUtr = new CRadarStation();
-
-		tmpUtr->m_fPosX = 0;
-
-		tmpUtr->m_fPosY = 0;
-
 		tmpUtr->m_strUniqID.Format(_T("Radar_1"));
-
 		pLista->LaggTill(tmpUtr);
 
-
-
 		NbrOfRadar++;
-
 		//	m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
 		Invalidate(true);
-
 		m_bDelete = true;
-
 		OnPropertiesRadar();
-
 	}
-
 }
 
 
 
 void CRadarplotView::OnButtonCreateJammer()
-
 {
-
 	if (m_bRun)
-
 		return;
-
 	if (NbrOfRadar != 0)
-
 	{
-
 		if (NbrOfJammer > 0)
-
 			AfxMessageBox(_T("Not available in DEMO version!"));
-
 		else
-
 		{
-
 			CUtrustning*		tmpUtr;
 			CUtrustningLista* pLista = CUtrustningLista::getInstance();
 			tmpUtr = new CRadarJammer();
@@ -1122,126 +1089,78 @@ void CRadarplotView::OnButtonCreateJammer()
 			//Här kan man göra ändringar i Utrustningen för Jammern
 
 			tmpUtr->m_strStatus = "OFF";
-
 			tmpUtr->m_fColor[0] = 0.5f;
-
 			tmpUtr->m_fColor[1] = 0.75f;
-
 			tmpUtr->m_fColor[2] = 1.0f;
-
 			tmpUtr->m_fBaring = 45.0f*countJ + 45.0f;
-
 			tmpUtr->m_strUniqID.Format(_T("Jammer_1"));
-
 			m_strCurrentObject = tmpUtr->m_strUniqID;
+
+			float X, Y;
+			CRadarCalculate::Startpos(tmpUtr->m_fBaring, tmpUtr->m_fDistanceToRadar, X, Y);
+			tmpUtr->m_startPos.x = X;
+			tmpUtr->m_startPos.y = Y;
+			tmpUtr->m_pos.x = X;
+			tmpUtr->m_pos.y = Y;
 
 			pLista->LaggTill(tmpUtr);
 
-
-
 			countJ++;
-
 			NbrOfJammer++;
 
-
-
 			Invalidate(true);
-
 			m_bDelete = true;
-
 			OnPropertiesJammer();
-
 		}
-
 	}
-
 	else
-
 		AfxMessageBox(_T("Start by adding a Radar!"));
-
-
-
 }
 
-
-
-
-
 void CRadarplotView::OnButtonCreateTarget()
-
 {
-
 	if (m_bRun)
-
 		return;
-
 	if (NbrOfRadar != 0)
-
 	{
-
 		if (NbrOfJammer != 0)
-
 		{
-
 			if (NbrOfTarget > 3)
-
 				AfxMessageBox(_T("The maximal amount of Targets is four"));
-
 			else
-
 			{
-
 				CUtrustning*		tmpUtr;
-
 				CUtrustningLista* pLista = CUtrustningLista::getInstance();
-
 				tmpUtr = new CRadarTarget();
-
 				tmpUtr->m_fVelocity = 250;
-
 				tmpUtr->m_fCourse = 180.0f + 90.0f*countT;
-
 				if (tmpUtr->m_fCourse > 360)
-
 					tmpUtr->m_fCourse -= 360;
-
 				tmpUtr->m_fBaring = 90.0f*countT;
-
 				tmpUtr->m_strUniqID.Format(_T("Target_%d"), countT + 1);
-
 				m_strCurrentObject = tmpUtr->m_strUniqID;
+
+				float X, Y;
+				CRadarCalculate::Startpos(tmpUtr->m_fBaring, tmpUtr->m_fDistanceToRadar, X, Y);
+				tmpUtr->m_startPos.x = X;
+				tmpUtr->m_startPos.y = Y;
+				tmpUtr->m_pos.x = X;
+				tmpUtr->m_pos.y = Y;
 
 				pLista->LaggTill(tmpUtr);
 
-
-
 				NbrOfTarget++;
-
 				countT++;
-				//			m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
-
 				Invalidate(true);
-
 				m_bDelete = true;
-
 				OnPropertiesTarget();
-
 			}
-
 		}
-
 		else
-
 			AfxMessageBox(_T("Add Jammer first!"));
-
 	}
-
 	else
-
 		AfxMessageBox(_T("Start by adding a Radar!"));
-
-
-
 }
 
 
@@ -2232,17 +2151,9 @@ void CRadarplotView::Serialize(CArchive& ar, int val)
 
 			ar << pUtr->m_fAngle;
 
-			ar << pUtr->m_fPosX;
+			ar << pUtr->m_pos.x;
 
-			ar << pUtr->m_fPosY;
-
-			ar << pUtr->m_fXstop;
-
-			ar << pUtr->m_fYstop;
-
-			ar << pUtr->m_fOldPosX;
-
-			ar << pUtr->m_fOldPosY;
+			ar << pUtr->m_pos.y;
 
 			//ar << pUtr->m_fStartPosY;
 
@@ -2286,12 +2197,10 @@ void CRadarplotView::Serialize(CArchive& ar, int val)
 
 
 
-			for (int t = 0; t < 20; t++)
-
+			for (int t = 0; t < pUtr->m_nNbrOfWayPoints; t++)
 			{
-
-				ar << pUtr->m_fWayPoints[t];
-
+				ar << pUtr->m_fWayPoints[t].x;
+				ar << pUtr->m_fWayPoints[t].y;
 			}
 
 			//Radar Parametrar			
@@ -2462,17 +2371,9 @@ void CRadarplotView::Serialize(CArchive& ar, int val)
 
 			ar >> pUtr->m_fAngle;
 
-			ar >> pUtr->m_fPosX;
+			ar >> pUtr->m_pos.x;
 
-			ar >> pUtr->m_fPosY;
-
-			ar >> pUtr->m_fXstop;
-
-			ar >> pUtr->m_fYstop;
-
-			ar >> pUtr->m_fOldPosX;
-
-			ar >> pUtr->m_fOldPosY;
+			ar >> pUtr->m_pos.y;
 
 			//ar >> pUtr->m_fStartPosY;
 
@@ -2518,12 +2419,10 @@ void CRadarplotView::Serialize(CArchive& ar, int val)
 
 
 
-			for (int t = 0; t < 20; t++)
-
+			for (int t = 0; t < pUtr->m_nNbrOfWayPoints; t++)
 			{
-
-				ar >> pUtr->m_fWayPoints[t];
-
+				ar >> pUtr->m_fWayPoints[t].x;
+				ar >> pUtr->m_fWayPoints[t].y;
 			}
 
 			//Radar Parametrar
@@ -2809,17 +2708,9 @@ void CRadarplotView::Serialize(CArchive& ar, int val)
 
 			ar << pUtr->m_fAngle;
 
-			ar << pUtr->m_fPosX;
+			ar << pUtr->m_pos.x;
 
-			ar << pUtr->m_fPosY;
-
-			ar << pUtr->m_fXstop;
-
-			ar << pUtr->m_fYstop;
-
-			ar << pUtr->m_fOldPosX;
-
-			ar << pUtr->m_fOldPosY;
+			ar << pUtr->m_pos.y;
 
 			//	ar << pUtr->m_fStartPosY;
 
@@ -2863,12 +2754,10 @@ void CRadarplotView::Serialize(CArchive& ar, int val)
 
 
 
-			for (int t = 0; t < 20; t++)
-
+			for (int t = 0; t < pUtr->m_nNbrOfWayPoints; t++)
 			{
-
-				ar << pUtr->m_fWayPoints[t];
-
+				ar << pUtr->m_fWayPoints[t].x;
+				ar << pUtr->m_fWayPoints[t].y;
 			}
 
 			//Jammer parametrar
@@ -2993,17 +2882,9 @@ void CRadarplotView::Serialize(CArchive& ar, int val)
 
 			ar >> pUtr->m_fAngle;
 
-			ar >> pUtr->m_fPosX;
+			ar >> pUtr->m_pos.x;
 
-			ar >> pUtr->m_fPosY;
-
-			ar >> pUtr->m_fXstop;
-
-			ar >> pUtr->m_fYstop;
-
-			ar >> pUtr->m_fOldPosX;
-
-			ar >> pUtr->m_fOldPosY;
+			ar >> pUtr->m_pos.y;
 
 			//ar >> pUtr->m_fStartPosY;
 
@@ -3049,12 +2930,10 @@ void CRadarplotView::Serialize(CArchive& ar, int val)
 
 
 
-			for (int t = 0; t < 20; t++)
-
+			for (int t = 0; t < pUtr->m_nNbrOfWayPoints; t++)
 			{
-
-				ar >> pUtr->m_fWayPoints[t];
-
+				ar >> pUtr->m_fWayPoints[t].x;
+				ar >> pUtr->m_fWayPoints[t].y;
 			}
 
 			ar >> pJammer->m_fNoiseBandwidth;
@@ -3398,6 +3277,12 @@ void CRadarplotView::OnTimer(UINT nIDEvent)
 
 	CView::OnTimer(nIDEvent);
 }
+void CRadarplotView::ShowStatus(TCHAR* text)
+{
+	CMainFrame* pFrame = (CMainFrame*)AfxGetApp()->m_pMainWnd;
+	CStatusBar* pStatus = pFrame->ReturnStatusBarPointer();
+	pStatus->SetPaneText(0, text);
+}
 
 void CRadarplotView::ShowStatus()
 {
@@ -3411,30 +3296,10 @@ void CRadarplotView::OnButtonStop()
 	if (!m_bRun)
 		return;
 
-	CUtrustning* pUtr;
-
-	CUtrustningLista::CNod *pTempPos;
-	CUtrustningLista* pLista = CUtrustningLista::getInstance();
-	pTempPos = pLista->m_pStartPos;
-	for (int i = 0; i < pLista->m_nAntalNoder; i++)
-	{
-		pTempPos->m_pUtrustning->stop();
-
-		/*if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
-		{
-			pUtr = pTempPos->m_pUtrustning;
-			break;
-		}*/
-		pTempPos = pTempPos->m_pNext;
-	}
-
-	//pUtr->m_strStatus = "OFF";
-
 	m_pDlgScenOpenGL->Stop();
 	//	m_pDlgOVOpenGL->Stop();
 	m_bRun = false;
 	KillTimer(4);
-	//m_pDlgScenOpenGL->m_pRadar->m_CellLista.TaBortAlla();
 	m_pDlgScenOpenGL->Invalidate();
 
 	m_strSimulationStatus.Format(_T("Ready"));

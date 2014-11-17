@@ -60,10 +60,6 @@ public:
 
 	void		CalculateScene();
 
-	void		CalculateTemp();
-
-
-
 	void		Init(CUtrustning* pRadar,CUtrustning* pJammer,int antalTarget);
 
 	int		InitRadar();

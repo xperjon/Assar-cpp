@@ -1,135 +1,71 @@
 // RadarCalculate.cpp: implementation of the CRadarCalculate class.
-
 //
-
 //////////////////////////////////////////////////////////////////////
 
-
-
 #include "stdafx.h"
-
 #include "ASSAR.h"
-
 #include "RadarCalculate.h"
-
 #include <math.h>
-
-
 
 #define M_PI 3.1415926535897932384626433832795f
 
-
-
 #ifdef _DEBUG
-
 #undef THIS_FILE
-
 static char THIS_FILE[]=__FILE__;
-
 #define new DEBUG_NEW
-
 #endif
 
-
-
-
-
-
-
 //////////////////////////////////////////////////////////////////////
-
 // Construction/Destruction
-
 //////////////////////////////////////////////////////////////////////
-
-
 
 CRadarCalculate::CRadarCalculate()
-
 {
-
-
-
 }
-
-
 
 CRadarCalculate::~CRadarCalculate()
-
 {
-
-
-
 }
-
 
 
 //Räknar orienterad bäring från a till b
-
-float CRadarCalculate::bearing(float Xa, float Ya, float Xb, float Yb)
-
+float CRadarCalculate::bearing(XYPosition posA, XYPosition posB)
 {
+	float Xa = posA.x;
+	float Ya = posA.y;
+	float Xb = posB.x;
+	float Yb = posB.y;
 
 	float beer;
-
-
-
 	if( (Yb-Ya) > 0 && (Xb-Xa) >= 0)
-
 		beer = (atan((Xb-Xa)/(Yb-Ya)));
 
-
-
 	if( (Yb-Ya) > 0 && (Xb-Xa) <= 0)
-
 		beer = (atan((Xb-Xa)/(Yb-Ya))+(2*M_PI));
 
-
-
-
-
 	if( (Yb-Ya) < 0 )
-
 		beer = (atan((Xb-Xa)/(Yb-Ya))+M_PI);
 
-
-
 	if( (Yb-Ya) == 0 && (Xb-Xa) >0)
-
 		beer = M_PI/2;
 
-
-
 	if( (Yb-Ya) == 0 && (Xb-Xa) < 0)
-
 		beer = (3*M_PI)/2;
 
-
-
 	if( (Yb-Ya) == 0 && (Xb-Xa) == 0)
-
 		beer = 0.0f;
 
-
-
 	return beer*180.0f/M_PI;
-
 }
 
 
 
 // Räknar ny Poistion från Pos A med orienterad bäring, och avstånd
-
 void CRadarCalculate::pos(float Xa, float Ya,float beer,float dist, float &Xb, float &Yb)
-
 {
-
 	Xb=Xa+dist*sin(beer*M_PI/180.0f);
-
 	Yb=Ya+dist*cos(beer*M_PI/180.0f);
-
 }
-
 
 
 // Räknar Start Poistion med orienterad bäring, och avstånd
@@ -149,13 +85,9 @@ void CRadarCalculate::Startpos(float beer,float dist, float &Xb, float &Yb)
 
 
 // Räknar ut avståndet mellan punkt A och B
-
-float CRadarCalculate::dist(float Xa, float Ya, float Xb, float Yb)
-
+float CRadarCalculate::dist(XYPosition posA, XYPosition posB)
 {
-
-	return (sqrt((Xa-Xb)*(Xa-Xb) + (Ya-Yb)*(Ya-Yb)));
-
+	return (sqrt((posA.x-posB.x)*(posA.x-posB.x) + (posA.y-posB.y)*(posA.y-posB.y)));
 }
 
 

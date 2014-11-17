@@ -72,12 +72,6 @@ CDlgRadarPPI::CDlgRadarPPI(CWnd* pParent /*=NULL*/)
 	m_strRad8 = _T("");
 	//}}AFX_DATA_INIT
 
-	//	CMDIFrameWnd *pFrame = (CMDIFrameWnd*)AfxGetApp()->m_pMainWnd;
-
-	//	CMDIChildWnd *pChild = (CMDIChildWnd*) pFrame->GetActiveFrame();
-
-	//	m_pView = (CRadarplotView*) pChild->GetActiveView();
-
 	m_strOpenGLType = "Scenario";
 
 	m_pDisplay = new COpenGL(m_strOpenGLType);
@@ -109,101 +103,51 @@ CDlgRadarPPI::~CDlgRadarPPI()
 void CDlgRadarPPI::Init(CUtrustning* pRadar, CUtrustning* pJammer, int antalTarget)
 {
 	ATLTRACE2(_T("CDlgRadarPPI::Init\n"));
-
-
 	//****************
-
 	//  Här görs alla beräkningar som måste göras innan scenario börjar
-
 	// ***************
-
 	// ***************
-
 	// OBS! Matematiska koordinater Norr = Y, Öster = X
-
 	// 0 grader = Norr, 90 grader = Öster
-
 	// ***************
-
 	//m_cLista			=*pUtrLista;
-
 	//m_pUtrLista			= pUtrLista;
-
 	m_pRadar = (CRadarStation*)pRadar;
-
-	m_nAntal = antalTarget;
-
 	m_pJammer = (CRadarJammer*)pJammer;
 
-	//	m_ppJammer			= (CRadarJammer**)malloc(m_nAntalJammer);
-
-	//m_ppTarget			= (CRadarTarget**)malloc(m_nAntal);
-	if (m_nAntal != 0)
-	{
-		m_ppTarget = new CRadarTarget*[m_nAntal];
-	}
-
 	//	m_nKillTime			= (int*)malloc(m_nAntalJammer);
-
 	m_fGgrRealTime = m_pRadar->m_fGgrRealTime;
-
-
-
-
-
 	m_bRun = true;
-
 	m_fTimeUnit = 0;
-
 	m_nZoomin = 45;
-
-
-
 	//	m_nFalseTargetCounter= 0;
-
 	//	m_nFalseTargetCounter2= 0;
-
 	angle = 0.0f;
-
 	//	m_fVinkelupplosning	= 1.0f;
-
 	vinkel = 0.0f;
 
-
 	//val
-
 	ChoiceOfDistanceBetweenFalseTargets = 1;
-
-
 
 	CUtrustningLista::CNod *pTempPos;
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
 	pTempPos = pLista->m_pStartPos;
-
-	int l = 0;
-
-	for (int i = 0; i < pLista->m_nAntalNoder; i++)
-
+	m_nAntal = antalTarget;
+	if (m_nAntal != 0)
 	{
-
+		m_ppTarget = new CRadarTarget*[m_nAntal];
+	}
+	int l = 0;
+	for (int i = 0; i < pLista->m_nAntalNoder; i++)
+	{
 		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
-
 		{
-
 			m_ppTarget[l] = new CRadarTarget();
 			m_ppTarget[l] = (CRadarTarget*)pTempPos->m_pUtrustning;
-
 			l++;
-
-			//break;
-
 		}
-
 		pTempPos = pTempPos->m_pNext;
-
 	}
-
-
 }
 
 void CDlgRadarPPI::StartSim()
@@ -472,8 +416,6 @@ void CDlgRadarPPI::OnPaint()
 
 		if (m_bRun == true)
 			CalculateScene();
-		else
-			CalculateTemp();
 
 		CDialog::OnPaint();
 	}
@@ -520,92 +462,6 @@ void CDlgRadarPPI::OnSize(UINT nType, int cx, int cy)
 	}
 }
 
-
-
-void CDlgRadarPPI::CalculateTemp()
-
-{
-
-	CUtrustningLista::CNod *pTempPos;
-	CUtrustningLista* pLista = CUtrustningLista::getInstance();
-	pTempPos = pLista->m_pStartPos;
-
-	if (pLista->IsEmpty() == false)
-
-	{
-
-		for (int i = 0; i < pLista->m_nAntalNoder; i++)
-
-		{
-
-			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
-
-			{
-
-
-
-			}
-
-			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
-
-			{
-
-				// ------- Jammer ------
-
-				float X, Y;
-
-				glColor3f(pTempPos->m_pUtrustning->m_fColor[0], pTempPos->m_pUtrustning->m_fColor[1], pTempPos->m_pUtrustning->m_fColor[2]);
-
-				CRadarCalculate::Startpos(pTempPos->m_pUtrustning->m_fBaring, pTempPos->m_pUtrustning->m_fDistanceToRadar, X, Y);
-
-				pTempPos->m_pUtrustning->m_fStartPosX = X;
-
-				pTempPos->m_pUtrustning->m_fStartPosY = Y;
-
-				pTempPos->m_pUtrustning->m_fPosX = X;
-
-				pTempPos->m_pUtrustning->m_fPosY = Y;
-
-
-
-			}
-
-
-
-			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
-
-			{
-
-				// ------- Target ------
-
-				float X, Y;
-
-				glColor3f(pTempPos->m_pUtrustning->m_fColor[0], pTempPos->m_pUtrustning->m_fColor[1], pTempPos->m_pUtrustning->m_fColor[2]);
-
-				CRadarCalculate::Startpos(pTempPos->m_pUtrustning->m_fBaring, pTempPos->m_pUtrustning->m_fDistanceToRadar, X, Y);
-
-				pTempPos->m_pUtrustning->m_fStartPosX = X;
-
-				pTempPos->m_pUtrustning->m_fStartPosY = Y;
-
-				pTempPos->m_pUtrustning->m_fPosX = X;
-
-				pTempPos->m_pUtrustning->m_fPosY = Y;
-
-
-
-			}
-
-			pTempPos = pTempPos->m_pNext;
-
-		}
-
-	}
-
-}
-
-
-
 void CDlgRadarPPI::CalculateScene()
 
 {
@@ -618,8 +474,7 @@ void CDlgRadarPPI::CalculateScene()
 
 
 
-	if (m_nAntal > 0)
-		CalculateNoiseEffectTargets();
+	CalculateNoiseEffectTargets();
 
 
 
@@ -1812,15 +1667,10 @@ float CDlgRadarPPI::CalulateJammerAsynkDist()
 
 
 float CDlgRadarPPI::ReturnAngleJammertoTarget(int i, CRadarJammer* m_pJammer)
-
 {
-
 	float A, B;
-
-	A = CRadarCalculate::bearing(m_pRadar->m_fPosX, m_pRadar->m_fPosY, m_pJammer->m_fPosX, m_pJammer->m_fPosY);
-
-	B = CRadarCalculate::bearing(m_pRadar->m_fPosX, m_pRadar->m_fPosY, m_ppTarget[i]->m_fPosX, m_ppTarget[i]->m_fPosY);
-
+	A = CRadarCalculate::bearing(m_pRadar->m_pos, m_pJammer->m_pos);
+	B = CRadarCalculate::bearing(m_pRadar->m_pos, m_ppTarget[i]->m_pos);
 
 	if (A > B)
 	{
@@ -1833,9 +1683,6 @@ float CDlgRadarPPI::ReturnAngleJammertoTarget(int i, CRadarJammer* m_pJammer)
 	}
 
 	//  return (A-B);
-
-
-
 }
 
 void CDlgRadarPPI::CalculateNoiseEffectTargets()
@@ -2111,164 +1958,86 @@ void CDlgRadarPPI::loop(float angle)
 
 void CDlgRadarPPI::position(float angle)
 {
-
-	CUtrustning* tmpRadar;
-
-	CUtrustningLista::CNod *pTempPos;
+	CUtrustningLista::CNod *pNod;
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
-	pTempPos = pLista->m_pStartPos;
+	pNod = pLista->m_pStartPos;
 
 	if (pLista->IsEmpty() == false)
-
 	{
-
 		for (int i = 0; i < pLista->m_nAntalNoder; i++)
-
 		{
-
-			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
-
+			if (pNod->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER || pNod->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 			{
-
-				tmpRadar = pTempPos->m_pUtrustning;
-
-			}
-
-			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER || pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
-
-			{
-
-
-				if (pTempPos->m_pUtrustning->m_nNbrOfWayPoints>0)
-
+				if (pNod->m_pUtrustning->m_nNbrOfWayPoints>0)
 				{
-
-					float BearingToWayPoint = CRadarCalculate::bearing(pTempPos->m_pUtrustning->m_fWayPoints[0], pTempPos->m_pUtrustning->m_fWayPoints[1], pTempPos->m_pUtrustning->m_fStartPosX, pTempPos->m_pUtrustning->m_fStartPosY);
-
-					pTempPos->m_pUtrustning->m_fCourse = BearingToWayPoint + 180;
-
-					if (pTempPos->m_pUtrustning->m_fCourse > 360)
-
-						pTempPos->m_pUtrustning->m_fCourse -= 360;
-
+					float BearingToWayPoint = CRadarCalculate::bearing(pNod->m_pUtrustning->m_fWayPoints[0], pNod->m_pUtrustning->m_startPos);
+					pNod->m_pUtrustning->m_fCourse = BearingToWayPoint + 180;
+					if (pNod->m_pUtrustning->m_fCourse > 360)
+						pNod->m_pUtrustning->m_fCourse -= 360;
 				}
-
 				else
-
 				{
-
-					float BearingToWayPoint = CRadarCalculate::bearing(m_pRadar->m_fPosX, m_pRadar->m_fPosY, pTempPos->m_pUtrustning->m_fStartPosX, pTempPos->m_pUtrustning->m_fStartPosY);
-
-					pTempPos->m_pUtrustning->m_fCourse = BearingToWayPoint + 180;
-
-					if (pTempPos->m_pUtrustning->m_fCourse > 360)
-
-						pTempPos->m_pUtrustning->m_fCourse -= 360;
-
+					float BearingToWayPoint = CRadarCalculate::bearing(m_pRadar->m_pos, pNod->m_pUtrustning->m_startPos);
+					pNod->m_pUtrustning->m_fCourse = BearingToWayPoint + 180;
+					if (pNod->m_pUtrustning->m_fCourse > 360)
+						pNod->m_pUtrustning->m_fCourse -= 360;
 				}
-
-
-
-
-
-				float X, Y, PosX, PosY;
-
+				float X, Y;
+				XYPosition latestWaypoint;
 				float DistToWayPoint = 0;
-
-				PosX = pTempPos->m_pUtrustning->m_fStartPosX;
-
-				PosY = pTempPos->m_pUtrustning->m_fStartPosY;
-
-
-
-				float td = CRadarCalculate::covereddist(pTempPos->m_pUtrustning->m_fVelocity, m_fTimeUnit);
-
-
-
-				for (int k = 1; k<pTempPos->m_pUtrustning->m_nNbrOfWayPoints; k++)
-
+				latestWaypoint = pNod->m_pUtrustning->m_startPos;
+				float td = CRadarCalculate::covereddist(pNod->m_pUtrustning->m_fVelocity, m_fTimeUnit);
+				for (int k = 1; k<pNod->m_pUtrustning->m_nNbrOfWayPoints; k++)
 				{
-
-					if (td>pTempPos->m_pUtrustning->m_fDistWayPoints[k - 1])
-
+					if (td > pNod->m_pUtrustning->m_fDistWayPoints[k - 1])
 					{
-
-						float BearingToWayPoint = CRadarCalculate::bearing(pTempPos->m_pUtrustning->m_fWayPoints[2 * k], pTempPos->m_pUtrustning->m_fWayPoints[2 * k + 1], pTempPos->m_pUtrustning->m_fWayPoints[2 * k - 2], pTempPos->m_pUtrustning->m_fWayPoints[2 * k - 1]);
-
-						pTempPos->m_pUtrustning->m_fCourse = BearingToWayPoint + 180.0f;
-
-						if (pTempPos->m_pUtrustning->m_fCourse > 360)
-
-							pTempPos->m_pUtrustning->m_fCourse -= 360;
-
-						PosX = pTempPos->m_pUtrustning->m_fWayPoints[2 * k - 2];
-
-						PosY = pTempPos->m_pUtrustning->m_fWayPoints[2 * k - 1];
-
-						DistToWayPoint = pTempPos->m_pUtrustning->m_fDistWayPoints[k - 1];
-
+						float BearingToWayPoint = CRadarCalculate::bearing(pNod->m_pUtrustning->m_fWayPoints[k], pNod->m_pUtrustning->m_fWayPoints[k - 1]);
+						pNod->m_pUtrustning->m_fCourse = BearingToWayPoint + 180.0f;
+						if (pNod->m_pUtrustning->m_fCourse > 360)
+							pNod->m_pUtrustning->m_fCourse -= 360;
+						latestWaypoint = pNod->m_pUtrustning->m_fWayPoints[k-1];
+						DistToWayPoint = pNod->m_pUtrustning->m_fDistWayPoints[k - 1];
 					}
-
 				}
 
-
-
-				CRadarCalculate::pos(PosX, PosY, pTempPos->m_pUtrustning->m_fCourse, td - DistToWayPoint, X, Y);
-
-				pTempPos->m_pUtrustning->m_fPosX = X;
-
-				pTempPos->m_pUtrustning->m_fPosY = Y;
-
-				pTempPos->m_pUtrustning->m_fDistanceToRadar = CRadarCalculate::dist(m_pRadar->m_fPosX, m_pRadar->m_fPosY, X, Y);
-
-				pTempPos->m_pUtrustning->m_fBaring = CRadarCalculate::bearing(m_pRadar->m_fPosX, m_pRadar->m_fPosY, X, Y);
-
-
+				CRadarCalculate::pos(latestWaypoint.x, latestWaypoint.y, pNod->m_pUtrustning->m_fCourse, td - DistToWayPoint, X, Y);
+				pNod->m_pUtrustning->m_pos = XYPosition(X,Y);
+				pNod->m_pUtrustning->m_fDistanceToRadar = CRadarCalculate::dist(m_pRadar->m_pos, pNod->m_pUtrustning->m_pos);
+				pNod->m_pUtrustning->m_fBaring = CRadarCalculate::bearing(m_pRadar->m_pos, pNod->m_pUtrustning->m_pos);
 
 				//-------Lite stulig variant(men fungerande) för att få jammers att uppdateras med svepet
-
-				if (pTempPos->m_pUtrustning->m_fDistanceToRadar < m_pRadar->m_fMaxRange && (angle<pTempPos->m_pUtrustning->m_fBaring + m_fAngleMove && angle>pTempPos->m_pUtrustning->m_fBaring - m_fAngleMove))
-
+				if (pNod->m_pUtrustning->m_fDistanceToRadar < m_pRadar->m_fMaxRange && (angle<pNod->m_pUtrustning->m_fBaring + m_fAngleMove && angle>pNod->m_pUtrustning->m_fBaring - m_fAngleMove))
 				{
-
 					//För att brusstråken inte skall röra sig(pulspulshopp) under utsläckningen
-
-					pTempPos->m_pUtrustning->m_fOldDistanceToRadar = pTempPos->m_pUtrustning->m_fDistanceToRadar;
-
-
-
-					pTempPos->m_pUtrustning->m_fOldPosX = X;
-
-					pTempPos->m_pUtrustning->m_fOldPosY = Y;
-
+					pNod->m_pUtrustning->m_fOldDistanceToRadar = pNod->m_pUtrustning->m_fDistanceToRadar;
 					//JEP060310
-					if (pTempPos->m_pUtrustning->m_fDistanceToRadar > ((300 * pow(10, 6.0))*m_pRadar->m_fPulseWidth))
+					if (pNod->m_pUtrustning->m_fDistanceToRadar > ((300 * pow(10, 6.0))*m_pRadar->m_fPulseWidth))
 					{
-						if (pTempPos->m_pUtrustning->m_fSNR >= 1)
+						if (pNod->m_pUtrustning->m_fSNR >= 1)
 						{
 							CCell*		tmpCell;
 							tmpCell = new CCell();
-							tmpCell->m_fDist = pTempPos->m_pUtrustning->m_fDistanceToRadar;
+							tmpCell->m_fDist = pNod->m_pUtrustning->m_fDistanceToRadar;
 							tmpCell->m_fSize = m_pRadar->m_fWidthMainlobeRx; //2.0f;			
-							tmpCell->m_fBaring = pTempPos->m_pUtrustning->m_fBaring;
+							tmpCell->m_fBaring = pNod->m_pUtrustning->m_fBaring;
 							tmpCell->m_enumTyp = TARGET;
-							if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+							if (pNod->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 								tmpCell->m_fLifeTime = RAWVideoModeJammer();
 							else
-								tmpCell->m_fLifeTime = RAWVideoModeTarget(((CRadarTarget*)pTempPos->m_pUtrustning));
-							ATLTRACE2(_T("CDlgRadarPPI::position new cell lifeTime: %4.1f \n"), tmpCell->m_fLifeTime);
+								tmpCell->m_fLifeTime = RAWVideoModeTarget(((CRadarTarget*)pNod->m_pUtrustning));
+							ATLTRACE2(_T("CDlgRadarPPI::position new cell lifeTime: %4.3f \n"), tmpCell->m_fLifeTime);
 							//JEP060310
 							if (tmpCell->m_fLifeTime > 0)
-								((CRadarStation*)tmpRadar)->m_CellLista.LaggTill(tmpCell);
+								m_pRadar->m_CellLista.LaggTill(tmpCell);
 							else
 								delete tmpCell;
 						}
 					}
 				}
-				pTempPos->m_pUtrustning->m_fPosX = X;
-				pTempPos->m_pUtrustning->m_fPosY = Y;
+				/*pNod->m_pUtrustning->m_fPosX = X;
+				pNod->m_pUtrustning->m_fPosY = Y;*/
 			}
-			pTempPos = pTempPos->m_pNext;
+			pNod = pNod->m_pNext;
 		}
 	}
 }
@@ -2673,25 +2442,26 @@ void CDlgRadarPPI::OnMenuPause()
 
 
 void CDlgRadarPPI::Stop()
-
 {
-
 	m_bRun = false;
-
-	//m_pRadar->m_bRun = false;
-
-	//m_pRadar->m_fGgrRealTime = DEFAULTGGRREALTIME;
-
-	//m_pRadar->m_CellLista.TaBortAlla();
-
 	HideMenu();
-
 	m_pDisplay->m_nZoomin = 45;
-
 	KillTimer(0);
+	CMDIFrameWnd *pFrame = (CMDIFrameWnd*)AfxGetApp()->m_pMainWnd;
+	CMDIChildWnd *pChild = (CMDIChildWnd*)pFrame->GetActiveFrame();
+	((CRadarplotView*)pChild->GetActiveView())->ShowStatus(_T("Ready"));
 
+
+	CUtrustning* pUtr;
+	CUtrustningLista::CNod *pTempPos;
+	CUtrustningLista* pLista = CUtrustningLista::getInstance();
+	pTempPos = pLista->m_pStartPos;
+	for (int i = 0; i < pLista->m_nAntalNoder; i++)
+	{
+		pTempPos->m_pUtrustning->stop();
+		pTempPos = pTempPos->m_pNext;
+	}
 	ShowWindow(SW_RESTORE);
-
 }
 
 void CDlgRadarPPI::HideMenu()

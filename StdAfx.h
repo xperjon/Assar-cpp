@@ -30,6 +30,7 @@ void HookTrace(const char* format, ...);
 
 #define M_PI 3.1415926535897932384626433832795f
 #define DEFAULTGGRREALTIME 3.0f
+#define MAXNBROFWAYPOINTS	10
 
 /*
 #ifdef ATLTRACE 

@@ -96,7 +96,7 @@ void CCellLista::LaggTill(CCell *pCell)
 	{
 		if(!AlreadyJammed(pCell))
 		{
-			ATLTRACE2(_T("CCellLista::LaggTill lifeTime: %4.1f , type: %d \n"),pCell->m_fLifeTime,pCell->m_enumTyp);
+			ATLTRACE2(_T("CCellLista::LaggTill lifeTime: %4.3f , type: %d \n"),pCell->m_fLifeTime,pCell->m_enumTyp);
 			pTempPos = End();
 			pTempPos->m_pNext = new CCellLista::CNod;
 			pTempPos->m_pNext->m_pPrev = pTempPos;
@@ -173,7 +173,7 @@ int CCellLista::LifeTime(CCell *pCell)
 	if(pCell->m_fLifeTime>0.0f)
 		pCell->m_fLifeTime--;
 
-	if(pCell->m_fLifeTime<0.0f || pCell->m_fLifeTime==0.0f)
+	if(pCell->m_fLifeTime < 0.0f || pCell->m_fLifeTime == 0.0f)
 	{
 		pCell->m_fLifeTime = -666;
 	//	TaBort(pCell);
@@ -246,7 +246,7 @@ CCellLista::CNod* CCellLista::getNotCleanedCell()
 	pTempPos = m_pStartPos;
 	while(pTempPos != NULL) 
 	{
-		if(pTempPos->m_pCell->m_fLifeTime==-666)
+		if(pTempPos->m_pCell->m_fLifeTime == -666)
 			return pTempPos;
 		pTempPos = pTempPos->m_pNext;
 	}

@@ -9,8 +9,12 @@ Character strings: http://www.codeproject.com/Articles/76252/What-are-TCHAR-WCHA
 TODO:
 done - antenndiagram
 done - gainrx tx
-se över waypoints hoppar mellan olika positioner, mål byter håll när man stoppar sim
-justera färgskalan så att mål ses vid räckviddsgränsen
+done - se över waypoints hoppar mellan olika positioner, mål byter håll när man stoppar sim
+done - justera färgskalan så att mål ses vid räckviddsgränsen
 done - start, brusstörning, stop, start -> då är brusstörning på beräkningsmässigt men inte i gui. 
 done - Fortsätt med AntennaChart
 done - OM en radar har antenndiagram filnamn satt måste filen läsas in när man öppnar radar från fil.
+
+Lägg in yes/no dialog vid stop simulation
+Byt versionnummer på splash och window title (version 2.0)
+Lägg in pausknapp i toolbar

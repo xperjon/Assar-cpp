@@ -61,10 +61,6 @@ public:
 
 	CString		m_strCurrentObject;
 
-	float		fX;
-
-	float		fY;
-
 	float avs,X,Y,m_fScale;
 
 	bool		m_bWayPoint;

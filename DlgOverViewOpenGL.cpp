@@ -439,41 +439,20 @@ void CDlgOverViewOpenGL::OnButDeletewaypoint()
 
 
 void CDlgOverViewOpenGL::OnCheckAllwaypoints() 
-
 {
-	CUtrustningLista* pLista = CUtrustningLista::getInstance();
-	if(pLista->IsEmpty())
-	return;
-	if(pLista->getRadar()->m_bRun)
-	{
-		AfxMessageBox(_T("Stop simulation first!"));
-		return;
-	}
-
 	if(m_checkAllWayPoints==false)
-
 	{
-
 		m_pDisplay->m_checkAllWayPoints=true;
-
 		m_checkAllWayPoints=true;
-
 	}
-
 	else
-
 	{
-
 		m_pDisplay->m_checkAllWayPoints=false;
-
 		m_checkAllWayPoints=false;
-
 	}
-
 	if (m_pDisplay != NULL)
 		m_pDisplay->InvalidateRect(NULL, FALSE);
 	UpdateData(true);
-
 }
 
 

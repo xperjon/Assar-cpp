@@ -401,31 +401,18 @@ void CRadarJammer::operator=(CUtrustning &utr)
 
 	m_fAngle				=	utr.m_fAngle;
 
-	m_fPosX					=	utr.m_fPosX;
-
-	m_fPosY					=	utr.m_fPosY;
+	m_pos = utr.m_pos;
 
 	m_nNbrOfWayPoints		=	utr.m_nNbrOfWayPoints;
 
-	for(int i=0;i<2*m_nNbrOfWayPoints;i++)
-
+	for(int i=0;i<m_nNbrOfWayPoints;i++)
 	{
-
 		m_fWayPoints[i]		=	utr.m_fWayPoints[i];
-
 	}
 
 		//float*		m_fDistWayPoints;
 
 	m_fDistWayPoints		=	utr.m_fDistWayPoints;
-
-	m_fXstop				=	utr.m_fXstop;
-
-	m_fYstop				=	utr.m_fYstop;
-
-	m_fOldPosX				=	utr.m_fOldPosX;
-
-	m_fOldPosY				=	utr.m_fOldPosY;
 
 	m_fCourse				=	utr.m_fCourse;
 
@@ -1107,17 +1094,7 @@ void CRadarStation::operator=(CUtrustning &utr)
 
 	m_fAngle				=	utr.m_fAngle;
 
-	m_fPosX					=	utr.m_fPosX;
-
-	m_fPosY					=	utr.m_fPosY;
-
-	m_fXstop				=	utr.m_fXstop;
-
-	m_fYstop				=	utr.m_fYstop;
-
-	m_fOldPosX				=	utr.m_fOldPosX;
-
-	m_fOldPosY				=	utr.m_fOldPosY;
+	m_pos					=	utr.m_pos;
 
 	m_fCourse				=	utr.m_fCourse;
 

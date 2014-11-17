@@ -135,7 +135,7 @@ private://Funktioner
 // Operations
 
 public:
-
+	void	ShowStatus(TCHAR* text);
 //	CDC m_dibResource;
 
 // Overrides
@@ -158,9 +158,7 @@ public:
 
 	void	ShowText(CDC* pDC,int nXPos,int nYPos, int textSize,CString* pstrText);
 	void	ShowStatus();
-
-
-
+	
 
 
 // Implementation
