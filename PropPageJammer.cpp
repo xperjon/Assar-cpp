@@ -616,7 +616,7 @@ void CPropPage3Jammer::OnSelchangeComboPolarization()
 
 	{
 
-		AfxMessageBox(_T("Not available in DEMO version!"));
+		AfxMessageBox(_T("Not available in current version!"));
 
 		m_strPolarization="Horizontal";
 
@@ -882,7 +882,7 @@ void CPropPage4Jammer::OnSelchangeComboJammode()
 
 	{
 
-		AfxMessageBox(_T("Not available in DEMO version!"));
+		AfxMessageBox(_T("Not available in current version!"));
 
 		m_strJamMode="Noise";
 
@@ -936,7 +936,7 @@ void CPropPage4Jammer::OnSelchangeComboType()
 
 	{
 
-		AfxMessageBox(_T("Not available in DEMO version!"));
+		AfxMessageBox(_T("Not available in current version!"));
 
 		m_strType="Continous";
 
@@ -1274,7 +1274,7 @@ void CPropPage5Jammer::OnSelchangeComboJammode()
 
 	{
 
-		AfxMessageBox(_T("Not available in DEMO version!"));
+		AfxMessageBox(_T("Not available in current version!"));
 
 		m_strJamMode="DRFM Repeater";
 
@@ -1327,7 +1327,7 @@ void CPropPage5Jammer::OnSelchangeComboPattern()
 	}
 	if(m_strPattern == "Unsynchronized")
 	{
-		AfxMessageBox(_T("Not available in DEMO version"));
+		AfxMessageBox(_T("Not available in current version"));
 		m_strPattern.Format(_T("Random"));
 		pattern = 1;
 
@@ -1336,7 +1336,7 @@ void CPropPage5Jammer::OnSelchangeComboPattern()
 	if(m_strPattern == "Synchronized")
 	{
 		m_strPattern.Format(_T("Random"));
-		AfxMessageBox(_T("Not available in DEMO version"));
+		AfxMessageBox(_T("Not available in current version"));
 		pattern = 1;
 	}
 

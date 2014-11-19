@@ -41,7 +41,7 @@ IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 // Toolbar
 //
 
-IDR_MAINFRAME TOOLBAR 32, 30
+IDR_MAINFRAME TOOLBAR 32, 32
 BEGIN
     BUTTON      ID_BUTTON_CREATE_RADAR
     SEPARATOR
@@ -54,8 +54,8 @@ BEGIN
     BUTTON      ID_BUTTON_PPI
     SEPARATOR
     BUTTON      ID_BUTTON_STOP
-    BUTTON      ID_BUTTON32816
-    BUTTON      ID_BUTTON32817
+    BUTTON      ID_BUTTON_PAUS
+    BUTTON      ID_BUTTON_FULL_SCREEN
     BUTTON      ID_BUTTON32818
 END
 
@@ -276,8 +276,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
+ FILEVERSION 2,0,0,0
+ PRODUCTVERSION 2,0,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -293,12 +293,12 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "FileDescription", "ASSAR MFC Application"
-            VALUE "FileVersion", "6, 1, 0, 0"
+            VALUE "FileVersion", "2.0.0.0"
             VALUE "InternalName", "ASSAR"
             VALUE "LegalCopyright", "Copyright (C) 2002"
             VALUE "OriginalFilename", "ASSAR.EXE"
             VALUE "ProductName", "ASSAR Application"
-            VALUE "ProductVersion", "1, 0, 0, 1"
+            VALUE "ProductVersion", "2.0.0.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -358,12 +358,12 @@ END
 
 STRINGTABLE
 BEGIN
-    IDR_MAINFRAME           "ASSAR Demo version\n\nASSAR\nScenario Files (*.sce)\n.sce\nASSAR.Document\nASSAR Document"
+    IDR_MAINFRAME           "ASSAR  version 2.0\n\nASSAR\nScenario Files (*.sce)\n.sce\nASSAR.Document\nASSAR Document"
 END
 
 STRINGTABLE
 BEGIN
-    AFX_IDS_APP_TITLE       "ASSAR Demo Version"
+    AFX_IDS_APP_TITLE       "ASSAR version 2.0"
     AFX_IDS_IDLEMESSAGE     "Ready"
 END
 
@@ -496,6 +496,12 @@ END
 STRINGTABLE
 BEGIN
     ID_INDICATOR_SIMTIME    "hej"
+END
+
+STRINGTABLE
+BEGIN
+    ID_BUTTON_PAUS          "\n Pause/Resume"
+    ID_BUTTON_FULL_SCREEN   "\n Toggle PPI full screen"
 END
 
 #endif    // English (United States) resources

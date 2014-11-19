@@ -86,6 +86,8 @@ BEGIN_MESSAGE_MAP(CRadarplotView, CView)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
 	ON_COMMAND(ID_ANTENNACHART, &CRadarplotView::OnAntennachart)
+	ON_COMMAND(ID_BUTTON_PAUS, &CRadarplotView::OnButtonPaus)
+	ON_COMMAND(ID_BUTTON_FULL_SCREEN, &CRadarplotView::OnButtonFullScreen)
 END_MESSAGE_MAP()
 
 
@@ -100,6 +102,7 @@ CRadarplotView::CRadarplotView() :m_rectEllipse(50, -345, 550, -430), m_rE1(60, 
 	countJ = 0;
 	countT = 0;
 	m_bRun = false;
+	m_bPause = false;
 	m_strSimulationStatus = "Ready";
 	m_pDlgOVOpenGL = NULL;
 	m_pDlgScenOpenGL = NULL;
@@ -458,69 +461,38 @@ return (CRadarplotDoc*)m_pDocument;
 
 
 void CRadarplotView::OnButtonPpi()
-
 {
-
 	if (m_bRun)
-
 		return;
 
 	if (NbrOfJammer > 0)
-
 	{
-
 		m_bRun = true;
-
 		CUtrustning*		tmpUtr;
-
 		CUtrustning*		utrjam;
-
-
 
 		CUtrustningLista::CNod *pTempPos;
 		CUtrustningLista* pLista = CUtrustningLista::getInstance();
 		pTempPos = pLista->m_pStartPos;
 
 		for (int i = 0; i < pLista->m_nAntalNoder; i++)
-
 		{
-
 			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
-
 			{
-
 				tmpUtr = pTempPos->m_pUtrustning;
-
 				//break;
-
 			}
-
 			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
-
 			{
-
 				utrjam = pTempPos->m_pUtrustning;
-
 			}
-
 
 
 			pTempPos = pTempPos->m_pNext;
-
 		}
 
-		//Kopiera över från kopian till orginalet (om någon trycker på/av på/av osv.)
-
-		//Vi kopierar ej utrustningen då detta skulle innebära ett waypoints försvann(de ligger ej i kopian)
-
-		//		*((CRadarJammer*)utrjam)=m_Jammer;
-
 		((CRadarStation*)tmpUtr)->m_bRun = true;
-
-		//m_pDlgScenOpenGL->ShowWindow(SW_MAXIMIZE);
-
 		m_pDlgScenOpenGL->Init(tmpUtr, utrjam, NbrOfTarget);
-
 
 		//Initfunktioner
 		bool resR = 0;
@@ -535,16 +507,11 @@ void CRadarplotView::OnButtonPpi()
 		else
 			m_pDlgScenOpenGL->StartSim();
 
-		//	m_pDlgScenOpenGL->SetFocus();	
-
 		m_strSimulationStatus.Format(_T("Running"));
 		ShowStatus();
 
-		//	m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
 		Invalidate();
-
 	}
-
 	else
 		AfxMessageBox(_T("You have not specified your scenario correctly!"));
 
@@ -1053,7 +1020,7 @@ void CRadarplotView::OnButtonCreateRadar()
 	if (m_bRun)
 		return;
 	if (NbrOfRadar > 0)
-		AfxMessageBox(_T("Not available in DEMO version!"));
+		AfxMessageBox(_T("Not available in current version!"));
 	else
 	{
 		CUtrustning*		tmpUtr;
@@ -1079,7 +1046,7 @@ void CRadarplotView::OnButtonCreateJammer()
 	if (NbrOfRadar != 0)
 	{
 		if (NbrOfJammer > 0)
-			AfxMessageBox(_T("Not available in DEMO version!"));
+			AfxMessageBox(_T("Not available in current version!"));
 		else
 		{
 			CUtrustning*		tmpUtr;
@@ -1093,15 +1060,9 @@ void CRadarplotView::OnButtonCreateJammer()
 			tmpUtr->m_fColor[1] = 0.75f;
 			tmpUtr->m_fColor[2] = 1.0f;
 			tmpUtr->m_fBaring = 45.0f*countJ + 45.0f;
+			tmpUtr->m_fDistanceToRadar = 60000;
 			tmpUtr->m_strUniqID.Format(_T("Jammer_1"));
 			m_strCurrentObject = tmpUtr->m_strUniqID;
-
-			float X, Y;
-			CRadarCalculate::Startpos(tmpUtr->m_fBaring, tmpUtr->m_fDistanceToRadar, X, Y);
-			tmpUtr->m_startPos.x = X;
-			tmpUtr->m_startPos.y = Y;
-			tmpUtr->m_pos.x = X;
-			tmpUtr->m_pos.y = Y;
 
 			pLista->LaggTill(tmpUtr);
 
@@ -1139,14 +1100,7 @@ void CRadarplotView::OnButtonCreateTarget()
 				tmpUtr->m_fBaring = 90.0f*countT;
 				tmpUtr->m_strUniqID.Format(_T("Target_%d"), countT + 1);
 				m_strCurrentObject = tmpUtr->m_strUniqID;
-
-				float X, Y;
-				CRadarCalculate::Startpos(tmpUtr->m_fBaring, tmpUtr->m_fDistanceToRadar, X, Y);
-				tmpUtr->m_startPos.x = X;
-				tmpUtr->m_startPos.y = Y;
-				tmpUtr->m_pos.x = X;
-				tmpUtr->m_pos.y = Y;
-
+				tmpUtr->m_fDistanceToRadar = 60000;
 				pLista->LaggTill(tmpUtr);
 
 				NbrOfTarget++;
@@ -1502,318 +1456,135 @@ void CRadarplotView::OnPropertiesRadar()
 
 	if (nResult == IDOK)
 	{
-		if (pRadar->m_bCoherentIntegration == true)
-
-		{
-
-			pRadar->m_nProcessingGain = CRadarCalculate::ProcessingGain(1, pRadar->m_fWidthMainlobeRx, pRadar->m_nAntennaScanPeriod, pRadar->m_fPRI);
-
-			//	if(((CRadarStation*)pUtr)->m_nProcessingGain>((CRadarStation*)pUtr)->m_fantal_pulser)
-
-			//	((CRadarStation*)pUtr)->m_nProcessingGain=((CRadarStation*)pUtr)->m_fantal_pulser;
-
-		}
-
-		else
-
-		{
-
-			pRadar->m_nProcessingGain = CRadarCalculate::ProcessingGain(2, pRadar->m_fWidthMainlobeRx, pRadar->m_nAntennaScanPeriod, pRadar->m_fPRI);
-
-			//	if(((CRadarStation*)pUtr)->m_nProcessingGain>((CRadarStation*)pUtr)->m_fantal_pulser)
-
-			//		((CRadarStation*)pUtr)->m_nProcessingGain=sqrt(((CRadarStation*)pUtr)->m_fantal_pulser);
-
-		}
-
-
-
-		pRadar->m_fIFBandWidth = CRadarCalculate::IFBandWidth(pRadar->m_fPulseWidth);
-
-		pRadar->m_fSensitivity = CRadarCalculate::SensitivityRadar(pRadar->m_fPulseWidth, pRadar->m_fNoiseFactor, pRadar->m_fSNRRadar, pRadar->m_fLosses);
-
-		pRadar->m_flambda = CRadarCalculate::LambdaRadar(pRadar->m_fFreqMax, pRadar->m_fFreqMin);
-
-		pRadar->m_fMaxRange = CRadarCalculate::MaxRange(pRadar->m_fGainMainlobe, pRadar->m_fGainMainlobeRx, pRadar->m_flambda, pRadar->m_fSigmaRef, pRadar->m_nProcessingGain, pRadar->m_fPeakPower, pRadar->m_fSensitivity);
-
-		pRadar->m_fSvepHastighet = CRadarCalculate::AntennaScanPeriod((float)pRadar->m_nAntennaScanPeriod);
-
-		if (pRadar->m_bPulseGroup == true && pRadar->m_fantal_pulser == 1 && pRadar->m_bMTIFilter == true)
-
-		{
-
-			AfxMessageBox(_T("Error: MTI Mode is not possible in \npulse-pulse frequency hopping!"));
-
-			pRadar->m_bMTIFilter = false;
-
-		}
-
-
-
-		//kopierar från Radar till Utrustning
-
-		//		pUtr->operator =((CUtrustning)m_Radar);
-
-		//kopierar från Radar till Radar
-
-		//		*((CRadarStation*)pUtr)=m_Radar;
-
-		//	Invalidate(true);
-
+		pRadar->init();
+		
 	}
-
 	if (nResult == IDCANCEL)
-
 	{
-
 		if (m_bDelete)
-
 		{
-
 			CUtrustningLista::CNod *pTempPos;
-
 			pTempPos = pLista->m_pStartPos;
-
 			for (int i = 0; i < pLista->m_nAntalNoder; i++)
-
 			{
-
 				if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
-
 				{
-
 					pLista->TaBort(pTempPos->m_pUtrustning);
-
 					break;
-
 				}
-
-
-
 				pTempPos = pTempPos->m_pNext;
-
 			}
-
-
-
 			NbrOfRadar--;
-
 			CUtrustning* tmpUtr;
-
 			//	Invalidate(true);
-
 		}
-
 	}
-
 	m_pDlgOVOpenGL->InvalidateRect(NULL, FALSE);
 	Invalidate(true);
-
 	m_bDelete = false;
-
 }
 
 
 
 void CRadarplotView::OnPropertiesJammer()
 {
-
 	CString SheetTitle;
-
 	SheetTitle.Format(_T("Properties "));
-
 	CUtrustning*	pUtr;
-
 	CUtrustning*	pUtrRadar;
-
 	CUtrustningLista::CNod *pTempPos;
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
 	pTempPos = pLista->m_pStartPos;
 
 	for (int i = 0; i < pLista->m_nAntalNoder; i++)
-
 	{
-
 		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
-
 		{
-
 			pUtrRadar = pTempPos->m_pUtrustning;
-
-			//	break;
-
 		}
-
-
-
 		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
-
 		{
-
 			if (pTempPos->m_pUtrustning->m_strUniqID == m_strCurrentObject)
-
 			{
-
 				pUtr = pTempPos->m_pUtrustning;
-
-				//	break;
-
 			}
-
 		}
-
-
-
 		pTempPos = pTempPos->m_pNext;
-
 	}
 
 	CRadarJammer* pJammer = (CRadarJammer*)pUtr;
-
 	SheetTitle.Insert(12, pUtr->m_strUniqID);
-
 	CPropSheetJammer sh(SheetTitle);
-
 	sh.m_psh.dwFlags |= PSH_NOAPPLYNOW;
-
 	//kopierar från Utrustning till Jammer
-
 	//	m_Jammer.operator =(*pUtr);
-
 	sh.Init(pJammer, pUtrRadar);
-
 	int nResult = sh.DoModal();
-
 	if (nResult == IDOK)
-
 	{
-
-		//kopierar från Jammer till Utrustning
-
-		//	pUtr->operator =((CUtrustning)m_Jammer);
-
-		//kopierar från Jammer till Jammer
-
-		//	*((CRadarJammer*)pUtr)=m_Jammer;
-
-
+		pJammer->init();
 	}
-
 	if (nResult == IDCANCEL)
-
 	{
-
 		if (m_bDelete)
-
 		{
-
 			pLista->TaBort(pUtr);
-
 			NbrOfJammer--;
-
-
 		}
-
 	}
-	//Uppdatera PPI ty där beräknas objectens nya positioner.
-	m_pDlgScenOpenGL->InvalidateRect(NULL, FALSE);
 	m_pDlgOVOpenGL->InvalidateRect(NULL, FALSE);
 	Invalidate(true);
 	m_bDelete = false;
-
 }
 
 
 
 void CRadarplotView::OnPropertiesTarget()
-
 {
-
 	// TODO: Add your command handler code here
 
-
-
 	CString SheetTitle;
-
 	SheetTitle.Format(_T("Properties "));
-
 	SheetTitle.Insert(12, m_strCurrentObject);
-
 	CUtrustning*	pUtr;
-
 	CUtrustningLista::CNod *pTempPos;
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
 	pTempPos = pLista->m_pStartPos;
-
 	for (int i = 0; i < pLista->m_nAntalNoder; i++)
-
 	{
-
 		if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
-
 		{
-
 			if (pTempPos->m_pUtrustning->m_strUniqID == m_strCurrentObject)
-
 			{
-
 				pUtr = pTempPos->m_pUtrustning;
-
 				break;
-
 			}
-
 		}
-
-
-
 		pTempPos = pTempPos->m_pNext;
-
 	}
-
 
 	CPropSheetTarget sh(SheetTitle);
-
 	sh.m_psh.dwFlags |= PSH_NOAPPLYNOW;
-
 	sh.Init(pUtr);
-
-
 	int nResult = sh.DoModal();
-
 	if (nResult == IDOK)
 	{
-
+		pUtr->init();
 	}
-
 	if (nResult == IDCANCEL)
-
 	{
-
 		if (m_bDelete)
-
 		{
-
 			pLista->TaBort(pUtr);
-
 			NbrOfTarget--;
-
 			CUtrustningLista::CNod *pTempPos2;
-
 			pTempPos2 = pLista->m_pStartPos;
-
-
 		}
-
 	}
 
-	//	m_pDlgOVOpenGL->InvalidateRect(NULL,FALSE);
-	//Uppdatera PPI ty där beräknas objectens nya positioner.
-	m_pDlgScenOpenGL->InvalidateRect(NULL, FALSE);
 	m_pDlgOVOpenGL->InvalidateRect(NULL, FALSE);
 	Invalidate(true);
 	m_bDelete = false;
-
 }
 
 
@@ -1951,11 +1722,9 @@ void CRadarplotView::OnUpdateViewSenario(CCmdUI* pCmdUI)
 
 
 void CRadarplotView::OnOpenradar()
-
 {
 
 	//Lätt sätt att göra en öppna Fildialog
-
 	CFileDialog DlgRadar(true, _T("rad"), _T("*.rad"));
 
 	char szFileNameOfFile[5100];
@@ -1969,38 +1738,21 @@ void CRadarplotView::OnOpenradar()
 	strFilePath += szDrive;
 	strFilePath += szFolder;
 	strFilePath += "Data\\";
-	//	if(strFilePath.Right(1) != "\\")
-	//	{
-	//		strFilePath += "\\";
-	//	}
-
 	DlgRadar.m_ofn.lpstrInitialDir = strFilePath;
 	if (DlgRadar.DoModal() == IDOK)
 	{
-
 		CString RadFile = DlgRadar.GetPathName();
-
 		CFile f;
-
 		if (f.Open(RadFile, CFile::modeRead) == FALSE)
-
 			return;
 
-
 		CArchive ar(&f, CArchive::load);
-
 		Serialize(ar, 1);
-
-
 		ar.Close();
-
 		f.Close();
-
 		//Important (calculates new positions)
 		m_pDlgScenOpenGL->InvalidateRect(NULL, FALSE);
-		//	m_pDlgOVOpenGL->Invalidate(true);
 		Invalidate(true);
-
 		//TODO: räkna om radarparametrar
 	}
 }
@@ -2035,167 +1787,83 @@ void CRadarplotView::OnSaveradar()
 
 	DlgRadar.m_ofn.lpstrInitialDir = strFilePath;
 	if (DlgRadar.DoModal() == IDOK)
-
 	{
-
 		CString RadFile = DlgRadar.GetPathName();
-
-
-
 		CFile f;
-
 		f.Open(RadFile, CFile::modeCreate | CFile::modeWrite);
-
-
-
 		CArchive ar(&f, CArchive::store);
-
 		Serialize(ar, 1);
-
-
-
 		ar.Close();
-
 		f.Close();
-		//		m_pDlgOVOpenGL->Invalidate(true);
 		Invalidate();
-
 	}
-
 }
 
 
 
 void CRadarplotView::Serialize(CArchive& ar, int val)
-
 {
-
-
 	CUtrustningLista* pLista = CUtrustningLista::getInstance();
-
 	if (val == 1)//Radar
-
 	{
-
 		CUtrustning* pUtr;
-
 		CUtrustningLista::CNod *pTempPos;
-
 		pTempPos = pLista->m_pStartPos;
-
 		for (int i = 0; i < pLista->m_nAntalNoder; i++)
-
 		{
-
 			if (pTempPos->m_pUtrustning->m_enumTyp == CUtrustning::RADARSTATION)
-
 			{
-
 				pUtr = pTempPos->m_pUtrustning;
-
 				break;
-
 			}
-
 			pTempPos = pTempPos->m_pNext;
-
 		}
-
 		CRadarStation* pRadar = (CRadarStation*)pUtr;
-
 		int Svep_pa = (int)pRadar->m_bSvep_pa;
-
 		int Run = (int)pRadar->m_bRun;
-
 		int Deflection = (int)pRadar->m_bDeflectionMode;
-
 		int RawVideoMode = (int)pRadar->m_bRAWVideoMode;
-
 		int SynteticMode = (int)pRadar->m_bSynteticMode;
-
 		int SyntAndRawVideoMode = (int)pRadar->m_bSyntAndRAWVideoMode;
-
 		int CoherentIntegration = (int)pRadar->m_bCoherentIntegration;
-
 		int PulseGroupe = (int)pRadar->m_bPulseGroup;
-
 		int FixFrequency = (int)pRadar->m_bfixfrekvens;
-
 		int StaggerJitter = (int)pRadar->m_bStaggerJitterPRF;
-
 		int FixEllerDilvisFixPRF = (int)pRadar->m_bFixEllerDelvisFixPRF;
-
 		int KlotterKarta = (int)pRadar->m_bKlotterKarta;
-
 		int MTIFilter = (int)pRadar->m_bMTIFilter;
-
 		int AntennaDiagramFromFile = (int)pRadar->m_bAntennDiagramFromFile;
 
-
-
 		if (ar.IsStoring())
-
 		{// storing code
-
 			//Utrustning
-
-
-
 			ar << pUtr->m_strUniqID;
-
 			ar << pUtr->m_fBaring;
-
 			ar << pUtr->m_strStatus;
-
 			ar << pUtr->m_nHitTime;
-
 			ar << pUtr->m_fAngle;
-
 			ar << pUtr->m_pos.x;
-
 			ar << pUtr->m_pos.y;
-
 			//ar << pUtr->m_fStartPosY;
-
 			//ar << pUtr->m_fStartPosX;
-
 			ar << pUtr->m_fCourse;
-
 			ar << pUtr->m_fVelocity;
-
 			ar << pUtr->m_fSigma;
-
 			ar << pUtr->m_fJ_mal;
-
 			ar << pUtr->m_fSignal;
-
 			ar << pUtr->m_fDistanceToRadar;
-
 			ar << pUtr->m_fOldDistanceToRadar;
-
 			ar << pUtr->m_fMapDistance;
-
 			ar << pUtr->m_fCriticalBorder;
-
 			for (int i = 0; i < 3; i++)
-
 			{
-
 				ar << pUtr->m_fColor[i];
-
 			}
-
 			ar << pUtr->m_nNbrOfWayPoints;
-
 			for (int k = 0; k < pUtr->m_nNbrOfWayPoints; k++)
-
 			{
-
 				ar << pUtr->m_fDistWayPoints[k];
-
 			}
-
-
 
 			for (int t = 0; t < pUtr->m_nNbrOfWayPoints; t++)
 			{
@@ -2204,161 +1872,78 @@ void CRadarplotView::Serialize(CArchive& ar, int val)
 			}
 
 			//Radar Parametrar			
-
 			ar << Svep_pa;
-
 			ar << Run;
-
 			ar << pRadar->m_nAntennaScanPeriod;
-
 			ar << pRadar->m_fSvepHastighet;
-
 			ar << pRadar->m_fGgrRealTime;
-
-
-
 			ar << Deflection;
-
 			ar << RawVideoMode;
-
 			ar << SynteticMode;
-
 			ar << SyntAndRawVideoMode;
-
-
-
 			ar << pRadar->m_fIndicatorIntensity;
-
 			ar << pRadar->m_nTimeUnit;
-
 			ar << pRadar->m_fPeakPower;
-
 			ar << pRadar->m_flambda;
-
 			ar << pRadar->m_fPulseWidth;
-
 			ar << pRadar->m_fSensitivity;
-
-
-
 			ar << pRadar->m_fGainMainlobe;
-
 			ar << pRadar->m_fSideLobeSupression;
-
 			ar << pRadar->m_fBackLobeSupression;
-
 			ar << pRadar->m_fSpilloverLobeSupression;
-
 			ar << pRadar->m_fGainSpilloverlobe;
-
 			ar << pRadar->m_fGainBacklobe;
-
 			ar << pRadar->m_fWidthMainlobe;
-
 			ar << pRadar->m_fWidthSpilloverlobe;
-
 			ar << pRadar->m_fOffsetSpilloverlobe;
-
 			ar << pRadar->m_fWidthBacklobe;
-
 			ar << pRadar->m_fOffsetBacklobe;
-
-
-
 			ar << pRadar->m_fGainMainlobeRx;
-
 			ar << pRadar->m_fSideLobeSupressionRx;
-
 			ar << pRadar->m_fBackLobeSupressionRx;
-
 			ar << pRadar->m_fSpilloverLobeSupressionRx;
-
 			ar << pRadar->m_fGainSpilloverlobeRx;
-
 			ar << pRadar->m_fGainBacklobeRx;
-
 			ar << pRadar->m_fWidthMainlobeRx;
-
 			ar << pRadar->m_fWidthSpilloverlobeRx;
-
 			ar << pRadar->m_fOffsetSpilloverlobeRx;
-
 			ar << pRadar->m_fWidthBacklobeRx;
-
 			ar << pRadar->m_fOffsetBacklobeRx;
-
-
-
 			ar << pRadar->m_fDynamicRange;
-
 			ar << pRadar->m_fIFBandWidth;
-
 			ar << pRadar->m_nProcessingGain;
-
 			ar << pRadar->m_fPRI;
-
 			ar << pRadar->m_fPRIDeviation;
-
 			ar << pRadar->m_fSigmaRef;
-
 			ar << pRadar->m_fNoiseFactor;
-
 			ar << pRadar->m_fSNRRadar;
-
 			ar << pRadar->m_fLosses;
-
 			ar << pRadar->m_fChannelSeparation;
-
 			ar << CoherentIntegration;
-
 			ar << pRadar->m_nklotterkarta_slump;
-
 			ar << pRadar->m_nPulseCompRatio;
-
 			ar << AntennaDiagramFromFile;
-
 			ar << PulseGroupe;
-
 			ar << pRadar->m_fantal_pulser;
-
 			ar << FixFrequency;
-
 			ar << StaggerJitter;
-
 			ar << FixEllerDilvisFixPRF;
-
 			ar << KlotterKarta;
-
 			ar << pRadar->m_nPlotSannolikhetKlotterKarta;
-
 			ar << pRadar->m_nKlotterKartaSlump;
-
 			ar << pRadar->m_nNedrakningCellutslackningKlotterKarta;
-
 			ar << pRadar->m_nAntalFalskmalForAktiveringKlotterKarta;
-
 			ar << pRadar->m_nKlotterKartaSlump2;
-
 			ar << pRadar->m_nplottsannolikhet;
-
 			ar << pRadar->m_fMaxRange;
-
 			ar << pRadar->m_fFreqMin;
-
 			ar << pRadar->m_fFreqMax;
-
 			ar << pRadar->m_fMTILowerVelocityLimit;
-
 			ar << pRadar->m_fMTIAttenuation;
-
 			ar << MTIFilter;
-
 			ar << pRadar->m_strAntennaDiagramFileName;
-
 		}
-
 		else
-
 		{	// loading code
 
 			ar >> pUtr->m_strUniqID;
@@ -2606,38 +2191,32 @@ void CRadarplotView::Serialize(CArchive& ar, int val)
 			pRadar->m_bMTIFilter = MTIFilter;
 
 			pRadar->m_bAntennDiagramFromFile = AntennaDiagramFromFile;
-
-			CDataFile df;
-			df.SetDelimiter(";");
-			TCHAR currentDir[MAX_PATH];
-			GetCurrentDirectory(MAX_PATH, currentDir);
-			CString cDir;
-			cDir.Format(currentDir);
-			ATLTRACE(cDir);
-			if (!df.ReadFile(CW2A(cDir + "\\Data\\" + pRadar->m_strAntennaDiagramFileName)))
-			{
-				AfxMessageBox(_T("Unable to open Antennadiagram File!"));
-				pRadar->m_bAntennDiagramFromFile = false;
-				pRadar->m_strAntennaDiagramFileName.Format(_T("error"));
-			}
-			else
-			{
-				int nSamps = df.GetNumberOfSamples(1);
-				int nVars = df.GetNumberOfVariables();
-				if (pRadar->m_fAntennTabel == NULL)
-					pRadar->m_fAntennTabel = new float[nSamps];
-
-				for (int i = 0; i < nSamps; i++)
+			if (pRadar->m_bAntennDiagramFromFile) {
+				CDataFile df;
+				df.SetDelimiter(";");
+				CString userHomeDir = GetUserHomeDir();
+				ATLTRACE(userHomeDir);
+				if (!df.ReadFile(CW2A(userHomeDir + "\\ASSAR\\Data\\" + pRadar->m_strAntennaDiagramFileName)))
 				{
-					pRadar->m_fAntennTabel[i] = df.GetData(1, i);
+					AfxMessageBox(_T("Unable to open Antennadiagram File!"));
+					pRadar->m_bAntennDiagramFromFile = false;
+					pRadar->m_strAntennaDiagramFileName.Format(_T("error"));
+				}
+				else
+				{
+					int nSamps = df.GetNumberOfSamples(1);
+					int nVars = df.GetNumberOfVariables();
+					if (pRadar->m_fAntennTabel == NULL)
+						pRadar->m_fAntennTabel = new float[nSamps];
+
+					for (int i = 0; i < nSamps; i++)
+					{
+						pRadar->m_fAntennTabel[i] = df.GetData(1, i);
+					}
 				}
 			}
-
-
-			//	*((CRadarStation*)pUtr)=m_Radar;
-
+			pRadar->init();
 		}
-
 	}
 
 	else//Jammer
@@ -3063,12 +2642,9 @@ void CRadarplotView::Serialize(CArchive& ar, int val)
 			pJammer->m_enumRepeaterPowerMode = (CRadarJammer::PowerMode)EnumPowerModeRepeater;
 
 
-			//	*((CRadarJammer*)pUtr)=m_Jammer;
-
+			pJammer->init();
 		}
-
 	}
-
 }
 
 
@@ -3136,7 +2712,6 @@ void CRadarplotView::OnSavejammer()
 
 
 void CRadarplotView::OnOpenjammer()
-
 {
 
 	// TODO: Add your command handler code here
@@ -3159,40 +2734,20 @@ void CRadarplotView::OnOpenjammer()
 	//	}
 
 	DlgJammer.m_ofn.lpstrInitialDir = strFilePath;
-
 	if (DlgJammer.DoModal() == IDOK)
-
 	{
-
 		CString JamFile = DlgJammer.GetPathName();
-
-
-
-
-
 		CFile f;
-
 		if (f.Open(JamFile, CFile::modeRead) == FALSE)
-
 			return;
-
-
-
 		CArchive ar(&f, CArchive::load);
-
 		Serialize(ar, 2);
-
-
-
 		ar.Close();
-
 		f.Close();
 		//Important (calculates new positions)
-		m_pDlgScenOpenGL->InvalidateRect(NULL, FALSE);
+		//m_pDlgScenOpenGL->InvalidateRect(NULL, FALSE);
 		Invalidate();
-
 	}
-
 }
 
 
@@ -3296,8 +2851,15 @@ void CRadarplotView::OnButtonStop()
 	if (!m_bRun)
 		return;
 
+	CString tmpstr;
+	tmpstr.Format(_T("Stop Simulation?"));
+
+	int nRet = AfxMessageBox(tmpstr, MB_YESNO, 1);
+	if (nRet != IDYES)
+		return;
+
+
 	m_pDlgScenOpenGL->Stop();
-	//	m_pDlgOVOpenGL->Stop();
 	m_bRun = false;
 	KillTimer(4);
 	m_pDlgScenOpenGL->Invalidate();
@@ -4119,8 +3681,6 @@ void CRadarplotView::OnScenarioAddtarget()
 
 void CRadarplotView::OnSimulationStart()
 {
-	m_strSimulationStatus.Format(_T("Running.."));
-	ShowStatus();
 	OnButtonPpi();
 }
 
@@ -4171,48 +3731,47 @@ void CRadarplotView::OnRStop()
 
 void CRadarplotView::OnRResume()
 {
-	m_strSimulationStatus.Format(_T("Running"));
-	ShowStatus();
-	m_pDlgScenOpenGL->OnButton1();
-
+	if (m_bRun){
+		m_strSimulationStatus.Format(_T("Running"));
+		ShowStatus();
+		m_pDlgScenOpenGL->OnButton1();
+	}
 }
 
 void CRadarplotView::OnRPause()
 {
-	m_strSimulationStatus.Format(_T("Paused"));
-	ShowStatus();
-	m_pDlgScenOpenGL->OnMenuPause();
-
+	if (m_bRun)
+	{
+		m_strSimulationStatus.Format(_T("Paused"));
+		ShowStatus();
+		m_pDlgScenOpenGL->OnMenuPause();
+	}
 }
 
 void CRadarplotView::OnSimulationPause()
 {
-	m_strSimulationStatus.Format(_T("Paused"));
-	ShowStatus();
 	OnRPause();
 }
 
 void CRadarplotView::OnSimulationResume()
 {
-	m_strSimulationStatus.Format(_T("Running"));
-	ShowStatus();
 	OnRResume();
 }
 
 void CRadarplotView::OnFileSave()
 {
-	AfxMessageBox(_T("Not possible in Demo version!"));
+	AfxMessageBox(_T("Not possible in current version!"));
 }
 
 void CRadarplotView::OnFileOpen()
 {
-	AfxMessageBox(_T("Not possible in Demo version!"));
+	AfxMessageBox(_T("Not possible in current version!"));
 
 }
 
 void CRadarplotView::OnFileNew()
 {
-	AfxMessageBox(_T("Not possible in Demo version!"));
+	AfxMessageBox(_T("Not possible in current version!"));
 
 }
 
@@ -4290,4 +3849,28 @@ void CRadarplotView::OnAntennachart()
 	{
 
 	}
+}
+
+
+void CRadarplotView::OnButtonPaus()
+{
+	if (m_bRun)
+	{
+		if (!m_bPause) {
+			m_strSimulationStatus.Format(_T("Paused"));
+			ShowStatus();
+			m_pDlgScenOpenGL->OnMenuPause();
+			m_bPause = true;
+		}
+		else {
+			OnRResume();
+			m_bPause = false;
+		}
+	}
+}
+
+
+void CRadarplotView::OnButtonFullScreen()
+{
+	OnSimulationFullscreen();
 }

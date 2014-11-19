@@ -633,6 +633,11 @@ void CRadarJammer::stop()
 	m_bRepeterStorning = false;
 }
 
+void CRadarJammer::init()
+{
+	CUtrustning::init();
+
+}
 
 
 // --------------------------
@@ -897,7 +902,10 @@ CRadarStation::~CRadarStation()
 {
 
 	TRACE("~CRadarStation\n");
-//	delete[] m_fAntennTabel;
+	if (m_fAntennTabel != NULL)
+	{
+		delete[] m_fAntennTabel;
+	}
 //	m_CellLista.TaBortAlla();
 	//m_CellLista.~CCellLista();
 }
@@ -1130,7 +1138,6 @@ void CRadarStation::operator=(CUtrustning &utr)
 
 float CRadarStation::ReturnAntennaGain(bool TXorRX, float alfa)
 {
-
 	//OBS gör om alfa från exakt vinkel till index i AntennTabel
 	if(m_bAntennDiagramFromFile)
 	{
@@ -1138,11 +1145,6 @@ float CRadarStation::ReturnAntennaGain(bool TXorRX, float alfa)
 		alfa=-alfa;
 
 		int index = int(alfa*2);
-	//	if(m_fAntennTabel != NULL)
-	//		TRACE("Effect %f\r\n",m_fAntennTabel[index]);
-
-		//return 10;
-
  		return m_fAntennTabel[index];
 	}
 	else
@@ -1210,4 +1212,27 @@ void CRadarStation::stop()
 	m_bRun = false;
 	m_fGgrRealTime = DEFAULTGGRREALTIME;
 	m_CellLista.TaBortAlla();
+}
+
+void CRadarStation::init()
+{
+	CUtrustning::init();
+	if (m_bCoherentIntegration == true)
+	{
+		m_nProcessingGain = CRadarCalculate::ProcessingGain(1, m_fWidthMainlobeRx, m_nAntennaScanPeriod, m_fPRI);
+	}
+	else
+	{
+		m_nProcessingGain = CRadarCalculate::ProcessingGain(2, m_fWidthMainlobeRx, m_nAntennaScanPeriod, m_fPRI);
+	}
+	m_fIFBandWidth = CRadarCalculate::IFBandWidth(m_fPulseWidth);
+	m_fSensitivity = CRadarCalculate::SensitivityRadar(m_fPulseWidth, m_fNoiseFactor, m_fSNRRadar, m_fLosses);
+	m_flambda = CRadarCalculate::LambdaRadar(m_fFreqMax, m_fFreqMin);
+	m_fMaxRange = CRadarCalculate::MaxRange(m_fGainMainlobe, m_fGainMainlobeRx, m_flambda, m_fSigmaRef, m_nProcessingGain, m_fPeakPower, m_fSensitivity);
+	m_fSvepHastighet = CRadarCalculate::AntennaScanPeriod((float)m_nAntennaScanPeriod);
+	if (m_bPulseGroup == true && m_fantal_pulser == 1 && m_bMTIFilter == true)
+	{
+		AfxMessageBox(_T("Error: MTI Mode is not possible in \npulse-pulse frequency hopping!"));
+		m_bMTIFilter = false;
+	}
 }

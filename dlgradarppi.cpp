@@ -85,17 +85,13 @@ CDlgRadarPPI::CDlgRadarPPI(CWnd* pParent /*=NULL*/)
 
 
 CDlgRadarPPI::~CDlgRadarPPI()
-
 {
-
 	TRACE("~CDlgRadarPPI\n");
-
 	if (m_ppTarget != NULL)
 		delete[] m_ppTarget;
 
 	if (m_pDisplay != NULL)
 		delete m_pDisplay;
-
 }
 
 
@@ -2034,8 +2030,6 @@ void CDlgRadarPPI::position(float angle)
 						}
 					}
 				}
-				/*pNod->m_pUtrustning->m_fPosX = X;
-				pNod->m_pUtrustning->m_fPosY = Y;*/
 			}
 			pNod = pNod->m_pNext;
 		}
@@ -2428,15 +2422,9 @@ void CDlgRadarPPI::OnMenuRun()
 
 
 void CDlgRadarPPI::OnMenuPause()
-
 {
-
-	// TODO: Add your command handler code here
-
 	m_pRadar->m_fGgrRealTime = 0.0f;
-
 	KillTimer(0);
-
 }
 
 

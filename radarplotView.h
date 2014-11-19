@@ -83,7 +83,7 @@ public:
 
 
 	bool				m_bRun;
-
+	bool				m_bPause;
 	int					l;
 
 
@@ -250,6 +250,8 @@ protected:
 
 public:
 	afx_msg void OnAntennachart();
+	afx_msg void OnButtonPaus();
+	afx_msg void OnButtonFullScreen();
 };
 
 

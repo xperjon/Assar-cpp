@@ -5,33 +5,19 @@
 
 #include "stdafx.h"
 
-void HookTrace(const wchar_t* format, ...)
+CString GetUserHomeDir()
 {
-	const int TraceBufferSize = 1024;
-	wchar_t buffer[TraceBufferSize];
+	TCHAR szHomeDirBuf[MAX_PATH] = { 0 };
 
-	va_list argptr; va_start(argptr, format);
-	vswprintf_s(buffer, format, argptr);
-	va_end(argptr);
+	// We need a process with query permission set
+	HANDLE hToken = 0;
+	VERIFY(OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken));
 
-	::OutputDebugString(buffer);
-}
+	// Returns a path like C:/Documents and Settings/nibu if my user name is nibu
+	DWORD BufSize = MAX_PATH;
+	VERIFY(GetUserProfileDirectory(hToken, szHomeDirBuf, &BufSize));
 
-void HookTrace(const char* format, ...)
-{
-	const int TraceBufferSize = 1024;
-	char szBuf[TraceBufferSize];
-
-	va_list argptr; va_start(argptr, format);
-	vsprintf_s(szBuf, format, argptr);
-	va_end(argptr);
-
-	wchar_t wszBuf[TraceBufferSize] = { '\0' };
-
-	if (MultiByteToWideChar(CP_ACP, 0, szBuf, -1, wszBuf, TraceBufferSize) == 0)
-	{
-		return;
-	}
-
-	::OutputDebugString(wszBuf);
-}
+	// Close handle opened via OpenProcessToken
+	CloseHandle(hToken);
+	return CString(szHomeDirBuf);
+}// End GetUserHomeDir

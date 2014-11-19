@@ -285,7 +285,9 @@
 #define ID_KALIBRERA_RADAR              32810
 #define ID_BUTTON_STOP                  32811
 #define ID_BUTTON32816                  32816
+#define ID_BUTTON_PAUS                  32816
 #define ID_BUTTON32817                  32817
+#define ID_BUTTON_FULL_SCREEN           32817
 #define ID_BUTTON32818                  32818
 #define ID_MENU_FASTER                  32819
 #define ID_MENU_SLOWER                  32820

@@ -69,6 +69,7 @@ public:
 	void operator=(CUtrustning &pUtr);
 
 	void stop();
+	void init();
 
 public:
 
@@ -253,6 +254,7 @@ public:
 	void operator=(CUtrustning &pUtr);
 
 	void stop();
+	void init();
 
 
 	float ReturnAntennaGain(bool TXorRX, float alfa);

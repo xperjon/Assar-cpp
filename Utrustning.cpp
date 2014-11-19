@@ -38,7 +38,7 @@ CUtrustning::CUtrustning()
 	m_fSigma = 1;		//sigma
 	m_fJ_mal = 0;		//Jmal (även bruseffekt från en annan brusare om man ser från ett Jammer perspektiv)
 	m_fSignal = 0;		//Smal
-	m_fDistanceToRadar = 60000;		//Rm
+	m_fDistanceToRadar = 0;		//Rm
 	m_fOldDistanceToRadar = 0;
 	m_fMapDistance = 0;		//Radiellt_avstand_mal
 	m_fCriticalBorder = 0;
@@ -124,4 +124,14 @@ void CUtrustning::stop()
 	m_strStatus = "OFF";
 	m_pos = m_startPos;
 	m_fDistanceToRadar = CRadarCalculate::dist({0,0}, m_pos);
+}
+
+void CUtrustning::init()
+{
+	float X, Y;
+	CRadarCalculate::Startpos(m_fBaring, m_fDistanceToRadar, X, Y);
+	m_startPos.x = X;
+	m_startPos.y = Y;
+	m_pos.x = X;
+	m_pos.y = Y;
 }

@@ -396,7 +396,7 @@ void CPropPage2Radar::OnSelchangeComboPritype()
 
 	{
 
-		AfxMessageBox(_T("Not available in DEMO version!"));
+		AfxMessageBox(_T("Not available in current version!"));
 
 		m_strPRIType="Fix";
 
@@ -923,7 +923,7 @@ void CPropPage4Radar::OnSelchangeComboPolarization()
 
 	{
 
-		AfxMessageBox(_T("Not available in DEMO version!"));
+		AfxMessageBox(_T("Not available in current version!"));
 
 		m_strPolarization="Horizontal";
 
@@ -1026,20 +1026,18 @@ void CPropPage4Radar::OnChangeEditWidthmainlobe()
 void CPropPage4Radar::ShowFileDialog()
 {
 	CFileDialog DlgLookup(TRUE, NULL, NULL, OFN_OVERWRITEPROMPT, _T("Comma Separated Values(*.csv)|*.csv| Text Files (*.txt)|*.txt|"));
-			TCHAR szFileNameOfFile[5100];
-			GetModuleFileNameW(NULL, szFileNameOfFile, 5100);
-			TCHAR szDrive[20], szFolder[4096],
-				 szFileName[MAX_PATH], szFileExt[10];
+			TCHAR szHomeDirBuffer[MAX_PATH];
+			HANDLE hToken = 0;
+			OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken);
+			DWORD BufSize = MAX_PATH;
+			GetUserProfileDirectory(hToken, szHomeDirBuffer, &BufSize);
+			CloseHandle(hToken);
 
-			_tsplitpath(szFileNameOfFile, szDrive, szFolder, szFileName, szFileExt);
-
-			CString strFilePath = "";
-			strFilePath += szDrive;
-			strFilePath += szFolder;
-			strFilePath += "Data\\";
+			CString strFilePath = GetUserHomeDir();
+			strFilePath += "\\ASSAR\\DATA";
 
 			DlgLookup.m_ofn.lpstrInitialDir = strFilePath;
-				
+
 			ATLTRACE(_T("File path: %s \n"), strFilePath);
 
 			if(DlgLookup.DoModal()==IDOK)
@@ -1052,7 +1050,7 @@ void CPropPage4Radar::ShowFileDialog()
 
 				if (!(m_strFileName == "antenndiagram.csv" || m_strFileName == "antenndiagram1.csv" || m_strFileName == "antenndiagram2.csv"))
 				{
-					AfxMessageBox(_T("Not possible to use customized antenna diagrams in demoversion!"));
+					AfxMessageBox(_T("Not possible to use customized antenna diagrams in current version!"));
 					return;
 				}
 
@@ -1292,7 +1290,7 @@ void CPropPage5Radar::OnSelchangeComboIndicatortype()
 
 	if(m_strIndicatorType!="RawVideo")
 	{
-		AfxMessageBox(_T("Not available in DEMO version!"));
+		AfxMessageBox(_T("Not available in current version!"));
 		m_strIndicatorType.Format(_T("RawVideo"));
 	}
 	/*

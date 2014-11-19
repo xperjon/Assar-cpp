@@ -24,23 +24,14 @@
 #endif // _AFX_NO_AFXCMN_SUPPORT
 #include <gl\gl.h>
 #include <gl\glu.h>
-
-void HookTrace(const wchar_t* format, ...);
-void HookTrace(const char* format, ...);
+#include "Userenv.h"
 
 #define M_PI 3.1415926535897932384626433832795f
 #define DEFAULTGGRREALTIME 3.0f
 #define MAXNBROFWAYPOINTS	10
 
-/*
-#ifdef ATLTRACE 
-#undef ATLTRACE
-#undef ATLTRACE2
+CString GetUserHomeDir();
 
-#define ATLTRACE HookTrace
-#define ATLTRACE2 ATLTRACE
-#endif // ATLTRACE
-*/
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

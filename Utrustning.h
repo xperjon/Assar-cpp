@@ -30,6 +30,7 @@ public:
 	CUtrustning();
 	virtual ~CUtrustning();
 	virtual void stop();
+	virtual void init();
 	//	CUtrustning(CUtrustning& utr);
 	//~CUtrustning();
 	void operator=(CUtrustning &utr);

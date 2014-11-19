@@ -946,28 +946,26 @@ void COpenGL::RenderOverView()
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
 				glTranslatef(0, 0, -m_fScale*3.0f);
-
-				// ------- Röd radar ------
-				glColor3f(1, 0, 0);
-				glBegin(GL_POINTS);
-				glVertex3f(0, 0, 0);
-				glEnd();
 				//-----------------------Avståndsringar---------------------------------------
 				glPushMatrix();
 				glColor3f(0, 0.6f, 0);
 				gluDisk(Obj, ((CRadarStation*)pNod->m_pUtrustning)->m_fMaxRange, ((CRadarStation*)pNod->m_pUtrustning)->m_fMaxRange, 360, 1);
 				glColor4f(0, 1, 0, 0.5);
 				glPopMatrix();
+
+				// ------- Röd radar ------
+				glColor3f(1, 0, 0);
 			}
-			if (pNod->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
+			else if (pNod->m_pUtrustning->m_enumTyp == CUtrustning::RADARTARGET)
 			{
+
 				if (pNod->m_bActive)
 					glColor3f(1, 0, 0);
 				else
 					glColor3f(pNod->m_pUtrustning->m_fColor[0], pNod->m_pUtrustning->m_fColor[1], pNod->m_pUtrustning->m_fColor[2]);
 
 			}
-			if (pNod->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
+			else if (pNod->m_pUtrustning->m_enumTyp == CUtrustning::RADARJAMMER)
 			{
 				// ------- Jammer ------
 				if (pNod->m_bActive)
@@ -978,14 +976,6 @@ void COpenGL::RenderOverView()
 			}
 			glEnable(GL_LINE_STIPPLE);
 			glLineStipple(3, 0x5555);
-
-
-			//if(pNod->m_pUtrustning->m_nNbrOfWayPoints==0)
-			//{
-			//	//Sätt alla waypoints till objektets aktuella position (annars ritas ett sträck till 0,0 om användaren kryssar i show all waypoints)
-			//	pNod->m_pUtrustning->m_fWayPoints[0]=pNod->m_pUtrustning->m_fPosX;
-			//	pNod->m_pUtrustning->m_fWayPoints[1]=pNod->m_pUtrustning->m_fPosY;
-			//}
 
 			if (pNod->m_bActive == true || m_checkAllWayPoints == true)
 			{
@@ -1003,15 +993,12 @@ void COpenGL::RenderOverView()
 					}
 				}
 			}
-
-			if (pNod->m_bActive)
-				glColor3f(1, 0, 0);
+			glDisable(GL_LINE_STIPPLE);
 
 			glBegin(GL_POINTS);
 			glVertex3f(pNod->m_pUtrustning->m_pos.x, pNod->m_pUtrustning->m_pos.y, 0);
 			glEnd();
 
-			glDisable(GL_LINE_STIPPLE);
 			pNod = pNod->m_pNext;
 		}
 	}
