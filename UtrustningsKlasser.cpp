@@ -651,77 +651,27 @@ void CRadarJammer::init()
 // Default-konstruktor för att skapa default objekt med "standard" inställningar
 
 CRadarStation::CRadarStation() : CUtrustning()
-
 {
-
-//	m_strAntennaDiagramFileName = "Data/antenndiagram.csv";
-
 		m_fAntennTabel = NULL;
 		m_bAntennDiagramFromFile = false;
-/*
-	CDataFile df;
-	df.SetDelimiter(";");
-	if(!df.ReadFile(m_strAntennaDiagramFileName))
-	{
-		AfxMessageBox("Unable to open Antennadiagram File!");
-	//	m_fAntennTabel = new float[2];
-	//	m_fAntennTabel[0] = 1600;
-	//	m_fAntennTabel[1] = 1000;
-		m_fAntennTabel = NULL;
-		m_bAntennDiagramFromFile = false;
-		m_strAntennaDiagramFileName.Format("error");
-	}
-	else
-	{
 
-		int nVars = df.GetNumberOfVariables();
-		int nSamps = df.GetNumberOfSamples(1); 
-		m_fAntennTabel = new float[nSamps];
-
-		for(int i =0;i<nSamps;i++)
-		{
-			m_fAntennTabel[i] = df.GetData(1,i);
-		}
-		m_bAntennDiagramFromFile = true;
-	}
-
-	df.ClearData();
-*/
-	
-	//		Senario
-
+		//		Senario
 	m_bSvep_pa							= true;
-
 	m_bRun								= false;
-
 	m_nAntennaScanPeriod				=	30;			//Varv/min
-
 	m_fSvepHastighet					=	60/m_nAntennaScanPeriod;		// #sec/varv
-
 	m_fGgrRealTime						= 3.0f;
-
 	//PPI-indikator 
-
 	m_bDeflectionMode					= 1;		//Efterlys
-
 	m_fIndicatorIntensity				= 1;
-
 	m_bRAWVideoMode						= true;
-
 	m_bSynteticMode						= false;
-
 	m_bSyntAndRAWVideoMode				= false;
-
 	m_nTimeUnit							= 0;
 
-
-
 //		Radardata
-
 	m_fPeakPower						=	30000;      //Pr	[W]
-
 	m_flambda							=	0;          //lambda
-
 	m_fPulseWidth						=	2*pow(10,-6);   //Pw    // värde i s resp sekundkonvertering
 
 	if(m_bAntennDiagramFromFile)
@@ -730,25 +680,16 @@ CRadarStation::CRadarStation() : CUtrustning()
 		m_fGainMainlobe						=	1600;				//Gr
 
 	m_fSideLobeSupression				=	20;	//dB
-
 	m_fBackLobeSupression				=	25;	//dB
-
 	m_fSpilloverLobeSupression			=	25;	//dB
-
-    m_fGainSpilloverlobe				=	1;				//Gsl
-
-    m_fGainBacklobe						=	1;            //Gbl
-
+	float gaindB = CRadarCalculate::FromGgrTodB(m_fGainMainlobe);
+	m_fGainSpilloverlobe = CRadarCalculate::FromdBToGgr(gaindB - m_fSpilloverLobeSupression);				//Gsl
+	m_fGainBacklobe = CRadarCalculate::FromdBToGgr(gaindB - m_fBackLobeSupression);
     m_fWidthMainlobe					=	2.5;             //W
-
     m_fWidthSpilloverlobe				=	20;             //Wsid
-
     m_fOffsetSpilloverlobe				=	130;           //Sidoff
-
     m_fWidthBacklobe					=	20;             //Wback
-
     m_fOffsetBacklobe					=	180;           //Backoff
-
 
 	if(m_bAntennDiagramFromFile)
 		m_fGainMainlobeRx					=	m_fAntennTabel[0];				//Gr
@@ -756,144 +697,64 @@ CRadarStation::CRadarStation() : CUtrustning()
 		m_fGainMainlobeRx					=	1600;
 
 	m_fSideLobeSupressionRx				=	20;	//dB
-
 	m_fBackLobeSupressionRx				=	25;	//dB
-
 	m_fSpilloverLobeSupressionRx		=	25;	//dB
-
-	m_fGainSpilloverlobeRx				=	1;				//Gsl
-
-	m_fGainBacklobeRx					=	1;            //Gbl
-
+	float gainRxdB = CRadarCalculate::FromGgrTodB(m_fGainMainlobeRx);
+	m_fGainSpilloverlobeRx = CRadarCalculate::FromdBToGgr(gainRxdB - m_fSpilloverLobeSupressionRx);				//Gsl
+	m_fGainBacklobeRx = CRadarCalculate::FromdBToGgr(gainRxdB - m_fBackLobeSupressionRx);        //Gbl
     m_fWidthMainlobeRx					=	2.5;             //W
-
     m_fWidthSpilloverlobeRx				=	20;             //Wsid
-
     m_fOffsetSpilloverlobeRx			=	130;           //Sidoff
-
     m_fWidthBacklobeRx					=	20;             //Wback
-
     m_fOffsetBacklobeRx					=	180;           //Backoff*/
 
-
-
 	m_fDynamicRange						=	100000000;            //JS
-
 	m_fIFBandWidth						=	(1/(m_fPulseWidth))*pow(10,-6);       //bmf, skall vara 1/PulseWidth [MHz]
-
 	m_fPRI								=	0.3*pow(10,-3);    //det skall vara möjligt att ange PRF oxå (1/PRI)
-
 	m_bCoherentIntegration				=	false;
-
 	if(m_bCoherentIntegration==false)
-
-	m_nProcessingGain					=	CRadarCalculate::ProcessingGain(2,m_fWidthMainlobeRx,m_nAntennaScanPeriod,m_fPRI);
-
+		m_nProcessingGain					=	CRadarCalculate::ProcessingGain(2,m_fWidthMainlobeRx,m_nAntennaScanPeriod,m_fPRI);
 	else
-
-	m_nProcessingGain					=	CRadarCalculate::ProcessingGain(1,m_fWidthMainlobeRx,m_nAntennaScanPeriod,m_fPRI);
+		m_nProcessingGain					=	CRadarCalculate::ProcessingGain(1,m_fWidthMainlobeRx,m_nAntennaScanPeriod,m_fPRI);
 
 //	m_fPRI								=	1*pow(10,-3);    //det skall vara möjligt att ange PRF oxå (1/PRI)
-
-
-
-	
-
     m_fSigmaRef							=	1;
-
 	m_fNoiseFactor						=	6;	//dB
-
 	m_fSNRRadar							=	10;	//dB
-
 	m_fLosses							=	6;	//dB
-
 	m_fSensitivity						=	(1/m_fPulseWidth)*pow(10,(-20.4+(m_fNoiseFactor+m_fSNRRadar+m_fLosses)/10));	
-
-
-
     m_fChannelSeparation				= 	0.05f;		//GHz (=50MHz)
-
 //	m_bCoherentIntegration				=	false;
 
-
-
     //Antenn
-
-
-
 //    m_bcosecantviktning					=	0;
-
 //	m_bcosviktning						=	0;
-
 //	m_buniform							=	1;
-
-
-
-
-
       //	020813 EM
-
     m_nklotterkarta_slump				=	0;
-
     m_nPulseCompRatio					=	1;
-
-	
     //		Radarbeteende     020813 EM
-
     m_bPulseGroup						=	true;
-
-		m_fantal_pulser					=	20;      //antalpulser=1 ger pulshopp
-
-
-
+	m_fantal_pulser					=	20;      //antalpulser=1 ger pulshopp
     m_bfixfrekvens						=	false;
-
-
-
     m_bStaggerJitterPRF				=	false;
-
-
-
     m_bFixEllerDelvisFixPRF			=	true;
-
 	m_bKlotterKarta					=	false;
-
     m_nPlotSannolikhetKlotterKarta	=10;
-
     m_nKlotterKartaSlump					=0;
-
     m_nNedrakningCellutslackningKlotterKarta	=1;
-
     m_nAntalFalskmalForAktiveringKlotterKarta	=20;
-
     m_nKlotterKartaSlump2							=0;
-
-
-
     m_nplottsannolikhet								=1;
-
-
-
 	m_fMaxRange							=	0;              //Rmax
-
 	m_fFreqMin							=	5.4;            //fmin_rr(GHz)
-
 	m_fFreqMax							=	5.9;            //fmax_rr(GHz)
-
 	m_fMTILowerVelocityLimit				=	10;	// m/s
-
 	m_fMTIAttenuation					=	50;// db
-
 	m_bMTIFilter						=	false;			
 
-
-
-//	SändarTyp
-
+	//	SändarTyp
 	m_enumTyp = CUtrustning::RADARSTATION;
-
-
-
 }
 
 

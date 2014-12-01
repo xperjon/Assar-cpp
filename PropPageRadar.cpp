@@ -115,36 +115,20 @@ void CPropPage1Radar::Init(CUtrustning* pUtr)
 
 
 void CPropPage1Radar::OnOK() 
-
 {
-
 	// TODO: Add your specialized code here and/or call the base class
-
 	m_pUtr->m_strUniqID	= m_strRadarName;
-
 	CPropertyPage::OnOK();
-
 }
 
 
-
 BEGIN_MESSAGE_MAP(CPropPage1Radar, CPropertyPage)
-
 	//{{AFX_MSG_MAP(CPropPage1Radar)
-
 	//}}AFX_MSG_MAP
-
 END_MESSAGE_MAP()
 
-
-
-
-
 /////////////////////////////////////////////////////////////////////////////
-
 // CPropPage2Radar property page
-
-
 
 CPropPage2Radar::CPropPage2Radar() : CPropertyPage(CPropPage2Radar::IDD)
 
@@ -1120,55 +1104,29 @@ void CPropPage4Radar::ShowFileDialog()
 
 }
 void CPropPage4Radar::OnOK() 
-
 {
-
 	((CRadarStation*)m_pUtr)->m_fWidthMainlobe			= m_fWidthMainLobe;
-
 	((CRadarStation*)m_pUtr)->m_fWidthSpilloverlobe		= m_fWidthSpilloverlobe;
-
 	((CRadarStation*)m_pUtr)->m_fWidthBacklobe			= m_fWidthBackLobe;
-
 	((CRadarStation*)m_pUtr)->m_fOffsetSpilloverlobe	= m_fOffsetSpilloverlobe;
-
 	((CRadarStation*)m_pUtr)->m_fGainMainlobe			= CRadarCalculate::FromdBToGgr(m_fGainMainlobe);
-
 	((CRadarStation*)m_pUtr)->m_fSideLobeSupression		= m_fSideLobeSupression;
-
 	((CRadarStation*)m_pUtr)->m_fGainBacklobe			= CRadarCalculate::FromdBToGgr(m_fGainMainlobe-m_fBackLobeSupression);
-
 	((CRadarStation*)m_pUtr)->m_fGainSpilloverlobe		= CRadarCalculate::FromdBToGgr(m_fGainMainlobe-m_fSpilloverLobeSupression);
-
 	((CRadarStation*)m_pUtr)->m_nAntennaScanPeriod		= m_fScanPeriod;
-
 	((CRadarStation*)m_pUtr)->m_fBackLobeSupression		= m_fBackLobeSupression;
-
 	((CRadarStation*)m_pUtr)->m_fSpilloverLobeSupression = m_fSpilloverLobeSupression;
-
 	((CRadarStation*)m_pUtr)->m_bAntennDiagramFromFile	= m_bFromFile;
-
 	((CRadarStation*)m_pUtr)->m_fWidthMainlobeRx		= m_fWidthMainLobeRx;
-
 	((CRadarStation*)m_pUtr)->m_fWidthSpilloverlobeRx	= m_fWidthSpilloverlobeRx;
-
 	((CRadarStation*)m_pUtr)->m_fWidthBacklobeRx		= m_fWidthBackLobeRx;
-
 	((CRadarStation*)m_pUtr)->m_fOffsetSpilloverlobeRx	= m_fOffsetSpilloverlobeRx;
-
 	((CRadarStation*)m_pUtr)->m_fGainMainlobeRx			= CRadarCalculate::FromdBToGgr(m_fGainMainlobeRx);
-
 	((CRadarStation*)m_pUtr)->m_fSideLobeSupressionRx	= m_fSideLobeSupressionRx;
-
 	((CRadarStation*)m_pUtr)->m_fGainBacklobeRx			= CRadarCalculate::FromdBToGgr(m_fGainMainlobeRx-m_fBackLobeSupressionRx);
-
 	((CRadarStation*)m_pUtr)->m_fGainSpilloverlobeRx	= CRadarCalculate::FromdBToGgr(m_fGainMainlobeRx-m_fSpilloverLobeSupressionRx);
-
-	
-
 	((CRadarStation*)m_pUtr)->m_fBackLobeSupressionRx	= m_fBackLobeSupressionRx;
-
 	((CRadarStation*)m_pUtr)->m_fSpilloverLobeSupressionRx = m_fSpilloverLobeSupressionRx;
-
 	((CRadarStation*)m_pUtr)->m_strAntennaDiagramFileName	= m_strFileName;
 
 	if(((CRadarStation*)m_pUtr)->m_fAntennTabel==NULL && m_bFromFile==true)
@@ -1180,9 +1138,7 @@ void CPropPage4Radar::OnOK()
 		//OnCheckFromfile();
 	}
 
-
 	CPropertyPage::OnOK();
-
 }
 
 
