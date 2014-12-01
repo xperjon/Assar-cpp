@@ -153,13 +153,9 @@ float CRadarCalculate::IFBandWidth(float PulseWidth)
 
 
 float CRadarCalculate::PowerRecieved(float PeakPowerRadar,float GainMainLobe,float Lambda,float AntennaGainRX,float DistanceToRadar)
-
 {
-
 	float PowerRecieved=(PeakPowerRadar*GainMainLobe*pow(Lambda,2)*AntennaGainRX)/(pow(DistanceToRadar,2)*16.0f*pow(M_PI,2));
-
 	return PowerRecieved;
-
 }
 
 

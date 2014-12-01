@@ -843,16 +843,7 @@ void COpenGL::RenderScenario()
 
 							if (pTempCellPos->m_pCell->m_fLifeTime > 0)
 							{
-
-
-								//	glColor4f(0,1.0f,0,pTempCellPos->m_pCell->m_fLifeTime/RadarDynamicRange*(((CRadarStation*)pTempPos->m_pUtrustning)->m_fIndicatorIntensity));
-
-
-								glColor4f(0, 0.8f, 0, (0.9f*pTempCellPos->m_pCell->m_fLifeTime / RadarDynamicRange) + 0.1f*(((CRadarStation*)pTempPos->m_pUtrustning)->m_fIndicatorIntensity));
-
-
-								//		glColor4f(0.05f, (0.75f*pTempCellPos->m_pCell->m_fLifeTime/RadarDynamicRange)+0.25f/*-(RadarDynamicRange-pTempCellPos->m_pCell->m_fLifeTime)/RadarDynamicRange+(RadarDynamicRange/5)*/,0.05f, ((CRadarStation*)pTempPos->m_pUtrustning)->m_fIndicatorIntensity/10);
-
+								glColor4f(0, 1.0f, 0, (1.0f*pTempCellPos->m_pCell->m_fLifeTime / RadarDynamicRange) + 0.1f*(((CRadarStation*)pTempPos->m_pUtrustning)->m_fIndicatorIntensity));
 
 								glPushMatrix();
 								float pulsewidth = CRadarCalculate::FromTimeToDistance(((CRadarStation*)pTempPos->m_pUtrustning)->m_fPulseWidth);
@@ -871,21 +862,11 @@ void COpenGL::RenderScenario()
 						}
 
 						if (pTempCellPos->m_pCell->m_enumTyp == NOISE)
-
 						{
-
-
 							if (pTempCellPos->m_pCell->m_fLifeTime > 0 && pTempCellPos->m_pCell->m_fDist < ((CRadarStation*)pTempPos->m_pUtrustning)->m_fMaxRange)
-
 							{
+								glColor4f(0, 1.0f, 0, (1.0f*pTempCellPos->m_pCell->m_fLifeTime / RadarDynamicRange) + 0.1f*(((CRadarStation*)pTempPos->m_pUtrustning)->m_fIndicatorIntensity));
 
-								//		glColor4f(0,1.0f,0,pTempCellPos->m_pCell->m_fLifeTime/RadarDynamicRange*(((CRadarStation*)pTempPos->m_pUtrustning)->m_fIndicatorIntensity));
-
-
-								glColor4f(0, 0.8f, 0, (0.9f*pTempCellPos->m_pCell->m_fLifeTime / RadarDynamicRange) + 0.1f*(((CRadarStation*)pTempPos->m_pUtrustning)->m_fIndicatorIntensity));
-
-
-								//	glColor4f(0.05f, (0.75f*pTempCellPos->m_pCell->m_fLifeTime/RadarDynamicRange)+0.25f/*-(RadarDynamicRange-pTempCellPos->m_pCell->m_fLifeTime)/RadarDynamicRange+(RadarDynamicRange/5)*/,0.05f, ((CRadarStation*)pTempPos->m_pUtrustning)->m_fIndicatorIntensity/10);
 								glLineWidth(3.0f);
 								glPushMatrix();
 								glRotatef(-pTempCellPos->m_pCell->m_fBaring, 0, 0, 1);
@@ -894,35 +875,16 @@ void COpenGL::RenderScenario()
 								glVertex3f(0, pTempCellPos->m_pCell->m_fSize, /*pTempCellPos->m_pCell->m_fSize,*/0);
 								glEnd();
 								glPopMatrix();
-
 							}
-
 						}
-
-
 						((CRadarStation*)pTempPos->m_pUtrustning)->m_CellLista.LifeTime(pTempCellPos->m_pCell);
-
 						pTempCellPos = pTempCellPos->m_pNext;
-
-
 					}
-
-
-
 				}
-
-				//	delete pTempCellPos;
-
 			}
-
-
-
 			pTempPos = pTempPos->m_pNext;
-
 		}
-
 	}
-
 }
 
 

@@ -165,7 +165,7 @@ private:
 
 	void		InitKlotterkarta(CRadarJammer* m_pJammer);
 
-	void		CalculatePowerRecieved(float search_angle,CRadarJammer* m_pJammer);
+	float		CalculatePowerRecieved(float search_angle,CRadarJammer* m_pJammer);
 
 	void		CalcutalePowerJam(float search_angle,CRadarJammer* m_pJammer);
 

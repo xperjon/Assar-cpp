@@ -1447,7 +1447,7 @@ void CDlgRadarPPI::CalculateSNR()
 	float	kTBNF = BoltzmannsConstant*NoiseTemperature*NoiseBandwidth*RadarNoiseFactor;			//dB
 	float	TermalNoise = kTBNF*LossesRadarReceiver;
 
-	CalculatePowerRecieved(0, m_pJammer);
+	m_pJammer->m_fPowerRecieved = CalculatePowerRecieved(0, m_pJammer);
 
 	CalculateNoiseEffectJammer(0, m_pJammer);
 	for (int i = 0; i < pLista->m_nAntalNoder; i++)
@@ -1495,7 +1495,7 @@ void CDlgRadarPPI::CalculateSNR()
 			if (m_pJammer->m_bBrusStorning == true)
 			{
 				float AngleJammerToTarget = ReturnAngleJammertoTarget(i - 2, m_pJammer);
-				CalculatePowerRecieved(AngleJammerToTarget, m_pJammer);
+				m_pJammer->m_fPowerRecieved = CalculatePowerRecieved(AngleJammerToTarget, m_pJammer);
 				CalculateNoiseEffectJammer(AngleJammerToTarget, m_pJammer);
 				//		float RadarAntennaGainTX=		m_pRadar->ReturnAntennaGain(1,AngleJammerToTarget);
 				/*		float FourPiSquare=				(float)pow((4.0f*M_PI),2.0f);
@@ -1613,18 +1613,11 @@ void CDlgRadarPPI::CalcutalePowerJam(float search_angle, CRadarJammer* m_pJammer
 
 }
 
-void CDlgRadarPPI::CalculatePowerRecieved(float search_angle, CRadarJammer* m_pJammer)
-
+float CDlgRadarPPI::CalculatePowerRecieved(float search_angle, CRadarJammer* m_pJammer)
 {
 	float AngleToJammer = search_angle;
 	//(1=TX, 2=RX)
-
-	m_pJammer->m_fPowerRecieved = (m_pRadar->m_fPeakPower*m_pJammer->ReturnAntennaGain(2, (180 + m_pJammer->m_fBaring) - m_pJammer->m_fCourse)*m_pRadar->ReturnAntennaGain(1, AngleToJammer)*(float)pow(m_pRadar->m_flambda, 2.0f)) / ((float)pow((4.0f*M_PI), 2.0f)*(float)pow(m_pJammer->m_fDistanceToRadar, 2.0f));
-
-	//	if(int(m_nTimeUnit/m_fGgrRealTime)%100==0 & int(m_nTimeUnit/m_fGgrRealTime)<20)
-
-	//	m_pJammer->m_fVectorToGraphPowerRecieved[int(m_nTimeUnit/m_fGgrRealTime/100)] = m_pJammer->m_fPowerRecieved;
-
+	return (m_pRadar->m_fPeakPower*m_pJammer->ReturnAntennaGain(2, (180 + m_pJammer->m_fBaring) - m_pJammer->m_fCourse)*m_pRadar->ReturnAntennaGain(1, AngleToJammer)*(float)pow(m_pRadar->m_flambda, 2.0f)) / ((float)pow((4.0f*M_PI), 2.0f)*(float)pow(m_pJammer->m_fDistanceToRadar, 2.0f));
 }
 
 float CDlgRadarPPI::CalulateJammerPRI()
@@ -1826,7 +1819,7 @@ void CDlgRadarPPI::loop(float angle)
 
 				if (m_pJammer->m_bFoljande == true)
 				{
-					CalculatePowerRecieved(k, m_pJammer);
+					m_pJammer->m_fPowerRecieved = CalculatePowerRecieved(k, m_pJammer);
 
 					if (m_pJammer->m_fPowerRecieved>m_pJammer->m_fSensitivity)
 					{
@@ -1897,7 +1890,7 @@ void CDlgRadarPPI::loop(float angle)
 
 			{
 
-				CalculatePowerRecieved(k, m_pJammer);
+				m_pJammer->m_fPowerRecieved = CalculatePowerRecieved(k, m_pJammer);
 				CalcutalePowerJam(k, m_pJammer);
 				if (m_pJammer->m_fPowerRecieved > m_pJammer->m_fSensitivity && m_pJammer->m_fPower > (m_pRadar->m_fSensitivity*m_pRadar->m_nProcessingGain))
 				{
@@ -2943,90 +2936,44 @@ void CDlgRadarPPI::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 
 void CDlgRadarPPI::UpdateView()
-
 {
-
 	//Scenario
-
 	m_valueTimeLine = m_fTimeUnit;
 
-
 	//Störare
-
 	m_strJam1.Format(_T("Name: \r\n %s"), m_pJammer->m_strUniqID);
-
 	m_strJam4.Format(_T("Jam Mode: \r\n %s"), m_pJammer->m_strStatus);
-
 	m_strJam3.Format(_T("Velocity: \r\n %3.0f[m/s]"), m_pJammer->m_fVelocity);
-
 	m_strJam2.Format(_T("Distance to Radar: \r\n %3.1f[km]"), m_pJammer->m_fDistanceToRadar / 1000.0f);
 
 
-
 	if (m_pJammer->m_bBrusStorning == true && m_pJammer->m_strStatus != "OFF")
-
 	{
-
 		m_strJam5.Format(_T("Effective Radiated Power: %3.1f [W]"), m_pJammer->m_fPeakPowerNoiseRef*m_pJammer->m_nAntennaGainTX);
-
 		m_strJam6.Format(_T("Frequency: \r\n min %3.1f[MHz] \r\n max %3.1f[MHz]"), m_pJammer->m_fFreqMin * 1000, m_pJammer->m_fFreqMax * 1000);
-
-
-
 	}
-
 	else if (m_pJammer->m_bRepeterStorning == true && m_pJammer->m_strStatus != "OFF")
-
 	{
-
 		m_strJam5.Format(_T("Effective Radiated Power: \r\n %3.1f[W]"), m_pJammer->m_fPeakPowerRepeaterRef*m_pJammer->m_nAntennaGainTX);
-
-		m_strJam6.Format(_T("Power Received: \r\n %3.1f[dBm]"), CRadarCalculate::FromGgrTodBm(CRadarCalculate::PowerRecieved(m_pRadar->m_fPeakPower, m_pRadar->m_fGainMainlobe, m_pRadar->m_flambda, m_pJammer->ReturnAntennaGain(2, (180 + m_pJammer->m_fBaring) - m_pJammer->m_fCourse), m_pJammer->m_fDistanceToRadar)));
-
-
-		//		text.Format("Velocity False Targets: %d [m/s]",(int)(((CRadarJammer*)pTempPos->m_pUtrustning)->m_fFalseTargetVelocity+pTempPos->m_pUtrustning->m_fVelocity));
-
-		//		ShowText(pDC,3400,4100+1100*J,180,&text);
-
-
-
+		m_strJam6.Format(_T("Power Received: \r\n %3.1f[dBm]"), CRadarCalculate::FromGgrTodBm(CalculatePowerRecieved(0,m_pJammer)));
 	}
-
 	else
-
 	{
-
 		m_strJam5.Format(_T("Effective Output Power: \r\n %3.1f[W]"), 0);
-
+		m_strJam6.Format(_T("Power Received: \r\n %3.1f[dBm]"), CRadarCalculate::FromGgrTodBm(CalculatePowerRecieved(0, m_pJammer)));
 	}
-
-
 
 	//Radar
-
-
-
 	m_strRad1.Format(_T("Name: \r\n %s"), m_pRadar->m_strUniqID);
-
 	m_strRad2.Format(_T("Max Range: \r\n %3.1f[km]"), m_pRadar->m_fMaxRange / 1000.0f);
-
 	m_strRad3.Format(_T("Frequency:  \r\n min %3.1f[MHz] \r\n max %3.1f[MHz]"), m_pRadar->m_fFreqMin * 1000, m_pRadar->m_fFreqMax * 1000);
-
 	m_strRad4.Format(_T("PRI: %3.1f [ms] \r\n  PRF: %3.1f [kHz]"), m_pRadar->m_fPRI * 1000, (1 / m_pRadar->m_fPRI) / 1000);
-
 	m_strRad5.Format(_T("Width Mainlobe Tx: \r\n %d [Grader] "), (int)(m_pRadar->m_fWidthMainlobe));
-
 	m_strRad5.Format(_T("Width Mainlobe Rx: \r\n %d [Grader] "), (int)(m_pRadar->m_fWidthMainlobeRx));
-
 	m_strRad6.Format(_T("Scan Period: \r\n %d [rpm] "), (int)(m_pRadar->m_nAntennaScanPeriod));
-
 	m_strRad7.Format(_T("Pulse Width: \r\n %3.1f [us] "), (m_pRadar->m_fPulseWidth * 1000000));
-
 	m_strRad8.Format(_T("Peakpower: \r\n %d [W] "), (int)(m_pRadar->m_fPeakPower));
-
-
 	UpdateData(false);
-
 }
 
 
