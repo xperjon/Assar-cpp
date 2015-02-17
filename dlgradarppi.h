@@ -135,7 +135,7 @@ private:
 	//Fulparametrar för att ändras under beräkning
 	float m_fDlgPeakPower;
 	float m_fDlgPeakPowerRepeater;
-
+	float m_fDlgNoiseBandwidth;
 	float		m_fKillTime;
 
 	float		m_fGgrRealTime;

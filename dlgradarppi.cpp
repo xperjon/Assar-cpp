@@ -78,6 +78,7 @@ CDlgRadarPPI::CDlgRadarPPI(CWnd* pParent /*=NULL*/)
 
 	m_fDlgPeakPower = 0;
 	m_fDlgPeakPowerRepeater = 0;
+	m_fDlgNoiseBandwidth = 0;
 
 	m_ppTarget = NULL;
 
@@ -661,82 +662,50 @@ int CDlgRadarPPI::InitRadar()
 
 
 int CDlgRadarPPI::InitJammer()
-
 {
-
-
-
-
 	//	float X,Y;
-
 	//Sätt initpositioner med bäring och avstånd till radar
-
 	//	CRadarCalculate::pos(0,0,m_ppJammer[i]->m_fBaring,m_ppJammer[i]->m_fDistanceToRadar,X,Y);
-
 	//	m_ppJammer[i]->m_fPosX=X;
-
 	//	m_ppJammer[i]->m_fPosY=Y;
 
 	//Kopiera parametrar som kan reduceras under simulering
 	m_fDlgPeakPower = m_pJammer->m_fPeakPower;
 	m_fDlgPeakPowerRepeater = m_pJammer->m_fPeakPowerRepeater;
-
-
+	m_fDlgNoiseBandwidth = m_pJammer->m_fNoiseBandwidth;
 
 	//Här beräknas Jammerns PRI
-
 	m_pJammer->m_fPRI = CalulateJammerPRI();
 
 	//Här beräknas avståndet mellan falsmål vid asynkron repeterströrning
-
 	m_pJammer->m_fAsynkDist = CalulateJammerAsynkDist();
 
-
-
 	//Brus
-
 	//Bestäm Bj utefter val (Bredbandig eller Smalbandig störning)
-
 	bool res = InitNoise();
 	if (res == 1)
 		return 1;
 
-
 	//Rep
-
 	//Sätt diverse parametrar
-
 	res = CalculateDistFalseTargets();
 	if (res == 1)
 		return 1;
 
 	//Kolla frekvens band
-
 	CheckFreqBand();
 
-
-
 	//Beräkna Arbetsfaktor REP
-
 	//	BeraknaArbetsfaktorRep(m_ppJammer[i]);
 
-
-
 	//kolla om antal falskmal är mindre än antal falskmal för aktivering av klotterkarta
-
 	//		InitKlotterkarta(m_ppJammer[i]);
 
-
-
 	//Sätt om vinkelupplösningRepeter
-
 	//		if(m_ppJammer[i]->m_bSynkronaFalskmal||m_ppJammer[i]->m_bAsynkronaFalskmal||m_ppJammer[i]->m_bSlumpadeFalskmal==true)          //modifierat (line 184-187)  AW 020821
-
 	//			m_fVinkelupplosningRepeter=m_fPlotSeparation;
 
-
 	return 0;
-
 }
 
 void CDlgRadarPPI::CalculateCriticalBorder()
@@ -918,62 +887,34 @@ int CDlgRadarPPI::CalculateDistFalseTargets()
 
 
 int CDlgRadarPPI::InitNoise()
-
 {
-
 	if (m_pJammer->m_bIckeFoljande == true && m_pJammer->m_bFoljande == false)
-
 	{
-
-		m_pJammer->m_fNoiseBandwidth = (m_pJammer->m_fFreqMax - m_pJammer->m_fFreqMin)*(float)pow(10.0f, 3.0f);
-
+		//I detta fall har användaren INTE angett brusbandbredden och den måste således räknas ut
+		m_fDlgNoiseBandwidth = (m_pJammer->m_fFreqMax - m_pJammer->m_fFreqMin)*(float)pow(10.0f, 3.0f);
 		CheckBandConstantFQ();
-
 	}
-
-
-
 	if (m_pJammer->m_bFoljande == true && m_pJammer->m_bIckeFoljande == false)
-
 	{
-
-		if (m_pJammer->m_fNoiseBandwidth > (m_pJammer->m_fFreqMax - m_pJammer->m_fFreqMin)*(float)pow(10.0f, 3.0f))
-
+		if (m_fDlgNoiseBandwidth > (m_pJammer->m_fFreqMax - m_pJammer->m_fFreqMin)*(float)pow(10.0f, 3.0f))
 		{
-
 			MessageBox(_T("Error Jammer Noisebandwidth (Bj) cannot be wider than Fmax_jam-Fmin_jam"));
 			return 1;
-
 		}
-
 		CheckBandFQtracking();
-
 	}
-
-
 
 	if (m_pJammer->m_bFoljande == true && m_pJammer->m_bIckeFoljande == true)
-
 	{
-
 		MessageBox(_T("Error Jammer cannot be Tracking(SOR) AND nonTracking(Fix)!"));
 		return 1;
-
 	}
-
-
-
 	if (m_pJammer->m_bFoljande == false && m_pJammer->m_bIckeFoljande == false)
-
 	{
-
 		MessageBox(_T("Error in jammer parameters!"));
 		return 1;
-
 	}
-
 	return 0;
-
 }
 
 
@@ -1039,11 +980,11 @@ void CDlgRadarPPI::CheckBandConstantFQ()
 				*/
 		// Denna funk funkar klockrent!!!!!!!!!!!!!! (fast inte om Bj=0)
 
-		if (m_pJammer->m_fNoiseBandwidth < m_pRadar->m_fIFBandWidth)
+		if (m_fDlgNoiseBandwidth < m_pRadar->m_fIFBandWidth)
 
 		{
 
-			m_pJammer->m_fNoiseBandwidth = m_pRadar->m_fIFBandWidth;
+			m_fDlgNoiseBandwidth = m_pRadar->m_fIFBandWidth;
 
 		}
 
@@ -1139,11 +1080,10 @@ void CDlgRadarPPI::CheckBandFQtracking()
 			*/
 
 
-		if (m_pJammer->m_fNoiseBandwidth < m_pRadar->m_fIFBandWidth)
-
+		if (m_fDlgNoiseBandwidth < m_pRadar->m_fIFBandWidth)
 		{
 
-			m_pJammer->m_fNoiseBandwidth = m_pRadar->m_fIFBandWidth;
+			m_fDlgNoiseBandwidth = m_pRadar->m_fIFBandWidth;
 
 		}
 
@@ -1210,7 +1150,7 @@ void CDlgRadarPPI::CalculateNoiseEffectJammer(float k, CRadarJammer* m_pJammer)
 
 	float JammerAntennaGainTX = m_pJammer->ReturnAntennaGain(1, (180 + m_pJammer->m_fBaring) - m_pJammer->m_fCourse);
 
-	float JammerBandWidthReduction = (m_pRadar->m_fIFBandWidth / m_pJammer->m_fNoiseBandwidth);
+	float JammerBandWidthReduction = (m_pRadar->m_fIFBandWidth / m_fDlgNoiseBandwidth);
 
 	float LambdaSquare = (float)pow(m_pRadar->m_flambda, 2.0f);
 
@@ -1337,7 +1277,7 @@ void CDlgRadarPPI::CalculateNoiseEffectMainLobe()
 		float JammerAntennaGainTX = m_pJammer->ReturnAntennaGain(1, (180 + m_pJammer->m_fBaring) - m_pJammer->m_fCourse);
 		float FourPiSquare = (float)pow((4.0f*M_PI), 2.0f);
 		float DistanceSquare = (float)pow(m_pJammer->m_fDistanceToRadar, 2.0f);
-		float JammerBandWidthReduction = m_pRadar->m_fIFBandWidth / m_pJammer->m_fNoiseBandwidth;
+		float JammerBandWidthReduction = m_pRadar->m_fIFBandWidth / m_fDlgNoiseBandwidth;
 		float LambdaSquare = (float)pow(m_pRadar->m_flambda, 2.0f);
 		float IGPowerCompensation = 1;
 		float PowerReceivedJammer = (m_pRadar->m_fPeakPower*m_pJammer->ReturnAntennaGain(2, (180 + m_pJammer->m_fBaring) - m_pJammer->m_fCourse)*RadarAntennaGainTX*(float)pow(m_pRadar->m_flambda, 2.0f)) / ((float)pow((4.0f*M_PI), 2.0f)*(float)pow(m_pJammer->m_fDistanceToRadar, 2.0f));
@@ -1695,7 +1635,7 @@ void CDlgRadarPPI::CalculateNoiseEffectTargets()
 			float JammerAntennaGainTX = m_pJammer->ReturnAntennaGain(1, (180 + m_pJammer->m_fBaring) - m_pJammer->m_fCourse);
 			float FourPiSquare = (float)pow((4.0f*M_PI), 2.0f);
 			float DistanceSquare = (float)pow(m_pJammer->m_fDistanceToRadar, 2.0f);
-			float JammerBandWidthReduction = m_pRadar->m_fIFBandWidth / m_pJammer->m_fNoiseBandwidth;
+			float JammerBandWidthReduction = m_pRadar->m_fIFBandWidth / m_fDlgNoiseBandwidth;
 			float LambdaSquare = (float)pow(m_pRadar->m_flambda, 2.0f);
 			float IGPowerCompensation = 1;
 			//(1=TX, 2=RX)
@@ -2152,89 +2092,46 @@ float CDlgRadarPPI::RadarEmittingReductionDRFMUpRange()
 
 
 float CDlgRadarPPI::RadarEmittingReductionSORUpRange()
-
 {
-
 	float Nytt_J = 0;
-
 	float reduce1 = 0;
-
 	float reduce2 = 0;
-
 	float Antalkanaler = (m_pRadar->m_fFreqMax - m_pRadar->m_fFreqMin) / m_pRadar->m_fChannelSeparation;
 
-
 	if (m_pRadar->m_bPulseGroup == false)
-
 	{
-
 		//Begränsning om jammer stör med Tracking noise. Då måste man kunna ta enom signal från radarn innan man kan störa(samma sak längre ned i denna funk.)
-
 		return m_pJammer->m_fJ;
-
 	}
-
 	if (m_pRadar->m_bPulseGroup == true)
-
 	{
 		/*				float Nytt_J=0;
-
 						float reduce1=0;
-
 						float reduce2=0;
-
 						float Antalkanaler=(m_pRadar->m_fFreqMax-m_pRadar->m_fFreqMin)/m_pRadar->m_fChannelSeparation;
 						*/
-
-
-
 		if (m_pRadar->m_fantal_pulser == 1)
-
 		{
-
 			//OBS 1000 är för att kanalseparation är i GHz och Bj i MHz
-
-			if (m_pRadar->m_fChannelSeparation >= (m_pJammer->m_fNoiseBandwidth / (2 * 1000)))
-
+			if (m_pRadar->m_fChannelSeparation >= (m_fDlgNoiseBandwidth / (2 * 1000)))
 			{
-
 				//Nytt_J=0;
-
 				return Nytt_J;
-
 			}
-
-
-			if (m_pRadar->m_fChannelSeparation < (m_pJammer->m_fNoiseBandwidth / (2 * 1000)))
-
+			if (m_pRadar->m_fChannelSeparation < (m_fDlgNoiseBandwidth / (2 * 1000)))
 			{
-
-				reduce1 = (m_pJammer->m_fNoiseBandwidth / 1000) / (m_pRadar->m_fChannelSeparation*Antalkanaler);
-
+				reduce1 = (m_fDlgNoiseBandwidth / 1000) / (m_pRadar->m_fChannelSeparation*Antalkanaler);
 				Nytt_J = (reduce1)*m_pJammer->m_fJ;
-
 				return Nytt_J;
-
-
 			}
-
-
 		}
-
 		else/*(m_pRadar->m_nantal_pulser>1)*/
-
 			//	reduce1=(m_pJammer->m_fNoiseBandwidth/1000)/(m_pRadar->m_fChannelSeparation*Antalkanaler);
-
 			reduce2 = (m_pRadar->m_fantal_pulser - 1) / m_pRadar->m_fantal_pulser;
 
-
 		Nytt_J = (reduce2)*m_pJammer->m_fJ;
-
 		return Nytt_J;
-
 	}
-
-
 }
 
 
