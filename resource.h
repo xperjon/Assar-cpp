@@ -26,7 +26,6 @@
 #define IDS_PROPSHT_CAPTION2            116
 #define IDD_PROP_TARGET_IDENTITY        117
 #define IDD_PROPPAGE22                  118
-#define IDD_PROP_SYMBOL                 118
 #define IDB_SPLASH2                     119
 #define ID_INDICATOR_SIMTIME            120
 #define IDR_MAINFRAME                   128
@@ -233,7 +232,6 @@
 #define IDC_BUT_SHOWDISK                1173
 #define IDC_STATIC_COOR                 1174
 #define IDC_STATIC_DISTTORADAR          1175
-#define IDC_STATIC_PREVIEW              1176
 #define IDC_CHECK_ALLWAYPOINTS          1181
 #define IDC_BUT_DEGREES                 1182
 #define IDC_LOOKUP_BUTTON               1183

@@ -47,13 +47,7 @@ public:
 public:
 
 	CPropPage1Target m_Page1;
-
-	CPropPage2Target m_Page2;
-
-
-
 // Operations
-
 public:
 
 
